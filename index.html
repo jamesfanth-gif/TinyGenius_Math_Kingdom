@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>TinyGenius Math 幼小數學樂園 (HK EDB Edition)</title>
+  <style>
+    /* ==========================================================================
+       1. DESIGN TOKENS & RESET
+       ========================================================================== */
+    :root {
+      --primary: #4F46E5;
+      --primary-light: #EEF2FF;
+      --secondary: #EC4899;
+      --accent-yellow: #F59E0B;
+      --accent-green: #10B981;
+      --accent-cyan: #06B6D4;
+      --accent-purple: #8B5CF6;
+      --bg-gradient: linear-gradient(135deg, #6EE7B7 0%, #3B82F6 50%, #9333EA 100%);
+      --surface-glass: rgba(255, 255, 255, 0.88);
+      --surface-glass-subtle: rgba(255, 255, 255, 0.65);
+      --border-glass: rgba(255, 255, 255, 0.7);
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --shadow-soft: 0 10px 30px -5px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow-glow: 0 0 25px rgba(79, 70, 229, 0.35);
+      --gold-gradient: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+      --rainbow-gradient: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff);
+      --font-family: 'SF Pro Rounded', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang HK", "Microsoft JhengHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      font-family: var(--font-family);
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      background-size: 300% 300%;
+      animation: ambientBackground 20s ease infinite;
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      padding: 12px;
+    }
+
+    @keyframes ambientBackground {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Screen Shake FX */
+    .shake {
+      animation: screenShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes screenShake {
+      10%, 90% { transform: translate3d(-3px, 0, 0); }
+      20%, 80% { transform: translate3d(5px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+      40%, 60% { transform: translate3d(6px, 0, 0); }
+    }
+
+    /* Floating Score FX */
+    .floating-text {
+      position: fixed;
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: #F59E0B;
+      text-shadow: 0 3px 10px rgba(0,0,0,0.25);
+      pointer-events: none;
+      z-index: 9999;
+      animation: floatUpFade 1s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+    }
+    @keyframes floatUpFade {
+      0% { transform: translateY(0) scale(0.6); opacity: 0; }
+      20% { transform: translateY(-20px) scale(1.3); opacity: 1; }
+      100% { transform: translateY(-90px) scale(1); opacity: 0; }
+    }
+
+    /* Canvas FX Layer */
+    #fx-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    /* ==========================================================================
+       2. APP CONTAINER & CARDS
+       ========================================================================== */
+    #app-container {
+      width: 100%;
+      max-width: 680px;
+      min-height: 94vh;
+      background: var(--surface-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 2px solid var(--border-glass);
+      border-radius: 36px;
+      box-shadow: var(--shadow-soft), var(--shadow-glow);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Top Bar */
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.7);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: white;
+      border: 2px solid #E2E8F0;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+    }
+    .nav-btn:active {
+      transform: translateY(1px);
+    }
+
+    .stats-cluster {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1);
+    }
+    .badge-pill.stars { background: #FEF3C7; color: #D97706; border: 2px solid #FDE68A; }
+    .badge-pill.grade { background: #EEF2FF; color: #4F46E5; border: 2px solid #C7D2FE; }
+
+    /* Hearts Life Container */
+    .hearts-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .heart-icon {
+      width: 22px;
+      height: 22px;
+      transition: transform 0.3s;
+    }
+    .heart-icon.lost {
+      filter: grayscale(1) opacity(0.3);
+      transform: scale(0.8);
+    }
+
+    /* Screen Views */
+    .screen-view {
+      display: none;
+      flex: 1;
+      padding: 24px 20px;
+      flex-direction: column;
+      animation: fadeIn 0.3s ease;
+    }
+    .screen-view.active {
+      display: flex;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================================
+       3. PORTAL: LEVEL SELECTION (K1, K2, K3, P1)
+       ========================================================================== */
+    .hero-banner {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .hero-title {
+      font-size: 2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #4F46E5, #EC4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+    .hero-sub {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .level-card {
+      background: white;
+      border-radius: 28px;
+      padding: 20px 16px;
+      border: 3px solid transparent;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .level-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 16px 28px rgba(0,0,0,0.12);
+    }
+    .level-card:active {
+      transform: scale(0.97);
+    }
+    .level-card.k1 { border-color: #A7F3D0; background: linear-gradient(180deg, #F0FDF4 0%, #FFFFFF 100%); }
+    .level-card.k2 { border-color: #FBCFE8; background: linear-gradient(180deg, #FDF2F8 0%, #FFFFFF 100%); }
+    .level-card.k3 { border-color: #FDE68A; background: linear-gradient(180deg, #FFFBEB 0%, #FFFFFF 100%); }
+    .level-card.p1 { border-color: #C7D2FE; background: linear-gradient(180deg, #EEF2FF 0%, #FFFFFF 100%); }
+
+    .level-icon-wrapper {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+      animation: floatIdle 3s ease-in-out infinite;
+    }
+    @keyframes floatIdle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .level-card-name {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+    .level-card-age {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: white;
+      padding: 2px 10px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+    }
+    .k1 .level-card-age { background: #10B981; }
+    .k2 .level-card-age { background: #EC4899; }
+    .k3 .level-card-age { background: #F59E0B; }
+    .p1 .level-card-age { background: #6366F1; }
+
+    .level-card-desc {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    /* Modules List */
+    .module-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .module-item-btn {
+      background: white;
+      border: 2px solid #E2E8F0;
+      border-radius: 20px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.04);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      text-align: left;
+    }
+    .module-item-btn:hover {
+      transform: translateX(4px);
+      border-color: var(--primary);
+      box-shadow: 0 8px 18px rgba(79, 70, 229, 0.15);
+    }
+    .module-item-btn:active {
+      transform: scale(0.98);
+    }
+    .module-btn-icon {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+    }
+    .module-btn-text h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+    .module-btn-text p {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================================
+       4. GAME ARENA (QUESTION & INTERACTIVE BOARD)
+       ========================================================================== */
+    .game-arena {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .question-card {
+      background: white;
+      border-radius: 24px;
+      padding: 18px 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+      border: 2px solid #F1F5F9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .question-text-box h2 {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--text-main);
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+    .question-text-box p {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .voice-speak-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      border: none;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 14px rgba(217, 119, 6, 0.35);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    .voice-speak-btn:hover { transform: scale(1.08); }
+    .voice-speak-btn:active { transform: scale(0.92); }
+
+    /* Interactive Canvas Container */
+    .stage-board {
+      background: white;
+      border-radius: 28px;
+      padding: 24px;
+      min-height: 250px;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.03), 0 8px 20px rgba(0,0,0,0.06);
+      border: 3px dashed #CBD5E1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .interactive-item-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      align-items: center;
+      max-width: 520px;
+      padding: 10px;
+    }
+
+    /* Individual Countable SVG Item */
+    .tap-item {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      background: #F8FAFC;
+      border: 3px solid #E2E8F0;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .tap-item:hover {
+      transform: translateY(-4px) scale(1.05);
+      border-color: #6366F1;
+    }
+    .tap-item:active {
+      transform: scale(0.92);
+    }
+    .tap-item.counted {
+      background: #EEF2FF;
+      border-color: #4F46E5;
+      box-shadow: 0 0 16px rgba(79, 70, 229, 0.3);
+    }
+    .tap-item.crossed-out {
+      background: #FEF2F2;
+      border-color: #EF4444;
+      opacity: 0.65;
+    }
+
+    .tap-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 26px;
+      height: 26px;
+      background: #EC4899;
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 900;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes popIn {
+      from { transform: scale(0); }
+      to { transform: scale(1); }
+    }
+
+    .cross-mark-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #EF4444;
+      font-size: 2.8rem;
+      font-weight: 900;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      animation: popIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      pointer-events: none;
+    }
+
+    /* Options Action Bar */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .option-btn {
+      background: white;
+      border: 3px solid #E2E8F0;
+      border-radius: 24px;
+      padding: 16px 8px;
+      font-size: 1.7rem;
+      font-weight: 900;
+      color: var(--text-main);
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .option-btn:hover {
+      transform: translateY(-4px);
+      border-color: #6366F1;
+      box-shadow: 0 12px 24px rgba(99, 102, 241, 0.2);
+    }
+    .option-btn:active {
+      transform: scale(0.95);
+    }
+    .option-btn.disabled {
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    /* Ten-Frame Grid */
+    .ten-frame-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 52px);
+      grid-template-rows: repeat(2, 52px);
+      gap: 8px;
+      background: #F1F5F9;
+      padding: 12px;
+      border-radius: 18px;
+      border: 3px solid #CBD5E1;
+    }
+    .ten-slot {
+      background: white;
+      border: 2px dashed #94A3B8;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ten-dot {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #EC4899, #F43F5E);
+      border-radius: 50%;
+      box-shadow: 0 4px 8px rgba(236, 72, 153, 0.4);
+      animation: popIn 0.3s ease;
+    }
+
+    /* ==========================================================================
+       5. STICKER BOOK & EVOLUTION MODAL
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 20px;
+      animation: fadeIn 0.25s ease;
+    }
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-window {
+      background: white;
+      border-radius: 36px;
+      width: 100%;
+      max-width: 540px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 28px 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+      border: 3px solid rgba(255, 255, 255, 0.8);
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .modal-header h2 {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+    .close-modal-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #F1F5F9;
+      border: none;
+      font-size: 1.2rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+    .close-modal-btn:hover { transform: scale(1.1); background: #E2E8F0; }
+
+    /* Sticker Grid in Album */
+    .sticker-album-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .sticker-cell {
+      background: #F8FAFC;
+      border-radius: 22px;
+      border: 3px solid #E2E8F0;
+      padding: 14px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .sticker-cell:hover {
+      transform: translateY(-5px) scale(1.03);
+    }
+
+    /* Sticker Tiers */
+    .sticker-cell.locked {
+      filter: grayscale(1) opacity(0.45);
+      border-style: dashed;
+    }
+    .sticker-cell.tier-1 {
+      border-color: #6EE7B7;
+      background: #ECFDF5;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.15);
+    }
+    .sticker-cell.tier-2 {
+      border-color: #F59E0B;
+      background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.3);
+      animation: goldPulse 3s ease infinite;
+    }
+    @keyframes goldPulse {
+      0%, 100% { box-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
+      50% { box-shadow: 0 0 22px rgba(245, 158, 11, 0.6); }
+    }
+
+    .sticker-cell.tier-3 {
+      border: 3px solid transparent;
+      background: linear-gradient(135deg, #FAF5FF, #FDF2F8);
+      position: relative;
+      animation: rainbowBorder 4s linear infinite;
+      box-shadow: 0 8px 24px rgba(168, 85, 247, 0.35);
+    }
+    @keyframes rainbowBorder {
+      0% { border-color: #FF007F; }
+      25% { border-color: #00E5FF; }
+      50% { border-color: #10B981; }
+      75% { border-color: #F59E0B; }
+      100% { border-color: #FF007F; }
+    }
+
+    .sticker-svg-box {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sticker-tag {
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-top: 4px;
+    }
+    .tag-locked { background: #94A3B8; color: white; }
+    .tag-normal { background: #10B981; color: white; }
+    .tag-gold { background: var(--gold-gradient); color: #78350F; font-weight: 900; }
+    .tag-rainbow { background: var(--rainbow-gradient); color: white; font-weight: 900; }
+
+    /* ==========================================================================
+       6. STICKER SHOWCASE / INSPECTION MODAL (Wiggle & Speech)
+       ========================================================================== */
+    .showcase-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .showcase-stage {
+      width: 170px;
+      height: 170px;
+      border-radius: 40px;
+      background: #F8FAFC;
+      border: 4px solid #E2E8F0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.12);
+      position: relative;
+    }
+
+    /* Showcase Wiggle Dynamic Animation */
+    .showcase-wiggle {
+      animation: showcaseSwing 2.2s ease-in-out infinite alternate;
+      transform-origin: center bottom;
+    }
+    @keyframes showcaseSwing {
+      0% { transform: rotate(-10deg) scale(1.1); }
+      50% { transform: rotate(10deg) scale(1.15) translateY(-5px); }
+      100% { transform: rotate(-8deg) scale(1.1); }
+    }
+
+    .showcase-title {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .showcase-subtitle {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+    .showcase-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 24px;
+      padding: 0 10px;
+    }
+
+    .voice-read-gift-btn {
+      background: linear-gradient(135deg, #6366F1, #8B5CF6);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 24px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 18px rgba(99, 102, 241, 0.35);
+      transition: transform 0.2s;
+    }
+    .voice-read-gift-btn:hover { transform: scale(1.05); }
+    .voice-read-gift-btn:active { transform: scale(0.95); }
+
+    /* Victory Settlement Modal */
+    .settlement-card {
+      text-align: center;
+      padding: 16px;
+    }
+    .trophy-bounce {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 16px;
+      animation: floatIdle 2.5s ease-in-out infinite;
+    }
+
+    .primary-action-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 22px;
+      font-size: 1.25rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+      transition: transform 0.2s;
+      margin-top: 14px;
+    }
+    .primary-action-btn:hover { transform: translateY(-2px); }
+    .primary-action-btn:active { transform: translateY(1px); }
+
+    /* Responsive adjustment */
+    @media (max-width: 480px) {
+      .level-grid { grid-template-columns: 1fr; }
+      .options-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .option-btn { font-size: 1.4rem; padding: 14px 4px; }
+      .hero-title { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Particle Canvas Layer -->
+  <canvas id="fx-canvas"></canvas>
+
+  <div id="app-container">
+
+    <!-- Top Navigation & Stats Bar -->
+    <header class="header-bar">
+      <div style="display: flex; gap: 8px;">
+        <button id="home-btn" class="nav-btn" onclick="goToHome()">
+          <span>🏠</span> 首頁
+        </button>
+        <button id="stickers-btn" class="nav-btn" onclick="openStickerAlbum()">
+          <span>🎁</span> 禮物簿
+        </button>
+      </div>
+
+      <div class="stats-cluster">
+        <!-- Hearts Bar -->
+        <div class="hearts-row" id="hearts-container">
+          <svg class="heart-icon" viewBox="0 0 24 24" fill="#EF4444"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          <svg class="heart-icon" viewBox="0 0 24 24" fill="#EF4444"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          <svg class="heart-icon" viewBox="0 0 24 24" fill="#EF4444"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </div>
+        <div class="badge-pill stars">
+          <span>⭐</span> <span id="star-count">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- SCREEN 1: PORTAL HOME (HK GRADE SELECTION) -->
+    <main id="screen-portal" class="screen-view active">
+      <div class="hero-banner">
+        <h1 class="hero-title">TinyGenius Math</h1>
+        <p class="hero-sub">香港幼小學制數學樂園 • 啟蒙至進階</p>
+      </div>
+
+      <div class="level-grid">
+        <!-- K1 -->
+        <div class="level-card k1" onclick="selectGrade('K1')">
+          <div class="level-icon-wrapper">
+            <!-- Inline SVG: K1 Sprout/Seed -->
+            <svg width="44" height="44" viewBox="0 0 36 36"><path fill="#10B981" d="M33 7c-4 0-14 3-15 13c-1-10-11-13-15-13c-2 0-3 2-1 4c7 7 14 11 14 11v11h4V22s7-4 14-11c2-2 1-4-1-4z"/></svg>
+          </div>
+          <h2 class="level-card-name">K1 幼兒班</h2>
+          <span class="level-card-age">3 - 4 歲</span>
+          <p class="level-card-desc">數感啟蒙 • 1-5點算<br>比較大小 • 基本幾何形狀</p>
+        </div>
+
+        <!-- K2 -->
+        <div class="level-card k2" onclick="selectGrade('K2')">
+          <div class="level-icon-wrapper">
+            <!-- Inline SVG: K2 Flower Blossom -->
+            <svg width="44" height="44" viewBox="0 0 36 36"><path fill="#EC4899" d="M18 13a5 5 0 1 0 0 10a5 5 0 0 0 0-10zm-8-1a5 5 0 1 0 0-10a5 5 0 0 0 0 10zm16 0a5 5 0 1 0 0-10a5 5 0 0 0 0 10zm0 14a5 5 0 1 0 0-10a5 5 0 0 0 0 10zm-16 0a5 5 0 1 0 0-10a5 5 0 0 0 0 10z"/><circle cx="18" cy="18" r="4" fill="#F59E0B"/></svg>
+          </div>
+          <h2 class="level-card-name">K2 低班</h2>
+          <span class="level-card-age">4 - 5 歲</span>
+          <p class="level-card-desc">1-10點數 • 連續加加看<br>動手劃叉減法 • 英文聆聽題</p>
+        </div>
+
+        <!-- K3 -->
+        <div class="level-card k3" onclick="selectGrade('K3')">
+          <div class="level-icon-wrapper">
+            <!-- Inline SVG: K3 Shining Star -->
+            <svg width="46" height="46" viewBox="0 0 36 36"><path fill="#F59E0B" d="M18 2l4.8 11.2L35 14.8l-8.7 8.1l2.3 12.1L18 28.8l-10.6 6.2l2.3-12.1L1 14.8l12.2-1.6z"/></svg>
+          </div>
+          <h2 class="level-card-name">K3 高班</h2>
+          <span class="level-card-age">5 - 6 歲</span>
+          <p class="level-card-desc">10的分解 (十格陣)<br>20內運算 • 香港硬幣辨識</p>
+        </div>
+
+        <!-- P1 -->
+        <div class="level-card p1" onclick="selectGrade('P1')">
+          <div class="level-icon-wrapper">
+            <!-- Inline SVG: P1 Rocket -->
+            <svg width="46" height="46" viewBox="0 0 36 36"><path fill="#6366F1" d="M34 2c-4 0-15 4-21 15l-8 3l6 6l3-8c11-6 15-17 15-21z"/><circle cx="23" cy="13" r="3" fill="#A5B4FC"/><path fill="#EF4444" d="M11 26l-7 7l4-1l3 3l1-4l-1-5z"/></svg>
+          </div>
+          <h2 class="level-card-name">P1 小一</h2>
+          <span class="level-card-age">6 - 7 歲</span>
+          <p class="level-card-desc">兩位數速算 • 十位與個位<br>購物換算 • 英文應用題</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- SCREEN 2: MODULES SELECTION -->
+    <main id="screen-modules" class="screen-view">
+      <div class="hero-banner" style="margin-bottom: 16px;">
+        <span id="module-grade-badge" class="badge-pill grade">K2 低班課程</span>
+        <h2 id="module-grade-title" style="margin-top: 8px; font-weight: 900;">選擇學習單元</h2>
+      </div>
+
+      <div class="module-list" id="module-items-container">
+        <!-- Injected via JavaScript -->
+      </div>
+    </main>
+
+    <!-- SCREEN 3: GAMEPLAY ARENA -->
+    <main id="screen-game" class="screen-view">
+      <div class="game-arena">
+        <!-- Question Bar -->
+        <div class="question-card">
+          <div class="question-text-box">
+            <h2 id="q-chinese-title">正在加載題目...</h2>
+            <p id="q-english-sub">Loading problem...</p>
+          </div>
+          <button class="voice-speak-btn" onclick="speakCurrentQuestion()" title="朗讀英文題目">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+          </button>
+        </div>
+
+        <!-- Stage Area (Interactive items, Clock, Ten-frame, etc.) -->
+        <div class="stage-board" id="game-stage">
+          <!-- Dynamically Rendered Content -->
+        </div>
+
+        <!-- Answer Options -->
+        <div class="options-grid" id="options-container">
+          <!-- Option buttons -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: STICKER ALBUM -->
+  <div id="modal-album" class="modal-backdrop">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h2>🎁 禮物成就珍藏館</h2>
+        <button class="close-modal-btn" onclick="closeModal('modal-album')">✕</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+        💡 每答對 4 題可解鎖或進化禮物！點擊禮物可放大檢視並聆聽英文發音！
+      </p>
+
+      <div class="sticker-album-grid" id="stickers-grid">
+        <!-- 12 Sticker Cells injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: STICKER SHOWCASE / INSPECTOR -->
+  <div id="modal-showcase" class="modal-backdrop">
+    <div class="modal-window" style="max-width: 440px;">
+      <div class="modal-header">
+        <h2 id="showcase-tier-tag">✨ 禮物檢視</h2>
+        <button class="close-modal-btn" onclick="closeModal('modal-showcase')">✕</button>
+      </div>
+
+      <div class="showcase-content">
+        <div class="showcase-stage" id="showcase-stage-box">
+          <div id="showcase-svg-container" class="showcase-wiggle">
+            <!-- Large SVG Injected -->
+          </div>
+        </div>
+
+        <h3 id="showcase-item-name" class="showcase-title">Panda Hero</h3>
+        <p id="showcase-status-badge" class="showcase-subtitle">⭐ 普通版</p>
+        <p id="showcase-item-desc" class="showcase-desc">
+          勇敢聰敏的熊貓！陪伴小朋友輕鬆探索數學天地。
+        </p>
+
+        <button class="voice-read-gift-btn" onclick="speakShowcaseItem()">
+          <span>🗣️</span> 讀出禮物名稱 (Listen)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: VICTORY & SETTLEMENT -->
+  <div id="modal-settlement" class="modal-backdrop">
+    <div class="modal-window" style="max-width: 460px;">
+      <div class="settlement-card">
+        <div class="trophy-bounce">
+          <svg viewBox="0 0 36 36" width="100" height="100"><path fill="#F59E0B" d="M28 6h-3V4c0-1.1-.9-2-2-2h-10c-1.1 0-2 .9-2 2v2H8c-2.2 0-4 1.8-4 4v4c0 4.4 3.6 8 8 8h1.1c1.5 2.4 4 4 6.9 4v4h-5c-.6 0-1 .4-1 1s.4 1 1 1h12c.6 0 1-.4 1-1s-.4-1-1-1h-5v-4c2.9 0 5.4-1.6 6.9-4H24c4.4 0 8-3.6 8-8v-4c0-2.2-1.8-4-4-4zM8 16c-2.2 0-4-1.8-4-4v-4c0-1.1.9-2 2-2h2v7.1c0 1.1.9 2 2 2h.2c-.7.6-1.4 1.2-2.2 1.9zm20-4c0 2.2-1.8 4-4 4c-.8-.7-1.5-1.3-2.2-1.9h.2c1.1 0 2-.9 2-2V6h2c1.1 0 2 .9 2 2v4z"/></svg>
+        </div>
+        <h2 style="font-size: 1.8rem; font-weight: 900; color: #10B981; margin-bottom: 6px;">好叻呀！挑戰成功！</h2>
+        <p style="font-weight: 700; color: var(--text-muted); margin-bottom: 16px;">Awesome! Challenge Completed!</p>
+
+        <div style="background: #F1F5F9; border-radius: 20px; padding: 16px; margin-bottom: 20px;">
+          <p style="font-size: 1.1rem; font-weight: 800; color: var(--text-main);">
+            本次累計獲得星星：<span id="settlement-stars" style="color: #F59E0B; font-size: 1.4rem;">+4</span> ⭐
+          </p>
+        </div>
+
+        <button class="primary-action-btn" onclick="continueToNextQuestion()">
+          下一關挑戰 Next Challenge 🚀
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       SVG ASSET FACTORY (100% INLINE CLEAN VECTORS)
+       ========================================================================== */
+    const SVG_ICONS = {
+      panda: `<svg viewBox="0 0 36 36" width="100%" height="100%"><circle cx="18" cy="19" r="13" fill="#FFFFFF" stroke="#1E293B" stroke-width="2.5"/><circle cx="8" cy="9" r="4.5" fill="#1E293B"/><circle cx="28" cy="9" r="4.5" fill="#1E293B"/><ellipse cx="13" cy="18" rx="3.5" ry="4.5" fill="#1E293B"/><circle cx="14" cy="17" r="1.5" fill="#FFFFFF"/><ellipse cx="23" cy="18" rx="3.5" ry="4.5" fill="#1E293B"/><circle cx="22" cy="17" r="1.5" fill="#FFFFFF"/><ellipse cx="18" cy="22" rx="2.5" ry="1.8" fill="#1E293B"/><path d="M16 25 Q18 27 20 25" stroke="#1E293B" stroke-width="2" fill="none"/></svg>`,
+      lion: `<svg viewBox="0 0 36 36" width="100%" height="100%"><circle cx="18" cy="18" r="15" fill="#F59E0B"/><circle cx="18" cy="18" r="11" fill="#FDE68A"/><circle cx="8" cy="10" r="3" fill="#D97706"/><circle cx="28" cy="10" r="3" fill="#D97706"/><circle cx="14" cy="17" r="2" fill="#1E293B"/><circle cx="22" cy="17" r="2" fill="#1E293B"/><polygon points="18,20 16,23 20,23" fill="#D97706"/><path d="M15 25 Q18 28 21 25" stroke="#1E293B" stroke-width="1.8" fill="none"/></svg>`,
+      unicorn: `<svg viewBox="0 0 36 36" width="100%" height="100%"><path d="M8 28 C6 18 16 10 24 10 L28 14 C28 22 22 30 14 30 Z" fill="#FDF2F8" stroke="#EC4899" stroke-width="2"/><polygon points="22,11 31,3 25,12" fill="#F59E0B"/><circle cx="20" cy="16" r="2" fill="#831843"/><path d="M12 12 C10 8 16 6 18 10" fill="#F472B6"/><circle cx="23" cy="22" r="1" fill="#F472B6"/></svg>`,
+      rocket: `<svg viewBox="0 0 36 36" width="100%" height="100%"><path d="M28 4 C24 4 16 10 12 18 L18 24 C26 20 32 12 32 8 Z" fill="#6366F1"/><circle cx="22" cy="14" r="3" fill="#FFFFFF"/><polygon points="11,20 6,22 10,26" fill="#EC4899"/><polygon points="16,25 14,29 20,27" fill="#EC4899"/><polygon points="10,26 4,32 8,30" fill="#F59E0B"/></svg>`,
+      strawberry: `<svg viewBox="0 0 36 36" width="100%" height="100%"><path d="M18 32 C10 32 6 22 8 14 C10 6 26 6 28 14 C30 22 26 32 18 32 Z" fill="#EF4444"/><path d="M18 10 C15 4 12 4 11 6 C14 8 15 10 15 10 C12 8 9 9 9 11 C13 11 16 12 18 12 C20 12 23 11 27 11 C27 9 24 8 21 10 C21 10 22 8 25 6 C24 4 21 4 18 10 Z" fill="#10B981"/><circle cx="14" cy="18" r="1" fill="#FEF08A"/><circle cx="22" cy="18" r="1" fill="#FEF08A"/><circle cx="18" cy="24" r="1" fill="#FEF08A"/></svg>`,
+      donut: `<svg viewBox="0 0 36 36" width="100%" height="100%"><circle cx="18" cy="18" r="14" fill="#D97706"/><circle cx="18" cy="18" r="12" fill="#F472B6"/><circle cx="18" cy="18" r="5" fill="#FFFFFF"/><circle cx="14" cy="12" r="1" fill="#3B82F6"/><circle cx="22" cy="12" r="1" fill="#10B981"/><circle cx="22" cy="22" r="1" fill="#FDE047"/><circle cx="12" cy="20" r="1" fill="#FFFFFF"/></svg>`,
+      crown: `<svg viewBox="0 0 36 36" width="100%" height="100%"><path d="M6 28 L4 12 L12 18 L18 8 L24 18 L32 12 L30 28 Z" fill="#F59E0B" stroke="#B45309" stroke-width="2"/><circle cx="4" cy="12" r="2" fill="#EF4444"/><circle cx="18" cy="8" r="2.5" fill="#3B82F6"/><circle cx="32" cy="12" r="2" fill="#10B981"/><rect x="8" y="24" width="20" height="3" fill="#FDE68A"/></svg>`,
+      dino: `<svg viewBox="0 0 36 36" width="100%" height="100%"><path d="M12 28 C8 28 8 20 14 18 L14 12 C14 8 20 6 26 8 L28 12 L22 14 L22 20 C28 20 28 28 24 28 Z" fill="#10B981"/><circle cx="22" cy="10" r="1.5" fill="#FFFFFF"/><circle cx="22" cy="10" r="0.8" fill="#064E3B"/><polygon points="12,14 10,12 12,10" fill="#F59E0B"/><polygon points="12,18 10,16 12,14" fill="#F59E0B"/></svg>`,
+      dolphin: `<svg viewBox="0 0 36 36" width="100%" height="100%"><path d="M4 22 C8 12 18 8 28 10 C32 12 34 16 30 18 C24 20 18 20 14 26 L10 24 Z" fill="#0EA5E9"/><polygon points="18,12 22,6 23,12" fill="#0284C7"/><circle cx="26" cy="14" r="1.5" fill="#FFFFFF"/><circle cx="26" cy="14" r="0.7" fill="#082F49"/></svg>`,
+      cupcake: `<svg viewBox="0 0 36 36" width="100%" height="100%"><path d="M10 20 L12 32 L24 32 L26 20 Z" fill="#D97706"/><path d="M8 20 C6 14 14 10 18 10 C22 10 30 14 28 20 Z" fill="#F472B6"/><circle cx="18" cy="8" r="3" fill="#EF4444"/></svg>`,
+      rainbow: `<svg viewBox="0 0 36 36" width="100%" height="100%"><path d="M6 30 A12 12 0 0 1 30 30" fill="none" stroke="#EF4444" stroke-width="4"/><path d="M10 30 A8 8 0 0 1 26 30" fill="none" stroke="#F59E0B" stroke-width="4"/><path d="M14 30 A4 4 0 0 1 22 30" fill="none" stroke="#3B82F6" stroke-width="4"/></svg>`,
+      lightning: `<svg viewBox="0 0 36 36" width="100%" height="100%"><polygon points="20,2 8,18 18,18 14,34 28,16 18,16" fill="#FACC15" stroke="#CA8A04" stroke-width="2"/></svg>`
+    };
+
+    /* HK Currency Coin SVG Generator */
+    function getHKCoinSVG(value) {
+      if(value === 1) {
+        return `<svg viewBox="0 0 40 40" width="70" height="70"><circle cx="20" cy="20" r="18" fill="#E2E8F0" stroke="#94A3B8" stroke-width="2.5"/><text x="20" y="25" font-size="16" font-weight="900" text-anchor="middle" fill="#334155">$1</text></svg>`;
+      } else if(value === 2) {
+        return `<svg viewBox="0 0 40 40" width="76" height="76"><path d="M20 2 A18 18 0 0 1 38 20 A18 18 0 0 1 20 38 A18 18 0 0 1 2 20 A18 18 0 0 1 20 2" fill="#E2E8F0" stroke="#94A3B8" stroke-width="3" stroke-dasharray="8 4"/><text x="20" y="26" font-size="17" font-weight="900" text-anchor="middle" fill="#334155">$2</text></svg>`;
+      } else if(value === 5) {
+        return `<svg viewBox="0 0 40 40" width="82" height="82"><circle cx="20" cy="20" r="18" fill="#CBD5E1" stroke="#64748B" stroke-width="4"/><text x="20" y="26" font-size="18" font-weight="900" text-anchor="middle" fill="#1E293B">$5</text></svg>`;
+      } else if(value === 10) {
+        return `<svg viewBox="0 0 40 40" width="78" height="78"><circle cx="20" cy="20" r="18" fill="#CA8A04" stroke="#94A3B8" stroke-width="3"/><circle cx="20" cy="20" r="12" fill="#E2E8F0"/><text x="20" y="25" font-size="14" font-weight="900" text-anchor="middle" fill="#1E293B">$10</text></svg>`;
+      }
+      return '';
+    }
+
+    /* Geometric Shapes SVG Generator for K1 */
+    function getShapeSVG(type) {
+      if(type === 'circle') return `<svg viewBox="0 0 50 50" width="70" height="70"><circle cx="25" cy="25" r="22" fill="#EC4899" stroke="#BE185D" stroke-width="3"/></svg>`;
+      if(type === 'square') return `<svg viewBox="0 0 50 50" width="70" height="70"><rect x="6" y="6" width="38" height="38" rx="6" fill="#3B82F6" stroke="#1D4ED8" stroke-width="3"/></svg>`;
+      if(type === 'triangle') return `<svg viewBox="0 0 50 50" width="70" height="70"><polygon points="25,5 45,43 5,43" fill="#10B981" stroke="#047857" stroke-width="3"/></svg>`;
+      if(type === 'star') return `<svg viewBox="0 0 50 50" width="70" height="70"><polygon points="25,4 32,18 47,19 35,30 39,45 25,37 11,45 15,30 3,19 18,18" fill="#F59E0B" stroke="#B45309" stroke-width="2"/></svg>`;
+    }
+
+    /* Analog Clock Generator for K3 */
+    function getClockSVG(hour, isHalf) {
+      const minuteAngle = isHalf ? 180 : 0;
+      const hourAngle = (hour % 12) * 30 + (isHalf ? 15 : 0);
+      return `
+        <svg viewBox="0 0 100 100" width="130" height="130">
+          <circle cx="50" cy="50" r="46" fill="#FFFFFF" stroke="#4F46E5" stroke-width="4"/>
+          <!-- Hour markers -->
+          <circle cx="50" cy="10" r="3" fill="#64748B"/>
+          <circle cx="90" cy="50" r="3" fill="#64748B"/>
+          <circle cx="50" cy="90" r="3" fill="#64748B"/>
+          <circle cx="10" cy="50" r="3" fill="#64748B"/>
+          <!-- Minute Hand -->
+          <line x1="50" y1="50" x2="50" y2="18" stroke="#3B82F6" stroke-width="3.5" stroke-linecap="round" transform="rotate(${minuteAngle} 50 50)"/>
+          <!-- Hour Hand -->
+          <line x1="50" y1="50" x2="50" y2="28" stroke="#EF4444" stroke-width="5" stroke-linecap="round" transform="rotate(${hourAngle} 50 50)"/>
+          <circle cx="50" cy="50" r="5" fill="#1E293B"/>
+        </svg>
+      `;
+    }
+
+    /* ==========================================================================
+       SOUND SYNTHESIZER ENGINE (WEB AUDIO API - ZERO EXTERNAL AUDIO)
+       ========================================================================== */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+      }
+      init() {
+        if(!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if(this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playPop() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(450, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, this.ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.08);
+      }
+      playCross() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(320, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(150, this.ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.12);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.12);
+      }
+      playCorrect() {
+        this.init();
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.08);
+          gain.gain.setValueAtTime(0.2, this.ctx.currentTime + idx * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.08 + 0.3);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(this.ctx.currentTime + idx * 0.08);
+          osc.stop(this.ctx.currentTime + idx * 0.08 + 0.3);
+        });
+      }
+      playWrong() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, this.ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(120, this.ctx.currentTime + 0.25);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 0.25);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.25);
+      }
+      playTierUp() {
+        this.init();
+        const chord = [440, 554.37, 659.25, 880];
+        chord.forEach((freq) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.8);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.8);
+        });
+      }
+    }
+    const sound = new SoundEngine();
+
+    /* ==========================================================================
+       CANVAS PARTICLE SYSTEM
+       ========================================================================== */
+    const canvas = document.getElementById('fx-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.size = Math.random() * 8 + 4;
+        this.vx = (Math.random() - 0.5) * 12;
+        this.vy = (Math.random() - 0.8) * 14;
+        this.gravity = 0.35;
+        this.opacity = 1;
+        this.rotation = Math.random() * 360;
+        this.vRot = (Math.random() - 0.5) * 10;
+      }
+      update() {
+        this.vy += this.gravity;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.rotation += this.vRot;
+        this.opacity -= 0.018;
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate((this.rotation * Math.PI) / 180);
+        ctx.globalAlpha = Math.max(0, this.opacity);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+        ctx.restore();
+      }
+    }
+
+    function spawnExplosion(x, y) {
+      const colors = ['#EC4899', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#F43F5E'];
+      for (let i = 0; i < 45; i++) {
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        particles.push(new Particle(x, y, color));
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        particles[i].draw();
+        if (particles[i].opacity <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    /* ==========================================================================
+       APP STATE & CURRICULUM DEFINITIONS
+       ========================================================================== */
+    const APP_STATE = {
+      grade: 'K2',
+      module: null,
+      score: 0,
+      lives: 3,
+      correctCount: 0,
+      isLocked: false,
+      currentQuestion: null,
+      activeInspectSticker: null,
+      // 12 Sticker items: ALL START AT tier: 0 (LOCKED) - FIXES BUG
+      stickers: [
+        { id: 'panda', name: 'Panda Hero 熊貓勇士', svg: SVG_ICONS.panda, tier: 0, desc: '勇敢純真的大熊貓，代表強大的邏輯專注力！' },
+        { id: 'lion', name: 'Brave Lion 勇敢獅子王', svg: SVG_ICONS.lion, tier: 0, desc: '森林百獸之王，賦予小朋友面對難題的勇氣。' },
+        { id: 'unicorn', name: 'Magic Unicorn 幻彩獨角獸', svg: SVG_ICONS.unicorn, tier: 0, desc: '擁有神奇魔法角的獨角獸，激發無限創意！' },
+        { id: 'rocket', name: 'Space Rocket 探索火箭', svg: SVG_ICONS.rocket, tier: 0, desc: '飛向宇宙深空，載著夢想不斷升空衝刺！' },
+        { id: 'strawberry', name: 'Berry Sweet 甜心士多啤梨', svg: SVG_ICONS.strawberry, tier: 0, desc: '香甜飽滿的水果之星，健康快樂每一天。' },
+        { id: 'donut', name: 'Glazed Donut 甜甜圈', svg: SVG_ICONS.donut, tier: 0, desc: '美味繽紛的下午茶甜點，帶來滿滿學習甜蜜。' },
+        { id: 'crown', name: 'Royal Crown 榮譽皇冠', svg: SVG_ICONS.crown, tier: 0, desc: '象徵最高榮耀，屬於勤奮動腦筋的小天才！' },
+        { id: 'dino', name: 'Dino Rex 暴龍小先鋒', svg: SVG_ICONS.dino, tier: 0, desc: '活力十足的小恐龍，邁出穩健的數學探索步伐。' },
+        { id: 'dolphin', name: 'Blue Dolphin 聰明海豚', svg: SVG_ICONS.dolphin, tier: 0, desc: '海洋中的智多星，伴你優雅穿梭數字海洋。' },
+        { id: 'cupcake', name: 'Fairy Cupcake 仙子紙杯蛋糕', svg: SVG_ICONS.cupcake, tier: 0, desc: '充滿童話色彩的美味點心，令人心情愉悅。' },
+        { id: 'rainbow', name: 'Lucky Rainbow 幸運彩虹', svg: SVG_ICONS.rainbow, tier: 0, desc: '風雨後的美麗彩虹，照亮未來的學業道路！' },
+        { id: 'lightning', name: 'Lightning Star 閃電星耀', svg: SVG_ICONS.lightning, tier: 0, desc: '迅捷如雷的超快心算力，思維敏捷第一名！' }
+      ]
+    };
+
+    const CURRICULUM_DATA = {
+      K1: [
+        { id: 'k1_count', title: '數數看 (1-5)', sub: 'Count 1 to 5', icon: SVG_ICONS.panda, desc: '直觀具象數算，建立基礎數感' },
+        { id: 'k1_compare', title: '哪邊比較多？', sub: 'Which is More?', icon: SVG_ICONS.strawberry, desc: '左右直觀對比，認識多少概念' },
+        { id: 'k1_shapes', title: '認識幾何形狀', sub: 'Basic Shapes', icon: SVG_ICONS.crown, desc: '圓形、正方形、三角形辨析' }
+      ],
+      K2: [
+        { id: 'k2_tap_count', title: '點擊數一數 (1-10)', sub: 'Tap to Count (1-10)', icon: SVG_ICONS.panda, desc: '點選圖案自動依序標號，手腦合一' },
+        { id: 'k2_add', title: '趣味加加看 (相加)', sub: 'Sequential Addition', icon: SVG_ICONS.donut, desc: '逐個點算相加總數，銜接具象加法' },
+        { id: 'k2_sub', title: '動手劃叉減法', sub: 'Interactive Cross-out', icon: SVG_ICONS.strawberry, desc: '親手點擊劃去指定物件，直觀理解減去' },
+        { id: 'k2_listen', title: '英文聆聽數學題', sub: 'English Audio Math', icon: SVG_ICONS.unicorn, desc: '純英語境磨耳朵，看圖解答' }
+      ],
+      K3: [
+        { id: 'k3_ten_frame', title: '10 的分解 (十格陣)', sub: 'Ten-Frame Math', icon: SVG_ICONS.cupcake, desc: '香港小一銜接關鍵，十的互補數' },
+        { id: 'k3_math20', title: '20 以內加減運算', sub: 'Addition & Subtraction to 20', icon: SVG_ICONS.lightning, desc: '初階心算與直觀口算' },
+        { id: 'k3_clock', title: '看鐘面認時間', sub: 'Telling Time (Clock)', icon: SVG_ICONS.rocket, desc: '認識整點與半點鐘面' },
+        { id: 'k3_coins', title: '香港硬幣面值辨識', sub: 'Hong Kong Coins', icon: SVG_ICONS.crown, desc: '認識 $1, $2, $5, $10 硬幣' }
+      ],
+      P1: [
+        { id: 'p1_place_value', title: '十位與個位 (位值)', sub: 'Tens & Ones Place Value', icon: SVG_ICONS.dino, desc: '理解兩位數位值與十進制' },
+        { id: 'p1_fast_math', title: '兩位數速算挑戰', sub: '2-Digit Math Sprint', icon: SVG_ICONS.lightning, desc: '進位與不進位加減練算' },
+        { id: 'p1_shopping', title: '香港貨幣購物換算', sub: 'HK Money Shopping', icon: SVG_ICONS.donut, desc: '買文具與零食，計算付錢與找贖' },
+        { id: 'p1_word_problems', title: '英文應用題訓練', sub: 'English Word Problems', icon: SVG_ICONS.dolphin, desc: '小一常規英文數學題型理解' }
+      ]
+    };
+
+    /* ==========================================================================
+       SPEECH SYNTHESIS HELPER (100% ENGLISH VOICE)
+       ========================================================================== */
+    function speakEnglish(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.88; // friendly and clear pace for kids
+        utterance.pitch = 1.15; // slightly higher pitch for cheerful engagement
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function speakCurrentQuestion() {
+      if(APP_STATE.currentQuestion && APP_STATE.currentQuestion.speechText) {
+        speakEnglish(APP_STATE.currentQuestion.speechText);
+      }
+    }
+
+    /* ==========================================================================
+       NAVIGATION & VIEW SWITCHING
+       ========================================================================== */
+    function switchScreen(screenId) {
+      document.querySelectorAll('.screen-view').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      if(target) target.classList.add('active');
+    }
+
+    function goToHome() {
+      switchScreen('screen-portal');
+    }
+
+    function selectGrade(gradeKey) {
+      APP_STATE.grade = gradeKey;
+      document.getElementById('module-grade-badge').textContent = `${gradeKey} 課程單元`;
+      renderModuleList(gradeKey);
+      switchScreen('screen-modules');
+    }
+
+    function renderModuleList(gradeKey) {
+      const container = document.getElementById('module-items-container');
+      container.innerHTML = '';
+      const modules = CURRICULUM_DATA[gradeKey] || [];
+      modules.forEach(m => {
+        const btn = document.createElement('div');
+        btn.className = 'module-item-btn';
+        btn.onclick = () => startModule(m.id);
+        btn.innerHTML = `
+          <div class="module-btn-icon">${m.icon}</div>
+          <div class="module-btn-text">
+            <h3>${m.title}</h3>
+            <p>${m.sub} • ${m.desc}</p>
+          </div>
+        `;
+        container.appendChild(btn);
+      });
+    }
+
+    function startModule(moduleId) {
+      APP_STATE.module = moduleId;
+      APP_STATE.lives = 3;
+      updateHeartsUI();
+      switchScreen('screen-game');
+      generateNextQuestion();
+    }
+
+    function updateHeartsUI() {
+      const container = document.getElementById('hearts-container');
+      const hearts = container.querySelectorAll('.heart-icon');
+      hearts.forEach((h, index) => {
+        if(index < APP_STATE.lives) {
+          h.classList.remove('lost');
+        } else {
+          h.classList.add('lost');
+        }
+      });
+    }
+
+    function triggerScreenShake() {
+      const app = document.getElementById('app-container');
+      app.classList.remove('shake');
+      void app.offsetWidth;
+      app.classList.add('shake');
+      setTimeout(() => app.classList.remove('shake'), 400);
+    }
+
+    function showFloatingScore(text, evt) {
+      const el = document.createElement('div');
+      el.className = 'floating-text';
+      el.textContent = text;
+      const x = evt ? evt.clientX : window.innerWidth / 2;
+      const y = evt ? evt.clientY : window.innerHeight / 2;
+      el.style.left = `${x - 40}px`;
+      el.style.top = `${y - 20}px`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1000);
+    }
+
+    /* ==========================================================================
+       QUESTION GENERATOR (ALL GRADES)
+       ========================================================================== */
+    function generateNextQuestion() {
+      APP_STATE.isLocked = false;
+      const mid = APP_STATE.module;
+      let q = {};
+
+      if(mid === 'k1_count') {
+        const count = Math.floor(Math.random() * 5) + 1; // 1 to 5
+        q = {
+          title: `數一數，共有幾多隻小熊貓？`,
+          sub: `How many pandas are there?`,
+          speechText: `How many pandas are there? Count them!`,
+          type: 'count_simple',
+          target: count,
+          options: generateOptions(count, 1, 5),
+          render: (box) => {
+            let html = '<div class="interactive-item-grid">';
+            for(let i=0; i<count; i++) {
+              html += `<div class="tap-item" onclick="handleSimpleTap(this)">${SVG_ICONS.panda}</div>`;
+            }
+            html += '</div>';
+            box.innerHTML = html;
+          }
+        };
+      }
+      else if(mid === 'k1_compare') {
+        const left = Math.floor(Math.random() * 4) + 1;
+        let right = Math.floor(Math.random() * 4) + 1;
+        while(right === left) right = Math.floor(Math.random() * 4) + 1;
+        const target = left > right ? '左邊 Left' : '右邊 Right';
+        q = {
+          title: `哪一邊的水果比較多？`,
+          sub: `Which side has more strawberries?`,
+          speechText: `Which side has more strawberries? Left or right?`,
+          target: target,
+          options: ['左邊 Left', '右邊 Right'],
+          render: (box) => {
+            box.innerHTML = `
+              <div style="display:flex; justify-content:space-around; width:100%; align-items:center;">
+                <div style="text-align:center; padding:12px; background:#F8FAFC; border-radius:20px; border:2px solid #E2E8F0;">
+                  <span style="font-weight:900; color:#64748B;">左邊 (Left)</span>
+                  <div style="display:flex; gap:6px; margin-top:8px;">${SVG_ICONS.strawberry.repeat ? Array(left).fill(SVG_ICONS.strawberry).map(s=>`<div style="width:42px;height:42px">${s}</div>`).join('') : ''}</div>
+                </div>
+                <span style="font-size:1.8rem; font-weight:900; color:#94A3B8;">VS</span>
+                <div style="text-align:center; padding:12px; background:#F8FAFC; border-radius:20px; border:2px solid #E2E8F0;">
+                  <span style="font-weight:900; color:#64748B;">右邊 (Right)</span>
+                  <div style="display:flex; gap:6px; margin-top:8px;">${Array(right).fill(SVG_ICONS.strawberry).map(s=>`<div style="width:42px;height:42px">${s}</div>`).join('')}</div>
+                </div>
+              </div>
+            `;
+          }
+        };
+      }
+      else if(mid === 'k1_shapes') {
+        const shapes = [
+          { name: '圓形 Circle', key: 'circle' },
+          { name: '正方形 Square', key: 'square' },
+          { name: '三角形 Triangle', key: 'triangle' },
+          { name: '星星 Star', key: 'star' }
+        ];
+        const chosen = shapes[Math.floor(Math.random() * shapes.length)];
+        q = {
+          title: `請找出「${chosen.name}」！`,
+          sub: `Find the shape: ${chosen.name}`,
+          speechText: `Find the shape: ${chosen.name}!`,
+          target: chosen.name,
+          options: shuffleArray(shapes.map(s => s.name)).slice(0, 3),
+          render: (box) => {
+            box.innerHTML = `<div style="padding:10px;">${getShapeSVG(chosen.key)}</div>`;
+          }
+        };
+        if(!q.options.includes(chosen.name)) q.options[0] = chosen.name;
+        q.options = shuffleArray(q.options);
+      }
+      else if(mid === 'k2_tap_count') {
+        const count = Math.floor(Math.random() * 8) + 3; // 3 to 10
+        q = {
+          title: `點擊圖案逐個數，一共有幾個？`,
+          sub: `Tap each item sequentially to count total!`,
+          speechText: `Tap each item to count! How many in total?`,
+          target: count,
+          options: generateOptions(count, 3, 10),
+          render: (box) => {
+            let html = '<div class="interactive-item-grid" id="tap-count-grid">';
+            for(let i=0; i<count; i++) {
+              html += `<div class="tap-item" data-idx="${i}" onclick="handleSequentialTap(this)">${SVG_ICONS.lion}</div>`;
+            }
+            html += '</div>';
+            box.innerHTML = html;
+          }
+        };
+      }
+      else if(mid === 'k2_add') {
+        const a = Math.floor(Math.random() * 4) + 1;
+        const b = Math.floor(Math.random() * 4) + 1;
+        const sum = a + b;
+        q = {
+          title: `${a} 加 ${b}，點擊圖案算出總數！`,
+          sub: `${a} plus ${b}. Tap to count the sum!`,
+          speechText: `${a} plus ${b}. How many in total? Tap to count!`,
+          target: sum,
+          options: generateOptions(sum, 2, 10),
+          render: (box) => {
+            let html = `
+              <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:center;">
+                <div class="interactive-item-grid" style="max-width:220px; background:#F8FAFC; padding:10px; border-radius:18px; border:2px solid #E2E8F0;">
+                  ${Array(a).fill(0).map(()=>`<div class="tap-item" onclick="handleSequentialTap(this)">${SVG_ICONS.donut}</div>`).join('')}
+                </div>
+                <span style="font-size:2rem; font-weight:900; color:#4F46E5;">+</span>
+                <div class="interactive-item-grid" style="max-width:220px; background:#F8FAFC; padding:10px; border-radius:18px; border:2px solid #E2E8F0;">
+                  ${Array(b).fill(0).map(()=>`<div class="tap-item" onclick="handleSequentialTap(this)">${SVG_ICONS.donut}</div>`).join('')}
+                </div>
+              </div>
+            `;
+            box.innerHTML = html;
+          }
+        };
+      }
+      else if(mid === 'k2_sub') {
+        const total = Math.floor(Math.random() * 4) + 4; // 4 to 8
+        const sub = Math.floor(Math.random() * (total - 2)) + 1; // 1 to total-2
+        const remain = total - sub;
+        q = {
+          title: `${total} 減 ${sub}，親手劃走 ❌ ${sub} 個，剩低幾多個？`,
+          sub: `${total} minus ${sub}. Cross out ${sub} items and count the rest!`,
+          speechText: `${total} take away ${sub}. Tap to cross out ${sub} items! How many are left?`,
+          target: remain,
+          options: generateOptions(remain, 1, 8),
+          render: (box) => {
+            let html = '<div class="interactive-item-grid" id="crossout-grid">';
+            for(let i=0; i<total; i++) {
+              html += `<div class="tap-item" onclick="handleCrossOut(this)">${SVG_ICONS.strawberry}</div>`;
+            }
+            html += '</div>';
+            box.innerHTML = html;
+          }
+        };
+      }
+      else if(mid === 'k2_listen') {
+        const numA = Math.floor(Math.random() * 3) + 2;
+        const numB = Math.floor(Math.random() * 3) + 1;
+        const sum = numA + numB;
+        q = {
+          title: `🎧 請聽英語題目並選出正確答案`,
+          sub: `Listen carefully to the audio problem!`,
+          speechText: `There are ${numA} sweet cupcakes on the plate. Mommy bakes ${numB} more cupcakes. How many cupcakes altogether?`,
+          target: sum,
+          options: generateOptions(sum, 3, 8),
+          render: (box) => {
+            box.innerHTML = `
+              <div style="text-align:center;">
+                <div style="width:80px; height:80px; margin:0 auto 12px;">${SVG_ICONS.cupcake}</div>
+                <button class="voice-read-gift-btn" onclick="speakCurrentQuestion()">
+                  <span>🔊</span> 再聽一次 (Listen Again)
+                </button>
+              </div>
+            `;
+          }
+        };
+      }
+      else if(mid === 'k3_ten_frame') {
+        const dots = Math.floor(Math.random() * 9) + 1; // 1 to 9
+        const complement = 10 - dots;
+        q = {
+          title: `十格陣中已有 ${dots} 點，還差幾多湊成 10？`,
+          sub: `How many more dots to make 10?`,
+          speechText: `There are ${dots} dots. How many more dots do we need to make ten?`,
+          target: complement,
+          options: generateOptions(complement, 1, 9),
+          render: (box) => {
+            let html = '<div class="ten-frame-grid">';
+            for(let i=0; i<10; i++) {
+              html += `<div class="ten-slot">${i < dots ? '<div class="ten-dot"></div>' : ''}</div>`;
+            }
+            html += '</div>';
+            box.innerHTML = html;
+          }
+        };
+      }
+      else if(mid === 'k3_clock') {
+        const h = Math.floor(Math.random() * 12) + 1;
+        const isHalf = Math.random() > 0.5;
+        const targetStr = isHalf ? `${h}:30` : `${h}:00`;
+        q = {
+          title: `睇鐘面，現在是幾點鐘？`,
+          sub: `What time is it on the clock?`,
+          speechText: `Look at the clock! What time is it?`,
+          target: targetStr,
+          options: [
+            targetStr,
+            isHalf ? `${(h%12)+1}:30` : `${(h%12)+1}:00`,
+            isHalf ? `${h}:00` : `${h}:30`
+          ],
+          render: (box) => {
+            box.innerHTML = getClockSVG(h, isHalf);
+          }
+        };
+        q.options = shuffleArray(q.options);
+      }
+      else if(mid === 'k3_coins') {
+        const coins = [1, 2, 5, 10];
+        const val = coins[Math.floor(Math.random() * coins.length)];
+        q = {
+          title: `這枚香港硬幣的面值是多少？`,
+          sub: `What is the value of this Hong Kong coin?`,
+          speechText: `What is the value of this Hong Kong coin?`,
+          target: `$${val}`,
+          options: shuffleArray(['$1', '$2', '$5', '$10']).slice(0, 3),
+          render: (box) => {
+            box.innerHTML = getHKCoinSVG(val);
+          }
+        };
+        if(!q.options.includes(`$${val}`)) q.options[0] = `$${val}`;
+        q.options = shuffleArray(q.options);
+      }
+      else if(mid === 'k3_math20') {
+        const a = Math.floor(Math.random() * 9) + 6;
+        const b = Math.floor(Math.random() * 5) + 2;
+        const isMinus = Math.random() > 0.5;
+        const ans = isMinus ? a - b : a + b;
+        q = {
+          title: `心算挑戰：${a} ${isMinus ? '－' : '＋'} ${b} ＝ ？`,
+          sub: `Calculate: ${a} ${isMinus ? '-' : '+'} ${b}`,
+          speechText: `Calculate! ${a} ${isMinus ? 'minus' : 'plus'} ${b}. What is the answer?`,
+          target: ans,
+          options: generateOptions(ans, 5, 20),
+          render: (box) => {
+            box.innerHTML = `<span style="font-size:3rem; font-weight:900; color:#4F46E5;">${a} ${isMinus ? '－' : '＋'} ${b} ＝ ？</span>`;
+          }
+        };
+      }
+      else if(mid === 'p1_place_value') {
+        const tens = Math.floor(Math.random() * 7) + 2; // 2 to 8
+        const ones = Math.floor(Math.random() * 9) + 1;
+        const num = tens * 10 + ones;
+        q = {
+          title: `數字 ${num} 中，十位數字是幾多？`,
+          sub: `In the number ${num}, which digit is in the tens place?`,
+          speechText: `In the number ${num}, what is the digit in the tens place?`,
+          target: tens,
+          options: generateOptions(tens, 1, 9),
+          render: (box) => {
+            box.innerHTML = `
+              <div style="display:flex; gap:16px;">
+                <div style="background:#EEF2FF; padding:16px 24px; border-radius:18px; text-align:center; border:2px solid #C7D2FE;">
+                  <span style="display:block; font-size:0.85rem; font-weight:800; color:#6366F1;">十位 (Tens)</span>
+                  <span style="font-size:2.4rem; font-weight:900; color:#4F46E5;">?</span>
+                </div>
+                <div style="background:#FDF2F8; padding:16px 24px; border-radius:18px; text-align:center; border:2px solid #FBCFE8;">
+                  <span style="display:block; font-size:0.85rem; font-weight:800; color:#EC4899;">個位 (Ones)</span>
+                  <span style="font-size:2.4rem; font-weight:900; color:#DB2777;">${ones}</span>
+                </div>
+              </div>
+            `;
+          }
+        };
+      }
+      else if(mid === 'p1_shopping') {
+        const itemPrice = Math.floor(Math.random() * 5) + 3; // $3 to $7
+        const pay = 10;
+        const change = pay - itemPrice;
+        q = {
+          title: `文具每件 $${itemPrice}，用 $10 買，找回多少錢？`,
+          sub: `Item costs $${itemPrice}. Pay with $10. How much change?`,
+          speechText: `An item costs ${itemPrice} dollars. You pay with a ten dollar coin. How much change do you get back?`,
+          target: `$${change}`,
+          options: generateOptions(change, 1, 8).map(v => `$${v}`),
+          render: (box) => {
+            box.innerHTML = `
+              <div style="display:flex; align-items:center; gap:20px;">
+                <div style="text-align:center;">
+                  <span style="font-weight:800; font-size:0.9rem;">商品價格</span>
+                  <p style="font-size:2rem; font-weight:900; color:#EC4899;">$${itemPrice}</p>
+                </div>
+                <span style="font-size:2rem; color:#94A3B8;">➡️</span>
+                <div style="text-align:center;">
+                  <span style="font-weight:800; font-size:0.9rem;">付出</span>
+                  <p style="font-size:2rem; font-weight:900; color:#10B981;">$10</p>
+                </div>
+              </div>
+            `;
+          }
+        };
+      }
+      else {
+        // Fallback simple
+        const a = Math.floor(Math.random() * 5) + 1;
+        const b = Math.floor(Math.random() * 5) + 1;
+        q = {
+          title: `${a} ＋ ${b} 等於幾多？`,
+          sub: `What is ${a} plus ${b}?`,
+          speechText: `What is ${a} plus ${b}?`,
+          target: a + b,
+          options: generateOptions(a + b, 2, 10),
+          render: (box) => {
+            box.innerHTML = `<span style="font-size:3rem; font-weight:900; color:#4F46E5;">${a} ＋ ${b} ＝ ？</span>`;
+          }
+        };
+      }
+
+      APP_STATE.currentQuestion = q;
+      document.getElementById('q-chinese-title').textContent = q.title;
+      document.getElementById('q-english-sub').textContent = q.sub;
+
+      const stage = document.getElementById('game-stage');
+      q.render(stage);
+
+      renderOptions(q.options);
+      // Auto speak problem
+      setTimeout(() => speakCurrentQuestion(), 300);
+    }
+
+    /* Option Helpers */
+    function generateOptions(correctVal, min, max) {
+      const opts = new Set([correctVal]);
+      while(opts.size < 3) {
+        let delta = (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 3) + 1);
+        let cand = correctVal + delta;
+        if(cand < min) cand = min + Math.floor(Math.random() * 2);
+        opts.add(cand);
+      }
+      return shuffleArray(Array.from(opts));
+    }
+
+    function shuffleArray(arr) {
+      return arr.slice().sort(() => Math.random() - 0.5);
+    }
+
+    function renderOptions(opts) {
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
+      opts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = opt;
+        btn.onclick = (e) => checkAnswer(opt, e);
+        container.appendChild(btn);
+      });
+    }
+
+    /* ==========================================================================
+       INTERACTIVE STAGE INTERACTIONS (COUNTING & CROSSING OUT)
+       ========================================================================== */
+    function handleSimpleTap(el) {
+      sound.playPop();
+      el.classList.toggle('counted');
+    }
+
+    /* Sequential tap counting with strictly capped 1..N order */
+    function handleSequentialTap(el) {
+      sound.playPop();
+      if(el.classList.contains('counted')) {
+        el.classList.remove('counted');
+        const badge = el.querySelector('.tap-badge');
+        if(badge) badge.remove();
+      } else {
+        el.classList.add('counted');
+      }
+
+      // Re-index all active counted items sequentially to prevent overflow bug
+      const parent = el.closest('.stage-board');
+      const countedItems = parent.querySelectorAll('.tap-item.counted');
+      let order = 1;
+      countedItems.forEach(item => {
+        let b = item.querySelector('.tap-badge');
+        if(!b) {
+          b = document.createElement('span');
+          b.className = 'tap-badge';
+          item.appendChild(b);
+        }
+        b.textContent = order++;
+      });
+      speakEnglish(String(countedItems.length));
+    }
+
+    function handleCrossOut(el) {
+      if(el.classList.contains('crossed-out')) {
+        el.classList.remove('crossed-out');
+        const x = el.querySelector('.cross-mark-overlay');
+        if(x) x.remove();
+        sound.playPop();
+      } else {
+        el.classList.add('crossed-out');
+        const x = document.createElement('span');
+        x.className = 'cross-mark-overlay';
+        x.textContent = '❌';
+        el.appendChild(x);
+        sound.playCross();
+      }
+    }
+
+    /* ==========================================================================
+       ANSWER VALIDATION & EVOLUTION SYSTEM
+       ========================================================================== */
+    function checkAnswer(chosen, evt) {
+      if(APP_STATE.isLocked) return;
+      APP_STATE.isLocked = true;
+
+      // Lock buttons
+      document.querySelectorAll('.option-btn').forEach(b => b.classList.add('disabled'));
+
+      const isCorrect = String(chosen) === String(APP_STATE.currentQuestion.target);
+
+      if(isCorrect) {
+        sound.playCorrect();
+        spawnExplosion(evt.clientX, evt.clientY);
+        showFloatingScore('+⭐ 100 EXP', evt);
+
+        APP_STATE.score += 1;
+        APP_STATE.correctCount += 1;
+        document.getElementById('star-count').textContent = APP_STATE.score;
+
+        // Check sticker unlock/upgrade every 4 correct answers
+        checkStickerEvolution();
+
+        // Speak warm praise
+        const praises = ["Awesome job!", "Brilliant!", "You are a genius!", "Great work!"];
+        const cheer = praises[Math.floor(Math.random() * praises.length)];
+        speakEnglish(cheer);
+
+        setTimeout(() => {
+          if(APP_STATE.correctCount % 4 === 0) {
+            openSettlementModal();
+          } else {
+            generateNextQuestion();
+          }
+        }, 1200);
+
+      } else {
+        sound.playWrong();
+        triggerScreenShake();
+        APP_STATE.lives = Math.max(0, APP_STATE.lives - 1);
+        updateHeartsUI();
+
+        speakEnglish("Try again! You can do it!");
+
+        setTimeout(() => {
+          if(APP_STATE.lives <= 0) {
+            alert('加油！我們再來練習一次！Try again!');
+            APP_STATE.lives = 3;
+            updateHeartsUI();
+          }
+          APP_STATE.isLocked = false;
+          document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('disabled'));
+        }, 1000);
+      }
+    }
+
+    /* 3-Tier Sticker Evolution: Locked(0) -> Normal(1) -> Gold(2) -> Rainbow(3) */
+    function checkStickerEvolution() {
+      // Find candidate to unlock or upgrade
+      // Step A: Find first tier 0 (locked)
+      let candidate = APP_STATE.stickers.find(s => s.tier === 0);
+      if(candidate) {
+        candidate.tier = 1;
+        sound.playTierUp();
+        return;
+      }
+      // Step B: Find first tier 1 to upgrade to 2 (Gold)
+      candidate = APP_STATE.stickers.find(s => s.tier === 1);
+      if(candidate) {
+        candidate.tier = 2;
+        sound.playTierUp();
+        return;
+      }
+      // Step C: Find first tier 2 to upgrade to 3 (Rainbow)
+      candidate = APP_STATE.stickers.find(s => s.tier === 2);
+      if(candidate) {
+        candidate.tier = 3;
+        sound.playTierUp();
+      }
+    }
+
+    function openSettlementModal() {
+      document.getElementById('settlement-stars').textContent = `+4`;
+      document.getElementById('modal-settlement').classList.add('active');
+    }
+
+    function continueToNextQuestion() {
+      closeModal('modal-settlement');
+      generateNextQuestion();
+    }
+
+    /* ==========================================================================
+       STICKER ALBUM & SHOWCASE INSPECTOR MODAL
+       ========================================================================== */
+    function openStickerAlbum() {
+      const grid = document.getElementById('stickers-grid');
+      grid.innerHTML = '';
+
+      APP_STATE.stickers.forEach(item => {
+        const cell = document.createElement('div');
+        let tierClass = 'locked';
+        let tagText = '🔒 未解鎖';
+        let tagClass = 'tag-locked';
+
+        if(item.tier === 1) {
+          tierClass = 'tier-1';
+          tagText = '普通版';
+          tagClass = 'tag-normal';
+        } else if(item.tier === 2) {
+          tierClass = 'tier-2';
+          tagText = '✨ 黃金箔';
+          tagClass = 'tag-gold';
+        } else if(item.tier === 3) {
+          tierClass = 'tier-3';
+          tagText = '🌈 幻彩虹光';
+          tagClass = 'tag-rainbow';
+        }
+
+        cell.className = `sticker-cell ${tierClass}`;
+        cell.onclick = () => inspectSticker(item);
+
+        cell.innerHTML = `
+          <div class="sticker-svg-box">${item.svg}</div>
+          <span style="font-size:0.75rem; font-weight:800; color:var(--text-main); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">
+            ${item.name.split(' ')[0]}
+          </span>
+          <span class="sticker-tag ${tagClass}">${tagText}</span>
+        `;
+        grid.appendChild(cell);
+      });
+
+      document.getElementById('modal-album').classList.add('active');
+    }
+
+    function inspectSticker(item) {
+      APP_STATE.activeInspectSticker = item;
+      const box = document.getElementById('showcase-svg-container');
+      box.innerHTML = item.svg;
+
+      const stageBox = document.getElementById('showcase-stage-box');
+      stageBox.className = 'showcase-stage';
+
+      const tierBadge = document.getElementById('showcase-tier-tag');
+      const subBadge = document.getElementById('showcase-status-badge');
+      const descEl = document.getElementById('showcase-item-desc');
+      document.getElementById('showcase-item-name').textContent = item.name;
+
+      if(item.tier === 0) {
+        tierBadge.textContent = '🔒 尚未解鎖 (Locked)';
+        subBadge.textContent = '快去答對題目解鎖我吧！';
+        subBadge.style.color = '#94A3B8';
+        descEl.textContent = '目前處於封鎖狀態。只要答對 4 題數學關卡，就能獲得這個可愛的專屬獎勵！';
+        stageBox.style.filter = 'grayscale(1) opacity(0.6)';
+        speakEnglish("Mystery gift! Keep practicing to unlock me!");
+      } else if(item.tier === 1) {
+        tierBadge.textContent = '⭐ 普通版 (Standard Edition)';
+        subBadge.textContent = '已獲得 • 下一級：✨ 升級純金箔版';
+        subBadge.style.color = '#10B981';
+        descEl.textContent = `${item.desc} (再累積答題成就可升級為閃爍純金箔！)`;
+        stageBox.style.filter = 'none';
+        speakShowcaseItem();
+      } else if(item.tier === 2) {
+        tierBadge.textContent = '✨ 純金箔版 (Golden Foil Edition)';
+        subBadge.textContent = '尊貴純金 • 下一級：🌈 幻彩全息流光';
+        subBadge.style.color = '#D97706';
+        descEl.textContent = `${item.desc} (散發璀璨純金光澤，象徵小朋友卓越的數學才華！)`;
+        stageBox.style.filter = 'drop-shadow(0 0 12px rgba(245, 158, 11, 0.6))';
+        speakShowcaseItem();
+      } else if(item.tier === 3) {
+        tierBadge.textContent = '🌈 幻彩全息虹光 (Prismatic Edition)';
+        subBadge.textContent = '👑 頂級滿階終極成就！';
+        subBadge.style.color = '#9333EA';
+        descEl.textContent = `${item.desc} (全息流動七彩霓光，代表登峰造極的數學大師實力！)`;
+        stageBox.style.filter = 'drop-shadow(0 0 16px rgba(168, 85, 247, 0.8))';
+        speakShowcaseItem();
+      }
+
+      document.getElementById('modal-showcase').classList.add('active');
+    }
+
+    function speakShowcaseItem() {
+      if(!APP_STATE.activeInspectSticker) return;
+      const s = APP_STATE.activeInspectSticker;
+      if(s.tier === 0) {
+        speakEnglish("Mystery locked gift! Play more to unlock!");
+      } else if(s.tier === 1) {
+        speakEnglish(`Level one: ${s.name.split(' ')[0]}!`);
+      } else if(s.tier === 2) {
+        speakEnglish(`Level two: Golden ${s.name.split(' ')[0]}! Sparkling and bright!`);
+      } else if(s.tier === 3) {
+        speakEnglish(`Master level: Rainbow prismatic ${s.name.split(' ')[0]}! Fantastic!`);
+      }
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // Initialize Default View
+    window.addEventListener('DOMContentLoaded', () => {
+      goToHome();
+    });
+  </script>
+</body>
+</html>
