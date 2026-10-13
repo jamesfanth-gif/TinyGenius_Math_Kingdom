@@ -1,0 +1,157 @@
+/* =========================================================================
+   TinyGenius Math HK - Data Configuration & Question Templates
+   ========================================================================= */
+
+// 1. 動物與生活詞彙庫
+const VOCAB_DATABASE = [
+  { emoji: '🐼', en: 'Panda', zh: '熊貓', pluralEn: 'pandas', unitZh: '隻熊貓' },
+  { emoji: '🐨', en: 'Koala', zh: '樹熊', pluralEn: 'koalas', unitZh: '隻樹熊' },
+  { emoji: '🦁', en: 'Lion', zh: '小獅子', pluralEn: 'lions', unitZh: '隻小獅子' },
+  { emoji: '🐰', en: 'Rabbit', zh: '小白兔', pluralEn: 'rabbits', unitZh: '隻小白兔' },
+  { emoji: '🐶', en: 'Puppy', zh: '小狗', pluralEn: 'puppies', unitZh: '隻小狗' },
+  { emoji: '🐱', en: 'Kitten', zh: '小貓', pluralEn: 'kittens', unitZh: '隻小貓' },
+  { emoji: '🐵', en: 'Monkey', zh: '小猴子', pluralEn: 'monkeys', unitZh: '隻小猴子' },
+  { emoji: '🐧', en: 'Penguin', zh: '企鵝', pluralEn: 'penguins', unitZh: '隻企鵝' },
+  { emoji: '🦆', en: 'Duck', zh: '小鴨', pluralEn: 'ducks', unitZh: '隻小鴨' },
+  { emoji: '🐸', en: 'Frog', zh: '青蛙', pluralEn: 'frogs', unitZh: '隻青蛙' },
+  { emoji: '🍎', en: 'Apple', zh: '蘋果', pluralEn: 'apples', unitZh: '個蘋果' },
+  { emoji: '🍓', en: 'Strawberry', zh: '士多啤梨', pluralEn: 'strawberries', unitZh: '粒士多啤梨' },
+  { emoji: '🍌', en: 'Banana', zh: '香蕉', pluralEn: 'bananas', unitZh: '條香蕉' },
+  { emoji: '🍩', en: 'Donut', zh: '冬甩', pluralEn: 'donuts', unitZh: '個冬甩' },
+  { emoji: '🚗', en: 'Car', zh: '玩具車', pluralEn: 'cars', unitZh: '架玩具車' }
+];
+
+// 2. 貼紙寶箱清單 (全 12 款貼紙及溫柔老師介紹語)
+const STICKER_LIST = [
+  { id: 's1', icon: '🦄', name: 'Unicorn 獨角獸', desc: "Look! It's the lovely Unicorn! Well done!" },
+  { id: 's2', icon: '🦖', name: 'T-Rex 暴龍', desc: "Wow! Look at the mighty Dino! Super strong!" },
+  { id: 's3', icon: '🚀', name: 'Rocket 太空火箭', desc: "Zoom! Look at the shiny Rocket ready to fly!" },
+  { id: 's4', icon: '🦁', name: 'Lion 勇敢小獅', desc: "Super! Look at the Golden Lion! It shines so brightly!" },
+  { id: 's5', icon: '👑', name: 'Crown 國王皇冠', desc: "Splendid! You earned the royal sparkling Crown!" },
+  { id: 's6', icon: '🌈', name: 'Rainbow 幸福彩虹', desc: "Beautiful! It's the magical glowing Rainbow!" },
+  { id: 's7', icon: '🍦', name: 'Gelato 甜品雪糕', desc: "Yummy! A sweet colorful ice cream for you!" },
+  { id: 's8', icon: '🐳', name: 'Whale 溫柔抹香鯨', desc: "Fantastic! Look at the gentle blue Whale!" },
+  { id: 's9', icon: '🐨', name: 'Koala 樹熊小寶', desc: "Aww, look at the cute Koala! Hugs for you!" },
+  { id: 's10', icon: '🦋', name: 'Butterfly 斑斕蝴蝶', desc: "Look! A lovely fluttery Butterfly! Great job!" },
+  { id: 's11', icon: '🛸', name: 'UFO 神秘飛碟', desc: "Amazing! A mysterious cosmic UFO from outer space!" },
+  { id: 's12', icon: '🏆', name: 'Trophy 數學冠軍', desc: "Champion! You won the golden Math Trophy!" }
+];
+
+// 3. 香港硬幣資料
+const HK_COIN_DATA = [
+  { val: 1, nameEn: 'One Dollar ($1)', nameZh: '一元 ($1)', css: 'coin-1', label: '$1' },
+  { val: 2, nameEn: 'Two Dollars ($2)', nameZh: '二元 ($2)', css: 'coin-2', label: '$2' },
+  { val: 5, nameEn: 'Five Dollars ($5)', nameZh: '五元 ($5)', css: 'coin-5', label: '$5' },
+  { val: 10, nameEn: 'Ten Dollars ($10)', nameZh: '十元 ($10)', css: 'coin-10', label: '$10' }
+];
+
+// 4. 小一超市購物清單商品庫
+const STORE_ITEMS = [
+  { nameZh: '玩具小熊 Teddy', nameEn: 'Teddy Bear', icon: '🧸', price: 15 },
+  { nameZh: '美味生日蛋糕 Cake', nameEn: 'Cake', icon: '🎂', price: 18 },
+  { nameZh: '遙控賽車 Toy Car', nameEn: 'Toy Car', icon: '🏎️', price: 12 },
+  { nameZh: '魔法水壺 Bottle', nameEn: 'Water Bottle', icon: '🧃', price: 6 },
+  { nameZh: '草莓冬甩 Donut', nameEn: 'Strawberry Donut', icon: '🍩', price: 8 },
+  { nameZh: '太空火箭積木 Block', nameEn: 'Toy Rocket', icon: '🚀', price: 14 }
+];
+
+// 5. 老師音色陣列 (配備嚴格性別與口音過濾)
+const TEACHER_PROFILES = [
+  {
+    id: 'emma',
+    name: 'Miss Emma',
+    title: '美式 • 溫柔幼兒園老師',
+    avatar: '🌸',
+    lang: 'en-US',
+    isFemale: true,
+    preferredNames: ['Samantha', 'Victoria', 'Jenny', 'Zira', 'Google US English', 'Natural', 'Female'],
+    rate: 0.82,
+    pitch: 1.20,
+    intro: "Hello sweetie! I'm Miss Emma. Let's learn math together!"
+  },
+  {
+    id: 'sophie',
+    name: 'Miss Sophie',
+    title: '英式 • 親切優雅小學老師',
+    avatar: '🇬🇧',
+    lang: 'en-GB',
+    isFemale: true,
+    preferredNames: ['Hazel', 'Susan', 'Serena', 'Google UK English Female', 'Libby', 'Sonia', 'Female'],
+    rate: 0.82,
+    pitch: 1.18,
+    intro: "Hello darling! I'm Miss Sophie. You are doing brilliantly!"
+  },
+  {
+    id: 'chloe',
+    name: 'Miss Chloe',
+    title: '澳式 • 陽光元氣老師',
+    avatar: '🐨',
+    lang: 'en-AU',
+    isFemale: true,
+    preferredNames: ['Karen', 'Catherine', 'Google Australian English', 'Natasha', 'Female'],
+    rate: 0.84,
+    pitch: 1.15,
+    intro: "G'day! I'm Miss Chloe. Let's play and count!"
+  },
+  {
+    id: 'daniel',
+    name: 'Mr. Daniel',
+    title: '美式 • 溫和故事叔叔',
+    avatar: '📖',
+    lang: 'en-US',
+    isFemale: false,
+    preferredNames: ['David', 'Mark', 'George', 'Google US English Male', 'Male'],
+    rate: 0.82,
+    pitch: 1.02,
+    intro: "Hello young math explorer! I'm Mr. Daniel. Ready for our adventure?"
+  }
+];
+
+// 6. 年級架構設定
+const GRADE_CONFIG = {
+  k1: {
+    icon: '🌱',
+    title: 'K1 幼兒班 (Age 3-4)',
+    desc: '啟蒙數感與感官操作 Early Math Foundation',
+    topics: [
+      { id: 'k1_count', title: '數一數 1-5', subtitle: 'Tap to Count 1-5', icon: '🐰', color: 'from-emerald-400 to-teal-500' },
+      { id: 'k1_compare', title: '比大小與長短', subtitle: 'Big vs Small / Size', icon: '🐘', color: 'from-teal-400 to-cyan-500' },
+      { id: 'k1_shape', title: '基礎圖形配對', subtitle: 'Shapes Explorer', icon: '🔷', color: 'from-cyan-400 to-sky-500' }
+    ]
+  },
+  k2: {
+    icon: '🌸',
+    title: 'K2 低班 (Age 4-5)',
+    desc: '具象運算與概念建構 Concrete Operations',
+    topics: [
+      { id: 'k2_count', title: '數一數 1-10', subtitle: 'Counting 1-10', icon: '🦁', color: 'from-amber-400 to-amber-500' },
+      { id: 'k2_compare', title: '比多少 (More/Less)', subtitle: 'Compare Quantities', icon: '⚖️', color: 'from-sky-400 to-sky-500' },
+      { id: 'k2_add', title: '加加看 (Tap-to-Add)', subtitle: 'Sequential Addition', icon: '➕', color: 'from-rose-400 to-rose-500' },
+      { id: 'k2_sub', title: '減減看 (Cross-Out ❌)', subtitle: 'Interactive Subtraction', icon: '✂️', color: 'from-purple-400 to-purple-500' },
+      { id: 'k2_listening', title: '🎧 1-10 數字英文聆聽', subtitle: 'Number Listening 1-10', icon: '🎧', color: 'from-indigo-400 to-blue-600' }
+    ]
+  },
+  k3: {
+    icon: '⭐',
+    title: 'K3 高班 (Age 5-6)',
+    desc: '幼小銜接與生活應用 Bridge to Primary Math',
+    topics: [
+      { id: 'k3_bonds', title: '10 的分解與組合', subtitle: 'Number Bonds to 10', icon: '🔟', color: 'from-amber-400 to-orange-500' },
+      { id: 'k3_math20', title: '20 以內運算', subtitle: 'Math within 20', icon: '⚡', color: 'from-sky-400 to-blue-500' },
+      { id: 'k3_clock', title: '認識時鐘 (鐘面)', subtitle: 'Telling Time (Clock)', icon: '⏰', color: 'from-pink-400 to-rose-500' },
+      { id: 'k3_coins', title: '香港硬幣辨析', subtitle: 'HK Coins ($1-$10)', icon: '🪙', color: 'from-emerald-400 to-teal-500' },
+      { id: 'k3_listening', title: '🎧 故事加減聆聽', subtitle: 'Story Add/Sub Listening', icon: '👂', color: 'from-violet-400 to-indigo-600' }
+    ]
+  },
+  p1: {
+    icon: '🚀',
+    title: 'P1 小學一年級 (Age 6-7)',
+    desc: '常規小學數學邏輯 Primary 1 Curriculum',
+    topics: [
+      { id: 'p1_place', title: '能量水晶柱 (十位與個位)', subtitle: 'Gems Place Value', icon: '💎', color: 'from-indigo-400 to-indigo-600' },
+      { id: 'p1_mental', title: '火箭發射台兩位數速算', subtitle: 'Rocket Mental Math', icon: '🚀', color: 'from-rose-400 to-pink-500' },
+      { id: 'p1_money', title: '超市購物車合併結帳', subtitle: 'HKD Shopping Cart', icon: '🛒', color: 'from-emerald-400 to-teal-600' },
+      { id: 'p1_listening', title: '🎧 十個位速算英文聆聽', subtitle: 'Tens Mental Listening', icon: '🎧', color: 'from-sky-500 to-indigo-600' }
+    ]
+  }
+];
