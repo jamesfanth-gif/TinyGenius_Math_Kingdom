@@ -14,46 +14,32 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <!-- 模組化樣式表 -->
   <link rel="stylesheet" href="style.css">
-  
-  <style>
-    /* 強制確保關閉的彈窗絕不攔截任何點擊事件 */
-    .modal-backdrop.hidden {
-      display: none !important;
-      pointer-events: none !important;
-      visibility: hidden !important;
-    }
-    .modal-backdrop:not(.hidden) {
-      display: flex !important;
-      pointer-events: auto !important;
-      visibility: visible !important;
-    }
-  </style>
 </head>
 <body class="flex flex-col items-center justify-between p-2 sm:p-5 select-none text-slate-800">
 
   <!-- ==========================================
        TOP UNIFIED APP BAR (手機防溢出自適應導航列)
        ========================================== -->
-  <header class="w-full max-w-5xl flex items-center justify-between clay-card px-2 sm:px-4 py-2 mb-3 gap-1 sm:gap-2 overflow-hidden z-20 relative">
+  <header class="w-full max-w-5xl flex items-center justify-between clay-card px-2 sm:px-4 py-2 mb-3 gap-1 sm:gap-2 overflow-hidden relative z-30">
     <!-- 左側導航組 -->
     <div class="flex items-center gap-1 sm:gap-2 shrink-0">
-      <button id="navBackBtn" onclick="handleNavigationBack()" class="unified-nav-btn bouncy-btn bg-gradient-to-b from-rose-400 to-pink-500 text-white border-pink-700" title="課程選單">
+      <button id="navBackBtn" type="button" class="unified-nav-btn bouncy-btn bg-gradient-to-b from-rose-400 to-pink-500 text-white border-pink-700" title="課程選單">
         <span id="navBackIcon">🏛️</span>
         <span id="navBackLabel" class="hidden md:inline">選單</span>
       </button>
 
-      <button id="teacherVoiceModalBtn" onclick="openTeacherVoiceModal()" class="unified-nav-btn bouncy-btn bg-gradient-to-b from-purple-400 to-indigo-500 text-white border-indigo-700" title="自選英語老師聲音">
+      <button id="teacherVoiceModalBtn" type="button" class="unified-nav-btn bouncy-btn bg-gradient-to-b from-purple-400 to-indigo-500 text-white border-indigo-700" title="自選英語老師聲音">
         <span id="currentTeacherAvatar">🌸</span>
         <span id="currentTeacherNamePill" class="hidden md:inline">Miss Emma</span>
       </button>
 
-      <button id="toggleAudioBtn" onclick="toggleAudioMute()" class="unified-nav-btn bouncy-btn bg-gradient-to-b from-sky-400 to-blue-500 text-white border-blue-700" title="發音開關">
+      <button id="toggleAudioBtn" type="button" class="unified-nav-btn bouncy-btn bg-gradient-to-b from-sky-400 to-blue-500 text-white border-blue-700" title="發音開關">
         <span id="audioMuteIcon">🔊</span>
         <span id="audioMuteLabel" class="hidden md:inline">發音</span>
       </button>
     </div>
 
-    <!-- 中間年級指示膠囊 -->
+    <!-- 中間年級指示膠囊 (手機螢幕自動適應長度) -->
     <div id="activeGradePill" class="flex items-center gap-1 bg-slate-100/90 border border-slate-300 px-2 py-1 rounded-xl text-[11px] sm:text-xs font-black text-slate-700 shrink truncate max-w-[110px] sm:max-w-none">
       <span id="activeGradePillIcon">🌸</span>
       <span id="activeGradePillText" class="truncate">K2 低班</span>
@@ -66,13 +52,13 @@
         <span id="headerStars" class="font-extrabold text-sm sm:text-base">0</span>
       </div>
 
-      <button id="openStickerAlbumBtn" onclick="openStickerModal()" class="unified-nav-btn bouncy-btn bg-gradient-to-b from-emerald-400 to-teal-500 text-white border-teal-700 relative !px-2" title="貼紙寶箱">
+      <button id="openStickerAlbumBtn" type="button" class="unified-nav-btn bouncy-btn bg-gradient-to-b from-emerald-400 to-teal-500 text-white border-teal-700 relative !px-2" title="貼紙寶箱">
         <span id="headerAlbumIcon">🎁</span>
         <span class="hidden md:inline">寶箱</span>
         <span id="albumTierBadge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[8px] font-black px-1 rounded-full border border-white">0/12</span>
       </button>
 
-      <button id="openParentGateBtn" onclick="openParentGate()" class="unified-nav-btn bouncy-btn bg-gradient-to-b from-slate-700 to-slate-900 text-amber-200 border-slate-950 !px-2" title="家長專區">
+      <button id="openParentGateBtn" type="button" class="unified-nav-btn bouncy-btn bg-gradient-to-b from-slate-700 to-slate-900 text-amber-200 border-slate-950 !px-2" title="家長專區">
         <span>🔒</span>
         <span class="hidden md:inline">家長</span>
       </button>
@@ -100,6 +86,7 @@
         </p>
       </div>
 
+      <!-- 4 個香港年級選擇卡片 -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full px-1.5">
         <!-- K1 -->
         <div class="clay-card p-4 sm:p-5 flex flex-col justify-between border-t-8 border-emerald-400 hover:shadow-xl transition-all">
@@ -116,7 +103,7 @@
               <li class="flex items-center gap-1.5"><span>🔹</span> 基礎幾何圖形辨識</li>
             </ul>
           </div>
-          <button onclick="selectGrade('k1')" class="bouncy-btn mt-4 w-full bg-gradient-to-b from-emerald-400 to-teal-500 text-white font-black text-sm py-2.5 rounded-2xl border-b-4 border-teal-700">
+          <button type="button" onclick="selectGrade('k1')" class="bouncy-btn mt-4 w-full bg-gradient-to-b from-emerald-400 to-teal-500 text-white font-black text-sm py-2.5 rounded-2xl border-b-4 border-teal-700">
             開始學習 Start 👉
           </button>
         </div>
@@ -137,7 +124,7 @@
               <li class="flex items-center gap-1.5 text-indigo-700 font-bold"><span>🎧</span> 1-10 基礎英文數字聽力</li>
             </ul>
           </div>
-          <button onclick="selectGrade('k2')" class="bouncy-btn mt-4 w-full bg-gradient-to-b from-sky-400 to-blue-500 text-white font-black text-sm py-2.5 rounded-2xl border-b-4 border-blue-700">
+          <button type="button" onclick="selectGrade('k2')" class="bouncy-btn mt-4 w-full bg-gradient-to-b from-sky-400 to-blue-500 text-white font-black text-sm py-2.5 rounded-2xl border-b-4 border-blue-700">
             開始學習 Start 👉
           </button>
         </div>
@@ -158,7 +145,7 @@
               <li class="flex items-center gap-1.5 text-indigo-700 font-bold"><span>🎧</span> 10 以內故事加減聆聽</li>
             </ul>
           </div>
-          <button onclick="selectGrade('k3')" class="bouncy-btn mt-4 w-full bg-gradient-to-b from-amber-400 to-orange-500 text-white font-black text-sm py-2.5 rounded-2xl border-b-4 border-orange-700">
+          <button type="button" onclick="selectGrade('k3')" class="bouncy-btn mt-4 w-full bg-gradient-to-b from-amber-400 to-orange-500 text-white font-black text-sm py-2.5 rounded-2xl border-b-4 border-orange-700">
             開始學習 Start 👉
           </button>
         </div>
@@ -179,7 +166,7 @@
               <li class="flex items-center gap-1.5 text-indigo-700 font-bold"><span>🎧</span> 十個位速算英文聆聽</li>
             </ul>
           </div>
-          <button onclick="selectGrade('p1')" class="bouncy-btn mt-4 w-full bg-gradient-to-b from-rose-400 to-pink-500 text-white font-black text-sm py-2.5 rounded-2xl border-b-4 border-pink-700">
+          <button type="button" onclick="selectGrade('p1')" class="bouncy-btn mt-4 w-full bg-gradient-to-b from-rose-400 to-pink-500 text-white font-black text-sm py-2.5 rounded-2xl border-b-4 border-pink-700">
             開始學習 Start 👉
           </button>
         </div>
@@ -187,7 +174,7 @@
     </div>
 
     <!-- SCREEN 2: GRADE TOPIC LOBBY -->
-    <div id="gradeLobbyScreen" class="w-full hidden flex-col items-center gap-4 py-2">
+    <div id="gradeLobbyScreen" class="w-full flex-col items-center gap-4 py-2" style="display: none;">
       <div class="text-center">
         <span id="lobbyBadge" class="text-xs font-black px-3.5 py-1 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-widest">Grade K1</span>
         <h2 id="lobbyTitle" class="text-2xl sm:text-4xl font-black text-slate-800 mt-1">請選擇探索單元</h2>
@@ -197,9 +184,9 @@
     </div>
 
     <!-- SCREEN 3: GAMEPLAY ARENA -->
-    <div id="gamePlayScreen" class="w-full hidden flex-col items-center">
+    <div id="gamePlayScreen" class="w-full flex-col items-center" style="display: none;">
       <div class="w-full max-w-3xl flex items-center justify-center gap-2 sm:gap-3 mb-2.5">
-        <button id="replayVoiceBtn" onclick="speakCurrentQuestionPrompt()" class="bouncy-btn bg-gradient-to-b from-amber-300 to-amber-500 text-amber-950 p-2 sm:px-3 sm:py-2.5 rounded-2xl border-b-4 border-amber-600 flex items-center gap-1.5 font-black shrink-0 cursor-pointer">
+        <button id="replayVoiceBtn" type="button" onclick="speakCurrentQuestionPrompt()" class="bouncy-btn bg-gradient-to-b from-amber-300 to-amber-500 text-amber-950 p-2 sm:px-3 sm:py-2.5 rounded-2xl border-b-4 border-amber-600 flex items-center gap-1.5 font-black shrink-0 cursor-pointer">
           <span class="text-xl sm:text-2xl">🗣️</span>
           <span class="text-xs sm:text-sm hidden sm:inline">重聽 (EN)</span>
         </button>
@@ -214,44 +201,45 @@
           <span>🏷️</span> <span id="vocabPillText">Panda 熊貓</span>
         </div>
 
-        <div id="stageK1Count" class="w-full hidden flex-col items-center py-4">
+        <!-- 關卡容器 -->
+        <div id="stageK1Count" class="w-full flex-col items-center py-4" style="display: none;">
           <div class="text-xs sm:text-sm font-bold text-slate-500 mb-3 bg-slate-100 px-3 py-1 rounded-full">👆 輕輕點擊每個動物，一起用英文數！</div>
           <div id="k1CountGrid" class="flex flex-wrap justify-center items-center gap-4 sm:gap-6 max-w-lg min-h-[120px]"></div>
         </div>
 
-        <div id="stageK1Compare" class="w-full hidden grid-cols-2 gap-4 max-w-lg py-2">
-          <button id="k1CompareLeftBtn" onclick="submitK1CompareChoice('left')" class="bouncy-btn clay-card hover:bg-emerald-50/70 p-4 flex flex-col items-center justify-center min-h-[190px] border-b-8 border-emerald-300">
+        <div id="stageK1Compare" class="w-full grid-cols-2 gap-4 max-w-lg py-2" style="display: none;">
+          <button id="k1CompareLeftBtn" type="button" onclick="submitK1CompareChoice('left')" class="bouncy-btn clay-card hover:bg-emerald-50/70 p-4 flex flex-col items-center justify-center min-h-[190px] border-b-8 border-emerald-300">
             <div id="k1CompareLeftGraphic" class="my-auto flex items-center justify-center"></div>
             <span class="text-xs sm:text-sm font-black bg-emerald-100 text-emerald-900 px-3 py-1 rounded-full mt-2">呢邊 👈</span>
           </button>
-          <button id="k1CompareRightBtn" onclick="submitK1CompareChoice('right')" class="bouncy-btn clay-card hover:bg-teal-50/70 p-4 flex flex-col items-center justify-center min-h-[190px] border-b-8 border-teal-300">
+          <button id="k1CompareRightBtn" type="button" onclick="submitK1CompareChoice('right')" class="bouncy-btn clay-card hover:bg-teal-50/70 p-4 flex flex-col items-center justify-center min-h-[190px] border-b-8 border-teal-300">
             <div id="k1CompareRightGraphic" class="my-auto flex items-center justify-center"></div>
             <span class="text-xs sm:text-sm font-black bg-teal-100 text-teal-900 px-3 py-1 rounded-full mt-2">呢邊 👉</span>
           </button>
         </div>
 
-        <div id="stageK1Shape" class="w-full hidden flex-col items-center py-2">
+        <div id="stageK1Shape" class="w-full flex-col items-center py-2" style="display: none;">
           <div id="k1ShapeTargetGraphic" class="w-28 h-28 sm:w-32 sm:h-32 mb-4 flex items-center justify-center"></div>
           <div id="k1ShapeOptionsGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-md"></div>
         </div>
 
-        <div id="stageK2Count" class="w-full hidden flex-col items-center py-3">
+        <div id="stageK2Count" class="w-full flex-col items-center py-3" style="display: none;">
           <div class="text-xs sm:text-sm font-bold text-slate-500 mb-2 bg-slate-100 px-3 py-1 rounded-full">👆 輕輕點擊每個圖案數數看！</div>
           <div id="k2CountGrid" class="flex flex-wrap justify-center items-center gap-3 sm:gap-4 max-w-xl min-h-[130px] p-2"></div>
         </div>
 
-        <div id="stageK2Compare" class="w-full hidden grid-cols-2 gap-3 sm:gap-5 max-w-xl py-2">
-          <button id="k2CompareLeftBtn" onclick="submitK2CompareChoice('left')" class="bouncy-btn clay-card hover:bg-sky-50/70 p-3 sm:p-5 flex flex-col items-center justify-between min-h-[180px] border-b-8 border-sky-300">
+        <div id="stageK2Compare" class="w-full grid-cols-2 gap-3 sm:gap-5 max-w-xl py-2" style="display: none;">
+          <button id="k2CompareLeftBtn" type="button" onclick="submitK2CompareChoice('left')" class="bouncy-btn clay-card hover:bg-sky-50/70 p-3 sm:p-5 flex flex-col items-center justify-between min-h-[180px] border-b-8 border-sky-300">
             <div id="k2CompareLeftContainer" class="flex flex-wrap justify-center gap-2 items-center my-auto min-h-[80px]"></div>
             <span class="text-xs sm:text-sm font-black bg-sky-200 text-sky-900 px-3 py-1 rounded-full mt-2">呢邊比較多 👈</span>
           </button>
-          <button id="k2CompareRightBtn" onclick="submitK2CompareChoice('right')" class="bouncy-btn clay-card hover:bg-amber-50/70 p-3 sm:p-5 flex flex-col items-center justify-between min-h-[180px] border-b-8 border-amber-300">
+          <button id="k2CompareRightBtn" type="button" onclick="submitK2CompareChoice('right')" class="bouncy-btn clay-card hover:bg-amber-50/70 p-3 sm:p-5 flex flex-col items-center justify-between min-h-[180px] border-b-8 border-amber-300">
             <div id="k2CompareRightContainer" class="flex flex-wrap justify-center gap-2 items-center my-auto min-h-[80px]"></div>
             <span class="text-xs sm:text-sm font-black bg-amber-200 text-amber-900 px-3 py-1 rounded-full mt-2">呢邊比較多 👉</span>
           </button>
         </div>
 
-        <div id="stageK2Add" class="w-full hidden flex-col items-center py-2">
+        <div id="stageK2Add" class="w-full flex-col items-center py-2" style="display: none;">
           <div class="text-xs sm:text-sm font-black text-rose-600 mb-2 bg-rose-50 border border-rose-200 px-3.5 py-1 rounded-full">👉 逐個點擊圖案數出總和！</div>
           <div class="flex items-center justify-center flex-wrap gap-2 sm:gap-4 my-2">
             <div class="clay-card p-3 sm:p-4 flex flex-col items-center min-w-[110px] sm:min-w-[130px] border-2 border-amber-200 bg-amber-50/40">
@@ -270,7 +258,7 @@
           </div>
         </div>
 
-        <div id="stageK2Sub" class="w-full hidden flex-col items-center py-2">
+        <div id="stageK2Sub" class="w-full flex-col items-center py-2" style="display: none;">
           <div class="text-xs sm:text-sm font-black text-purple-700 mb-2 bg-purple-100 border border-purple-300 px-4 py-1 rounded-full flex items-center gap-1.5">
             <span>✂️</span> 點擊劃走 <span id="k2SubCutBadge" class="bg-red-500 text-white px-2 py-0.5 rounded-full font-black text-sm">2</span> 個，數下仲剩幾多？
           </div>
@@ -284,7 +272,7 @@
           </div>
         </div>
 
-        <div id="stageAudioListening" class="w-full hidden flex-col items-center py-2">
+        <div id="stageAudioListening" class="w-full flex-col items-center py-2" style="display: none;">
           <div class="flex items-center gap-2 mb-2 bg-sky-50 border border-sky-300 px-4 py-1.5 rounded-full">
             <span class="text-sky-600 font-black text-xs">🎧 英文聆聽題 Listening Challenge...</span>
             <div class="flex items-center gap-1">
@@ -301,7 +289,7 @@
           <div class="text-xs font-black text-indigo-700 mt-1">👂 仔細聆聽老師的英語提示，挑選正確數字！</div>
         </div>
 
-        <div id="stageK3Bonds" class="w-full hidden flex-col items-center py-2">
+        <div id="stageK3Bonds" class="w-full flex-col items-center py-2" style="display: none;">
           <div class="text-xs sm:text-sm font-bold text-amber-700 mb-2 bg-amber-50 border border-amber-300 px-3 py-1 rounded-full">十格陣 (Ten-Frame)：凑成 10 仲需要幾多？</div>
           <div id="k3TenFrame" class="grid grid-cols-5 gap-2 p-3 bg-white border-4 border-amber-300 rounded-2xl shadow-inner max-w-xs mb-3"></div>
           <div class="flex items-center justify-center gap-2 text-2xl sm:text-3xl font-black text-amber-950 bg-amber-50 px-5 py-2 rounded-2xl border-2 border-amber-200">
@@ -313,7 +301,7 @@
           </div>
         </div>
 
-        <div id="stageK3Math20" class="w-full hidden flex-col items-center py-4">
+        <div id="stageK3Math20" class="w-full flex-col items-center py-4" style="display: none;">
           <div class="clay-card-flat px-8 py-5 flex items-center justify-center gap-3 text-3xl sm:text-5xl font-black text-slate-800 shadow-sm border-2 border-sky-200">
             <span id="k3Math20A">12</span>
             <span id="k3Math20Op" class="text-pink-500">➕</span>
@@ -323,17 +311,17 @@
           </div>
         </div>
 
-        <div id="stageK3Clock" class="w-full hidden flex-col items-center py-2">
+        <div id="stageK3Clock" class="w-full flex-col items-center py-2" style="display: none;">
           <div class="text-xs sm:text-sm font-bold text-slate-600 mb-2">睇下個鐘面，現在係幾點鐘？(What time is it?)</div>
           <div id="k3ClockSvgContainer" class="w-48 h-48 sm:w-56 sm:h-56 my-2 drop-shadow-md"></div>
         </div>
 
-        <div id="stageK3Coins" class="w-full hidden flex-col items-center py-2">
+        <div id="stageK3Coins" class="w-full flex-col items-center py-2" style="display: none;">
           <div class="text-xs sm:text-sm font-bold text-slate-600 mb-2">呢個係香港幾多元硬幣？</div>
           <div id="k3CoinTargetDisplay" class="my-4 transform scale-125"></div>
         </div>
 
-        <div id="stageP1Place" class="w-full hidden flex-col items-center py-2">
+        <div id="stageP1Place" class="w-full flex-col items-center py-2" style="display: none;">
           <div class="text-xs sm:text-sm font-bold text-indigo-800 mb-2 bg-indigo-50 border border-indigo-200 px-4 py-1 rounded-full flex items-center gap-1.5">
             <span>✨</span> 魔法能量柱 (每柱 10 粒水晶) 與零散寶石，代表咩數字？
           </div>
@@ -349,7 +337,7 @@
           </div>
         </div>
 
-        <div id="stageP1Mental" class="w-full hidden flex-col items-center py-2">
+        <div id="stageP1Mental" class="w-full flex-col items-center py-2" style="display: none;">
           <div class="flex items-center gap-2 mb-2 bg-rose-50 border border-rose-200 px-4 py-1 rounded-full text-xs font-black text-rose-700">
             <span>🚀</span> 太空火箭能量推進！計算推進器數值！
           </div>
@@ -363,7 +351,7 @@
           </div>
         </div>
 
-        <div id="stageP1Money" class="w-full hidden flex-col items-center py-2 w-full max-w-lg">
+        <div id="stageP1Money" class="w-full flex-col items-center py-2 w-full max-w-lg" style="display: none;">
           <div class="w-full bg-gradient-to-b from-amber-50 to-orange-50/50 border-2 border-amber-300 rounded-3xl p-3.5 shadow-sm mb-2">
             <div class="flex items-center justify-between border-b border-amber-200 pb-2 mb-2.5">
               <span class="text-xs font-black text-amber-900 flex items-center gap-1.5">
@@ -385,11 +373,11 @@
     </div>
 
     <!-- ==========================================
-         MODALS (均標記 modal-backdrop 以確保不卡死)
+         MODALS (改用原生 style="display: none;" 徹底杜絕隱形透明玻璃擋住螢幕)
          ========================================== -->
 
     <!-- 彈窗 1: 貼紙寶箱 -->
-    <div id="stickerAlbumModal" class="modal-backdrop fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div id="stickerAlbumModal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 items-center justify-center p-3 sm:p-4" style="display: none;">
       <div class="clay-card p-4 sm:p-6 max-w-lg w-full border-4 border-amber-300 flex flex-col items-center text-center pop-in max-h-[92vh]">
         <div class="flex items-center gap-2 mb-1">
           <span class="text-3xl">📖</span>
@@ -403,16 +391,16 @@
         <div class="w-full overflow-y-auto flex-1 my-1 p-2 bg-amber-50/70 rounded-2xl border-2 border-amber-200 min-h-[200px]">
           <div id="stickerGridContainer" class="grid grid-cols-3 sm:grid-cols-4 gap-2.5 w-full"></div>
         </div>
-        <button onclick="closeStickerModal()" class="bouncy-btn mt-3 w-full bg-gradient-to-b from-pink-400 to-rose-500 text-white font-black text-sm sm:text-base py-2.5 rounded-2xl border-b-4 border-rose-700 shrink-0">
+        <button type="button" onclick="closeStickerModal()" class="bouncy-btn mt-3 w-full bg-gradient-to-b from-pink-400 to-rose-500 text-white font-black text-sm sm:text-base py-2.5 rounded-2xl border-b-4 border-rose-700 shrink-0">
           回到遊戲 Keep Playing 🎈
         </button>
       </div>
     </div>
 
     <!-- 彈窗 2: 3D 大尺寸立體展示窗 -->
-    <div id="stickerShowcaseModal" class="modal-backdrop fixed inset-0 bg-black/75 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div id="stickerShowcaseModal" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 items-center justify-center p-4" style="display: none;">
       <div class="clay-card p-5 sm:p-6 max-w-sm w-full border-4 flex flex-col items-center text-center pop-in max-h-[92vh] overflow-y-auto relative">
-        <button onclick="closeShowcaseModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700 text-xl font-black w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">✕</button>
+        <button type="button" onclick="closeShowcaseModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700 text-xl font-black w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">✕</button>
         <h3 id="showcaseModalTitle" class="text-lg sm:text-xl font-black text-slate-800 mt-1">Sticker Showcase</h3>
         <span id="showcaseModalTierPill" class="text-[11px] font-black px-3 py-0.5 rounded-full text-white bg-emerald-500 my-1.5">普通徽章</span>
         <div class="my-3 py-2 flex items-center justify-center w-full">
@@ -423,10 +411,10 @@
           "Look! It's the lovely Unicorn! Well done!"
         </p>
         <div class="grid grid-cols-2 gap-2 w-full mt-4">
-          <button onclick="replayShowcaseVoice()" class="bouncy-btn bg-gradient-to-b from-sky-400 to-blue-500 text-white font-black text-xs sm:text-sm py-2.5 rounded-xl border-b-4 border-blue-700 flex items-center justify-center gap-1">
+          <button type="button" onclick="replayShowcaseVoice()" class="bouncy-btn bg-gradient-to-b from-sky-400 to-blue-500 text-white font-black text-xs sm:text-sm py-2.5 rounded-xl border-b-4 border-blue-700 flex items-center justify-center gap-1">
             <span>🔊</span> 溫柔讀音
           </button>
-          <button onclick="closeShowcaseModal()" class="bouncy-btn bg-gradient-to-b from-slate-200 to-slate-300 text-slate-700 font-black text-xs sm:text-sm py-2.5 rounded-xl border-b-4 border-slate-400">
+          <button type="button" onclick="closeShowcaseModal()" class="bouncy-btn bg-gradient-to-b from-slate-200 to-slate-300 text-slate-700 font-black text-xs sm:text-sm py-2.5 rounded-xl border-b-4 border-slate-400">
             關閉 Close
           </button>
         </div>
@@ -434,20 +422,20 @@
     </div>
 
     <!-- 彈窗 3: 老師音色選擇 -->
-    <div id="teacherVoiceModal" class="modal-backdrop fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div id="teacherVoiceModal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 items-center justify-center p-4" style="display: none;">
       <div class="clay-card p-5 max-w-md w-full border-4 border-indigo-300 flex flex-col items-center text-center pop-in max-h-[92vh] overflow-y-auto">
         <div class="text-3xl mb-1">👩‍🏫</div>
         <h3 class="text-xl font-black text-slate-800">自選英語老師聲音 (Teacher Voices)</h3>
         <p class="text-xs font-bold text-slate-500 mb-3">嚴格過濾發音性別，杜絕男聲誤稱 Miss！可自由選擇喜歡的老師：</p>
         <div id="teacherCardsList" class="flex flex-col gap-2.5 w-full"></div>
-        <button onclick="closeTeacherVoiceModal()" class="bouncy-btn mt-4 w-full bg-gradient-to-b from-indigo-500 to-indigo-600 text-white font-black text-sm py-2.5 rounded-xl border-b-4 border-indigo-800">
+        <button type="button" onclick="closeTeacherVoiceModal()" class="bouncy-btn mt-4 w-full bg-gradient-to-b from-indigo-500 to-indigo-600 text-white font-black text-sm py-2.5 rounded-xl border-b-4 border-indigo-800">
           儲存並返回 Save & Return
         </button>
       </div>
     </div>
 
     <!-- 彈窗 4: 家長專區 -->
-    <div id="parentGateModal" class="modal-backdrop fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div id="parentGateModal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 items-center justify-center p-4" style="display: none;">
       <div class="clay-card p-6 max-w-lg w-full border-4 border-slate-300 flex flex-col items-center text-center pop-in max-h-[90vh] overflow-y-auto">
         <div class="text-3xl mb-1">🔒</div>
         <h3 class="text-xl font-black text-slate-800">家長驗證與學習進度 (Parents Only)</h3>
@@ -455,10 +443,10 @@
         <div id="parentLockChallenge" class="w-full my-3 p-3 bg-slate-100 rounded-2xl border border-slate-300">
           <div id="parentLockFormula" class="text-2xl font-black text-slate-700 tracking-wider">8 × 7 = ?</div>
           <input id="parentLockInput" type="number" placeholder="答案" class="mt-2 w-28 text-center text-xl font-black p-1.5 rounded-xl border-2 border-slate-400 focus:outline-none focus:border-indigo-500">
-          <button onclick="verifyParentPass()" class="bouncy-btn mt-2 bg-indigo-600 text-white font-bold text-xs px-4 py-2 rounded-xl block mx-auto">驗證 Verify</button>
+          <button type="button" onclick="verifyParentPass()" class="bouncy-btn mt-2 bg-indigo-600 text-white font-bold text-xs px-4 py-2 rounded-xl block mx-auto">驗證 Verify</button>
           <div id="parentLockError" class="text-red-500 text-xs font-bold mt-1 hidden">答案不正確，請再試一次</div>
         </div>
-        <div id="parentDashboardReport" class="w-full hidden text-left my-2">
+        <div id="parentDashboardReport" class="w-full text-left my-2" style="display: none;">
           <div class="flex items-center justify-between border-b pb-1.5 mb-2.5">
             <h4 class="text-sm font-black text-slate-800">📊 香港學制學習進度 (EDB Progress)</h4>
             <span class="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Live</span>
@@ -474,19 +462,19 @@
             </div>
           </div>
         </div>
-        <button onclick="closeParentGateModal()" class="bouncy-btn mt-3 w-full bg-slate-200 text-slate-700 font-black text-sm py-2 rounded-xl">關閉 Close</button>
+        <button type="button" onclick="closeParentGateModal()" class="bouncy-btn mt-3 w-full bg-slate-200 text-slate-700 font-black text-sm py-2 rounded-xl">關閉 Close</button>
       </div>
     </div>
 
     <!-- 彈窗 5: 貼紙升級慶祝 -->
-    <div id="unlockCelebrationModal" class="modal-backdrop fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div id="unlockCelebrationModal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 items-center justify-center p-4" style="display: none;">
       <div id="celebrationModalCard" class="clay-card p-6 max-w-sm w-full border-4 flex flex-col items-center text-center pop-in">
         <h3 id="celebrationTitle" class="text-2xl font-black text-amber-600">🎉 Super Milestone!</h3>
         <p id="celebrationSubtitle" class="text-xs font-black text-slate-600 mt-1">恭喜你解鎖了新貼紙！</p>
         <div id="newStickerBigIconContainer" class="w-32 h-32 rounded-3xl my-3 flex items-center justify-center text-7xl shadow-lg animate-wiggle">🦁</div>
         <div id="newStickerTierPill" class="text-xs font-black px-3 py-1 rounded-full text-white bg-amber-500 mb-1">普通徽章 Normal</div>
         <p id="newStickerNameText" class="text-base font-black text-slate-800 mb-3">Lion 勇敢小獅子</p>
-        <button onclick="closeUnlockModal()" class="bouncy-btn w-full bg-gradient-to-b from-pink-500 to-rose-600 text-white font-black text-base py-3 rounded-2xl border-b-4 border-rose-800">
+        <button type="button" onclick="closeUnlockModal()" class="bouncy-btn w-full bg-gradient-to-b from-pink-500 to-rose-600 text-white font-black text-base py-3 rounded-2xl border-b-4 border-rose-800">
           太棒了！繼續挑戰 🎈
         </button>
       </div>
@@ -498,5 +486,20 @@
   <script src="js/data.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/game.js"></script>
+
+  <!-- 終極解鎖保證指令碼：強制所有彈窗初始隱藏且不阻擋點擊 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 確保 5 個彈窗 100% 關閉，不能有一絲一毫透明阻擋
+      ['stickerAlbumModal', 'stickerShowcaseModal', 'teacherVoiceModal', 'parentGateModal', 'unlockCelebrationModal'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) {
+          el.style.display = 'none';
+          el.style.pointerEvents = 'none';
+        }
+      });
+      console.log('✅ All modal overlays neutralized. Touch events ready.');
+    });
+  </script>
 </body>
 </html>
