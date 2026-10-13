@@ -1,2458 +1,454 @@
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>TinyGenius Math HK 幼小數學樂園 (K1-P1)</title>
-<!-- Tailwind CSS CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
-<!-- Google Fonts: Quicksand, Fredoka & Noto Sans TC -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@600;700;800;900&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
-<!-- Canvas Confetti Engine -->
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-<style>
-:root {
---app-font: 'Quicksand', 'Fredoka', 'Noto Sans TC', sans-serif;
-}
-* {
-font-family: var(--app-font);
-user-select: none;
--webkit-tap-highlight-color: transparent;
-box-sizing: border-box;
-}
-body {
-background: linear-gradient(150deg, #F0FDF4 0%, #FEF9C3 25%, #FDF2F8 60%, #EFF6FF 100%);
-min-height: 100vh;
-min-height: 100dvh;
-touch-action: manipulation;
-overflow-x: hidden;
-}
-/* Claymorphic 3D Card Tokens */
-.clay-card {
-background: rgba(255, 255, 255, 0.94);
-backdrop-filter: blur(14px);
-border: 3px solid rgba(255, 255, 255, 0.95);
-box-shadow: 0 16px 32px -8px rgba(71, 85, 105, 0.13), 0 4px 10px rgba(0, 0, 0, 0.04), inset 0 2px 4px rgba(255, 255, 255, 0.95);
-border-radius: 26px;
-}
-.clay-card-flat {
-background: rgba(255, 255, 255, 0.90);
-border: 2px solid rgba(255, 255, 255, 0.92);
-border-radius: 20px;
-}
-/* Tactile Bouncy Button */
-.bouncy-btn {
-transition: all 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
-box-shadow: 0 5px 0 rgba(0, 0, 0, 0.13), 0 8px 14px -3px rgba(0, 0, 0, 0.08);
-}
-.bouncy-btn:active:not(:disabled) {
-transform: translateY(3px);
-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.13), 0 4px 6px -2px rgba(0, 0, 0, 0.08);
-}
-.bouncy-btn:disabled {
-opacity: 0.55;
-cursor: not-allowed;
-transform: none !important;
-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.08) !important;
-}
-/* Unified Top-Bar Button Class */
-.top-bar-btn {
-height: 42px;
-display: inline-flex;
-align-items: center;
-justify-content: center;
-gap: 6px;
-padding: 0 12px;
-border-radius: 16px;
-font-size: 13px;
-font-weight: 800;
-white-space: nowrap;
-border-bottom-width: 3px;
-}
-/* Animations & Gentle Float Wiggle */
-.pop-in {
-animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-@keyframes popIn {
-0% { opacity: 0; transform: scale(0.68) translateY(8px); }
-100% { opacity: 1; transform: scale(1) translateY(0); }
-}
-@keyframes wiggle {
-0%, 100% { transform: rotate(-5deg); }
-50% { transform: rotate(5deg); }
-}
-.animate-wiggle {
-animation: wiggle 0.35s ease-in-out;
-}
-/* Sticker Showcase 3D Floating & Happy Wiggle Animation */
-@keyframes gentleFloatWiggle {
-0% { transform: translateY(0px) rotate(0deg) scale(1); }
-25% { transform: translateY(-5px) rotate(-3deg) scale(1.02); }
-50% { transform: translateY(-9px) rotate(0deg) scale(1.03); }
-75% { transform: translateY(-4px) rotate(3deg) scale(1.02); }
-100% { transform: translateY(0px) rotate(0deg) scale(1); }
-}
-.animate-gentleFloatWiggle {
-animation: gentleFloatWiggle 3.2s ease-in-out infinite;
-transform-origin: center center;
-}
-/* Cross-out subtraction style */
-.cross-marked {
-position: relative;
-opacity: 0.38;
-filter: grayscale(85%);
-transform: scale(0.95);
-}
-.cross-marked::after {
-content: '❌';
-position: absolute;
-inset: 0;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 2.2rem;
-filter: drop-shadow(0 2px 6px rgba(220, 38, 38, 0.55));
-animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-/* HK Currency Coins */
-.hk-coin {
-display: inline-flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-font-weight: 900;
-cursor: pointer;
-box-shadow: 0 6px 14px rgba(0,0,0,0.18), inset 0 2px 4px rgba(255,255,255,0.7);
-transition: transform 0.15s ease;
-}
-.hk-coin:hover { transform: scale(1.06); }
-.coin-1 { width: 56px; height: 56px; border-radius: 9999px; background: linear-gradient(135deg, #e2e8f0, #94a3b8); border: 3px solid #cbd5e1; color: #1e293b; }
-.coin-2 { width: 62px; height: 62px; border-radius: 38%; background: linear-gradient(135deg, #cbd5e1, #64748b); border: 3.5px dashed #475569; color: #0f172a; }
-.coin-5 { width: 68px; height: 68px; border-radius: 9999px; background: linear-gradient(135deg, #e2e8f0, #64748b); border: 6px solid #475569; color: #0f172a; }
-.coin-10 { width: 66px; height: 66px; border-radius: 9999px; background: radial-gradient(circle, #fde047 52%, #94a3b8 53%); border: 4px solid #64748b; color: #854d0e; }
-/* Sticker Shaders (Standard -> Gold -> Rainbow) */
-.tier-standard {
-background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f8fafc 70%, #e2e8f0 100%);
-border: 3px solid #e2e8f0;
-box-shadow: 0 4px 14px rgba(100, 116, 139, 0.12), inset 0 2px 4px rgba(255, 255, 255, 0.9);
-}
-.tier-gold {
-background: radial-gradient(circle at 25% 25%, #fffef0 0%, #fef08a 30%, #eab308 72%, #b45309 100%);
-border: 3.5px solid #fde047;
-box-shadow: 0 10px 24px rgba(202, 138, 4, 0.42), inset 0 3px 8px rgba(255, 255, 255, 0.9);
-position: relative;
-overflow: hidden;
-}
-.tier-gold::before {
-content: '';
-position: absolute;
-top: -100%;
-left: -100%;
-width: 300%;
-height: 300%;
-background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.8) 50%, transparent 60%);
-animation: goldSheenSweep 3.2s infinite linear;
-pointer-events: none;
-}
-@keyframes goldSheenSweep {
-0% { transform: translate(-35%, -35%); }
-100% { transform: translate(35%, 35%); }
-}
-.tier-rainbow {
-background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 20%, #a1c4fd 45%, #c2e9fb 65%, #d4fc79 85%, #b19ffb 100%);
-background-size: 300% 300%;
-border: 3.5px solid #ffffff;
-box-shadow: 0 12px 28px rgba(168, 85, 247, 0.45), inset 0 3px 8px rgba(255, 255, 255, 0.95);
-animation: rainbowShifting 4.5s ease infinite alternate;
-position: relative;
-overflow: hidden;
-}
-@keyframes rainbowShifting {
-0% { background-position: 0% 50%; }
-50% { background-position: 100% 50%; }
-100% { background-position: 0% 50%; }
-}
-.tier-rainbow::after {
-content: '✨';
-position: absolute;
-top: 4px;
-right: 6px;
-font-size: 15px;
-filter: drop-shadow(0 0 4px rgba(255,255,255,0.95));
-animation: sparklePulse 1.4s infinite alternate;
-pointer-events: none;
-}
-@keyframes sparklePulse {
-0% { opacity: 0.3; transform: scale(0.85); }
-100% { opacity: 1; transform: scale(1.25); }
-}
-/* Sound Wave Visualization */
-.sound-wave-bar {
-width: 4px;
-height: 14px;
-background-color: #3b82f6;
-border-radius: 9999px;
-animation: wavePulse 0.8s ease-in-out infinite alternate;
-}
-.sound-wave-bar:nth-child(2) { animation-delay: 0.2s; height: 22px; }
-.sound-wave-bar:nth-child(3) { animation-delay: 0.4s; height: 18px; }
-.sound-wave-bar:nth-child(4) { animation-delay: 0.1s; height: 25px; }
-@keyframes wavePulse {
-0% { transform: scaleY(0.4); }
-100% { transform: scaleY(1.3); }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>TinyGenius Math HK 幼小數學樂園 (K1-P1)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@600;700;800;900&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body class="flex flex-col items-center justify-between p-2.5 sm:p-5 select-none text-slate-800">
-<!-- TOP APP BAR WITH UNIFIED BUTTON SPECS -->
-<header class="w-full max-w-5xl flex items-center justify-between clay-card px-3 sm:px-4 py-2.5 mb-3 gap-2 flex-wrap sm:flex-nowrap">
-<!-- Left Button Group -->
-<div class="flex items-center gap-2">
-<button id="navBackBtn" onclick="handleNavigationBack()" class="top-bar-btn bouncy-btn bg-gradient-to-b from-rose-400 to-pink-500 text-white border-pink-700">
-<span id="navBackIcon">🏛️</span> <span id="navBackLabel" class="hidden xs:inline">課程選單</span>
-</button>
-<!-- Teacher Voice Settings Modal Launcher -->
-<button onclick="openVoiceSettingsModal()" class="top-bar-btn bouncy-btn bg-gradient-to-b from-sky-400 to-blue-500 text-white border-blue-700">
-<span id="teacherAvatarIcon">🌸</span>
-<span id="teacherNameLabel" class="hidden sm:inline">Miss Emma</span>
-<span class="text-[10px] bg-white/30 px-1.5 py-0.5 rounded-full font-black">口音</span>
-</button>
-<!-- Quick Mute / Unmute Toggle -->
-<button id="toggleAudioBtn" class="top-bar-btn bouncy-btn bg-slate-100 text-slate-700 border-slate-300 !px-3" title="靜音/開啟聲音">
-<span id="audioMuteIcon">🔊</span>
-</button>
-</div>
-<!-- Center Active Grade Pill -->
-<div id="activeGradePill" class="hidden md:flex items-center gap-1.5 bg-slate-100/90 border border-slate-300 px-3.5 h-[42px] rounded-2xl text-xs font-black text-slate-700">
-<span id="activeGradePillIcon">🌸</span>
-<span id="activeGradePillText">K2 低班</span>
-</div>
-<!-- Right Button Group -->
-<div class="flex items-center gap-2">
-<!-- Stars Counter -->
-<div class="top-bar-btn bg-amber-50 border-2 border-amber-300 text-amber-800 shadow-inner !border-b-2">
-<span class="text-lg animate-spin" style="animation-duration: 12s;">⭐</span>
-<span id="headerStars" class="font-black text-base ml-0.5">0</span>
-</div>
-<!-- Progressive Evolution Sticker Album Button -->
-<button id="openStickerAlbumBtn" class="top-bar-btn bouncy-btn bg-gradient-to-b from-emerald-400 to-teal-500 text-white border-teal-700 relative">
-<span id="headerAlbumIcon">🎁</span>
-<span class="hidden md:inline">貼紙寶箱</span>
-<span id="albumTierBadge" class="bg-white/30 text-white text-[10px] font-black px-1.5 py-0.2 rounded-full">0/12</span>
-</button>
-<!-- Parent Gate Zone -->
-<button id="openParentGateBtn" class="top-bar-btn bouncy-btn bg-gradient-to-b from-slate-700 to-slate-900 text-amber-200 border-slate-950" title="Parent Dashboard">
-<span>🔒</span> <span class="hidden sm:inline">家長專區</span>
-</button>
-</div>
-</header>
-<!-- MAIN VIEWPORT CONTAINER -->
-<main class="w-full max-w-5xl flex-1 flex flex-col items-center justify-center relative">
-<!-- SCREEN 1: HONG KONG EDB CURRICULUM SELECTION PORTAL -->
-<div id="curriculumPortalScreen" class="w-full flex flex-col items-center gap-4 sm:gap-6 py-2">
-<div class="text-center relative">
-<div class="inline-flex items-center gap-2 bg-white/95 px-5 py-1.5 rounded-full shadow-sm border-2 border-pink-200 mb-2">
-<span class="text-xs sm:text-sm font-extrabold text-pink-600 uppercase tracking-wider">🇭🇰 遵循香港教育局指引 • 幼兒園溫柔純英文語音教學</span>
-</div>
-<h1 class="text-3xl sm:text-5xl font-black text-slate-800 tracking-tight flex items-center justify-center gap-2">
-<span class="text-pink-500">Tiny</span><span class="text-sky-500">Genius</span>
-<span class="text-amber-500">Math</span>
-<span class="text-3xl sm:text-5xl">🇭🇰</span>
-</h1>
-<p class="text-xs sm:text-base font-bold text-slate-600 mt-1 max-w-xl mx-auto px-2">
-幼小銜接專屬：K1 啟蒙 ➔ K2 具象運算 ➔ K3 幼小銜接 ➔ P1 常規！支援多位溫柔英語老師口音切換、貼紙立體展示窗與生動小學購物數學！
-</p>
-</div>
-<!-- 4 Hong Kong Academic Level Cards Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full px-1.5">
-<!-- CARD 1: K1 幼兒班 (Age 3-4) -->
-<div class="clay-card p-4 sm:p-5 flex flex-col justify-between border-t-8 border-emerald-400 hover:shadow-xl transition-all">
-<div>
-<div class="flex items-center justify-between mb-2">
-<span class="text-3xl sm:text-4xl">🌱</span>
-<span class="bg-emerald-100 text-emerald-800 text-xs font-black px-2.5 py-0.5 rounded-full">3 - 4 歲</span>
-</div>
-<h2 class="text-xl sm:text-2xl font-black text-slate-800">K1 幼兒班</h2>
-<div class="text-xs font-bold text-emerald-700">啟蒙數感 (Early Math)</div>
-<ul class="mt-3 space-y-1.5 text-xs text-slate-600 font-semibold border-t border-slate-200/80 pt-2.5">
-<li class="flex items-center gap-1.5"><span>🔹</span> 點點小動物 1-5 數數</li>
-<li class="flex items-center gap-1.5"><span>🔹</span> 大小與長短直觀比較</li>
-<li class="flex items-center gap-1.5"><span>🔹</span> 基礎幾何圖形辨識</li>
-</ul>
-</div>
-<div class="mt-4 pt-3 border-t border-slate-100 flex flex-col gap-2">
-<div class="text-[11px] font-bold text-slate-400 text-center">EDB: 感官操作與數概念萌芽</div>
-<button onclick="selectGrade('k1')" class="bouncy-btn w-full bg-gradient-to-b from-emerald-400 to-teal-500 text-white font-black text-sm py-2.5 rounded-2xl border-b-4 border-teal-700 flex items-center justify-center gap-1.5">
-<span>開始學習 Start</span> <span>👉</span>
-</button>
-</div>
-</div>
-<!-- CARD 2: K2 低班 (Age 4-5) -->
-<div class="clay-card p-4 sm:p-5 flex flex-col justify-between border-t-8 border-sky-400 hover:shadow-xl transition-all">
-<div>
-<div class="flex items-center justify-between mb-2">
-<span class="text-3xl sm:text-4xl">🌸</span>
-<span class="bg-sky-100 text-sky-800 text-xs font-black px-2.5 py-0.5 rounded-full">4 - 5 歲</span>
-</div>
-<h2 class="text-xl sm:text-2xl font-black text-slate-800">K2 低班</h2>
-<div class="text-xs font-bold text-sky-700">具象運算 (Operations)</div>
-<ul class="mt-3 space-y-1.5 text-xs text-slate-600 font-semibold border-t border-slate-200/80 pt-2.5">
-<li class="flex items-center gap-1.5"><span>🔹</span> 1-10 點算與詞彙卡</li>
-<li class="flex items-center gap-1.5"><span>🔹</span> 連續點數加法 (加加看)</li>
-<li class="flex items-center gap-1.5"><span>🔹</span> 動手劃叉 ❌ 減法 (減減看)</li>
-<li class="flex items-center gap-1.5 text-indigo-700 font-bold"><span>🎧</span> 英文聆聽 1-10 數字辨識</li>
-</ul>
-</div>
-<div class="mt-4 pt-3 border-t border-slate-100 flex flex-col gap-2">
-<div class="text-[11px] font-bold text-slate-400 text-center">EDB: 1-10 聆聽識別與運算操作</div>
-<button onclick="selectGrade('k2')" class="bouncy-btn w-full bg-gradient-to-b from-sky-400 to-blue-500 text-white font-black text-sm py-2.5 rounded-2xl border-b-4 border-blue-700 flex items-center justify-center gap-1.5">
-<span>開始學習 Start</span> <span>👉</span>
-</button>
-</div>
-</div>
-<!-- CARD 3: K3 高班 (Age 5-6) -->
-<div class="clay-card p-4 sm:p-5 flex flex-col justify-between border-t-8 border-amber-400 hover:shadow-xl transition-all">
-<div>
-<div class="flex items-center justify-between mb-2">
-<span class="text-3xl sm:text-4xl">⭐</span>
-<span class="bg-amber-100 text-amber-800 text-xs font-black px-2.5 py-0.5 rounded-full">5 - 6 歲</span>
-</div>
-<h2 class="text-xl sm:text-2xl font-black text-slate-800">K3 高班</h2>
-<div class="text-xs font-bold text-amber-700">幼小銜接 (Bridge to Primary)</div>
-<ul class="mt-3 space-y-1.5 text-xs text-slate-600 font-semibold border-t border-slate-200/80 pt-2.5">
-<li class="flex items-center gap-1.5"><span>🔹</span> 10 的分解與組合 (Bonds)</li>
-<li class="flex items-center gap-1.5"><span>🔹</span> 20 以內進位思維運算</li>
-<li class="flex items-center gap-1.5"><span>🔹</span> 香港硬幣 ($1, $2, $5, $10)</li>
-<li class="flex items-center gap-1.5 text-indigo-700 font-bold"><span>🎧</span> 英文聆聽 10 以內加減數</li>
-</ul>
-</div>
-<div class="mt-4 pt-3 border-t border-slate-100 flex flex-col gap-2">
-<div class="text-[11px] font-bold text-slate-400 text-center">EDB: 數的合成及聆聽加減</div>
-<button onclick="selectGrade('k3')" class="bouncy-btn w-full bg-gradient-to-b from-amber-400 to-orange-500 text-white font-black text-sm py-2.5 rounded-2xl border-b-4 border-orange-700 flex items-center justify-center gap-1.5">
-<span>開始學習 Start</span> <span>👉</span>
-</button>
-</div>
-</div>
-<!-- CARD 4: P1 小學一年級 (Age 6-7) -->
-<div class="clay-card p-4 sm:p-5 flex flex-col justify-between border-t-8 border-rose-400 hover:shadow-xl transition-all">
-<div>
-<div class="flex items-center justify-between mb-2">
-<span class="text-3xl sm:text-4xl">🚀</span>
-<span class="bg-rose-100 text-rose-800 text-xs font-black px-2.5 py-0.5 rounded-full">6 - 7 歲</span>
-</div>
-<h2 class="text-xl sm:text-2xl font-black text-slate-800">P1 小一</h2>
-<div class="text-xs font-bold text-rose-700">小學數學 (Primary Math)</div>
-<ul class="mt-3 space-y-1.5 text-xs text-slate-600 font-semibold border-t border-slate-200/80 pt-2.5">
-<li class="flex items-center gap-1.5"><span>🔹</span> 魔法寶石柱 (十位與個位)</li>
-<li class="flex items-center gap-1.5"><span>🔹</span> 港幣超市多件商品結算 🛒</li>
-<li class="flex items-center gap-1.5"><span>🔹</span> 火箭發射速算挑戰 🚀</li>
-<li class="flex items-center gap-1.5 text-indigo-700 font-bold"><span>🎧</span> 英文十個位加減速算聆聽</li>
-</ul>
-</div>
-<div class="mt-4 pt-3 border-t border-slate-100 flex flex-col gap-2">
-<div class="text-[11px] font-bold text-slate-400 text-center">EDB: 多件商品合併找續與位值</div>
-<button onclick="selectGrade('p1')" class="bouncy-btn w-full bg-gradient-to-b from-rose-400 to-pink-500 text-white font-black text-sm py-2.5 rounded-2xl border-b-4 border-pink-700 flex items-center justify-center gap-1.5">
-<span>開始學習 Start</span> <span>👉</span>
-</button>
-</div>
-</div>
-</div>
-<!-- Footer Trust Banner -->
-<div class="w-full max-w-3xl flex items-center gap-3 bg-white/90 border-2 border-indigo-200 px-5 py-2.5 rounded-2xl shadow-sm text-center mt-2">
-<span class="text-3xl">🎙️✨</span>
-<div class="text-left text-xs sm:text-sm font-bold text-slate-700">
-<span class="text-indigo-800 font-black">真實純英語母語發音過濾：</span>
-系統嚴格匹配女聲與男聲標籤，徹底杜絕男聲稱呼為 Miss 的問題！支援多位老師溫柔口音自由切換。
-</div>
-</div>
-</div>
-<!-- SCREEN 2: GRADE ACTIVITY LOBBY -->
-<div id="gradeLobbyScreen" class="w-full hidden flex-col items-center gap-4 py-2">
-<div class="text-center">
-<span id="lobbyBadge" class="text-xs font-black px-3.5 py-1 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-widest">Grade K1</span>
-<h2 id="lobbyTitle" class="text-2xl sm:text-4xl font-black text-slate-800 mt-1">請選擇今天想探索的單元</h2>
-<p id="lobbySubtitle" class="text-xs sm:text-sm font-bold text-slate-500">Pick a game mode to start today's adventure!</p>
-</div>
-<!-- Dynamic Topic Cards Container -->
-<div id="lobbyCardsContainer" class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 w-full max-w-4xl px-2">
-<!-- Rendered dynamically -->
-</div>
-</div>
-<!-- SCREEN 3: GAME STAGE PLAYGROUND -->
-<div id="gamePlayScreen" class="w-full hidden flex-col items-center">
-<!-- Bilingual Question Bar with English Voice Button -->
-<div class="w-full max-w-3xl flex items-center justify-center gap-2 sm:gap-3 mb-2.5">
-<button id="replayVoiceBtn" onclick="speakCurrentQuestionPrompt()" class="bouncy-btn bg-gradient-to-b from-amber-300 to-amber-500 text-amber-950 p-2 sm:px-3 sm:py-2.5 rounded-2xl border-b-4 border-amber-600 flex items-center gap-1.5 font-black shrink-0 cursor-pointer" title="Listen English again">
-<span class="text-xl sm:text-2xl">🗣️</span>
-<span class="text-xs sm:text-sm hidden sm:inline">Listen Again</span>
-</button>
-<div id="promptDisplayBanner" class="clay-card px-4 sm:px-6 py-2.5 text-center flex-1">
-<div id="promptZh" class="text-base sm:text-xl font-extrabold text-slate-800">載入題目中...</div>
-<div id="promptEn" class="text-xs sm:text-sm font-bold text-sky-600 flex items-center justify-center gap-1">Loading prompt...</div>
-</div>
-</div>
-<!-- INTERACTIVE PLAY CANVAS -->
-<div class="w-full max-w-3xl clay-card p-3 sm:p-6 min-h-[350px] flex flex-col items-center justify-center relative">
-<!-- Vocabulary / Skill Pill -->
-<div id="vocabPill" class="absolute top-2.5 left-3 sm:left-5 inline-flex items-center gap-1.5 bg-amber-100/90 border border-amber-300 text-amber-900 text-xs font-black px-3 py-1 rounded-full shadow-sm">
-<span>🏷️</span> <span id="vocabPillText">Panda 熊貓</span>
-</div>
-<!-- STAGE: K1 Counting (1-5) -->
-<div id="stageK1Count" class="w-full hidden flex-col items-center py-4">
-<div class="text-xs sm:text-sm font-bold text-slate-500 mb-3 bg-slate-100 px-3 py-1 rounded-full">
-👆 輕輕點擊每個動物，一起跟老師數數！(Tap each to count)
-</div>
-<div id="k1CountGrid" class="flex flex-wrap justify-center items-center gap-4 sm:gap-6 max-w-lg min-h-[120px]"></div>
-</div>
-<!-- STAGE: K1 Compare (Big vs Small) -->
-<div id="stageK1Compare" class="w-full hidden grid-cols-2 gap-4 max-w-lg py-2">
-<button id="k1CompareLeftBtn" onclick="submitK1CompareChoice('left')" class="bouncy-btn clay-card hover:bg-emerald-50/70 p-4 flex flex-col items-center justify-center min-h-[190px] border-b-8 border-emerald-300 cursor-pointer">
-<div id="k1CompareLeftGraphic" class="my-auto flex items-center justify-center"></div>
-<span id="k1CompareLeftLabel" class="text-xs sm:text-sm font-black bg-emerald-100 text-emerald-900 px-3 py-1 rounded-full mt-2">呢邊 👈</span>
-</button>
-<button id="k1CompareRightBtn" onclick="submitK1CompareChoice('right')" class="bouncy-btn clay-card hover:bg-teal-50/70 p-4 flex flex-col items-center justify-center min-h-[190px] border-b-8 border-teal-300 cursor-pointer">
-<div id="k1CompareRightGraphic" class="my-auto flex items-center justify-center"></div>
-<span id="k1CompareRightLabel" class="text-xs sm:text-sm font-black bg-teal-100 text-teal-900 px-3 py-1 rounded-full mt-2">呢邊 👉</span>
-</button>
-</div>
-<!-- STAGE: K1 Shapes -->
-<div id="stageK1Shape" class="w-full hidden flex-col items-center py-2">
-<div id="k1ShapeTargetGraphic" class="w-28 h-28 sm:w-32 sm:h-32 mb-4 flex items-center justify-center"></div>
-<div id="k1ShapeOptionsGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-md"></div>
-</div>
-<!-- STAGE: K2 Counting (1-10) -->
-<div id="stageK2Count" class="w-full hidden flex-col items-center py-3">
-<div class="text-xs sm:text-sm font-bold text-slate-500 mb-2 bg-slate-100 px-3 py-1 rounded-full">
-👆 輕輕點擊每個圖案數數看！(Tap sequentially to count)
-</div>
-<div id="k2CountGrid" class="flex flex-wrap justify-center items-center gap-3 sm:gap-4 max-w-xl min-h-[130px] p-2"></div>
-</div>
-<!-- STAGE: K2 Compare -->
-<div id="stageK2Compare" class="w-full hidden grid-cols-2 gap-3 sm:gap-5 max-w-xl py-2">
-<button id="k2CompareLeftBtn" onclick="submitK2CompareChoice('left')" class="bouncy-btn clay-card hover:bg-sky-50/70 p-3 sm:p-5 flex flex-col items-center justify-between min-h-[180px] border-b-8 border-sky-300 cursor-pointer">
-<div id="k2CompareLeftContainer" class="flex flex-wrap justify-center gap-2 items-center my-auto min-h-[80px]"></div>
-<span class="text-xs sm:text-sm font-black bg-sky-200 text-sky-900 px-3 py-1 rounded-full mt-2">呢邊比較多 👈</span>
-</button>
-<button id="k2CompareRightBtn" onclick="submitK2CompareChoice('right')" class="bouncy-btn clay-card hover:bg-amber-50/70 p-3 sm:p-5 flex flex-col items-center justify-between min-h-[180px] border-b-8 border-amber-300 cursor-pointer">
-<div id="k2CompareRightContainer" class="flex flex-wrap justify-center gap-2 items-center my-auto min-h-[80px]"></div>
-<span class="text-xs sm:text-sm font-black bg-amber-200 text-amber-900 px-3 py-1 rounded-full mt-2">呢邊比較多 👉</span>
-</button>
-</div>
-<!-- STAGE: K2 Addition -->
-<div id="stageK2Add" class="w-full hidden flex-col items-center py-2">
-<div class="text-xs sm:text-sm font-black text-rose-600 mb-2 bg-rose-50 border border-rose-200 px-3.5 py-1 rounded-full shadow-sm">
-👉 逐個點擊圖案數出總和！(Tap items to count sum!)
-</div>
-<div class="flex items-center justify-center flex-wrap gap-2 sm:gap-4 my-2">
-<div class="clay-card p-3 sm:p-4 flex flex-col items-center min-w-[110px] sm:min-w-[130px] border-2 border-amber-200 bg-amber-50/40">
-<div id="k2AddLeftItems" class="flex flex-wrap justify-center gap-2 max-w-[140px] min-h-[60px] items-center"></div>
-<span id="k2AddLeftDigit" class="text-2xl sm:text-3xl font-black text-amber-700 mt-1">3</span>
-</div>
-<span class="text-3xl sm:text-4xl font-black text-rose-500">➕</span>
-<div class="clay-card p-3 sm:p-4 flex flex-col items-center min-w-[110px] sm:min-w-[130px] border-2 border-sky-200 bg-sky-50/40">
-<div id="k2AddRightItems" class="flex flex-wrap justify-center gap-2 max-w-[140px] min-h-[60px] items-center"></div>
-<span id="k2AddRightDigit" class="text-2xl sm:text-3xl font-black text-sky-700 mt-1">2</span>
-</div>
-<span class="text-3xl sm:text-4xl font-black text-emerald-500">🟰</span>
-<div class="w-14 sm:w-16 h-14 sm:h-16 rounded-2xl border-4 border-dashed border-indigo-300 flex items-center justify-center bg-indigo-50/70">
-<span class="text-3xl font-black text-indigo-400">❓</span>
-</div>
-</div>
-</div>
-<!-- STAGE: K2 Subtraction -->
-<div id="stageK2Sub" class="w-full hidden flex-col items-center py-2">
-<div class="text-xs sm:text-sm font-black text-purple-700 mb-2 bg-purple-100 border border-purple-300 px-4 py-1 rounded-full flex items-center gap-1.5">
-<span>✂️</span> 點擊劃走 <span id="k2SubCutBadge" class="bg-red-500 text-white px-2 py-0.5 rounded-full font-black text-sm">2</span> 個，數下仲剩幾多？
-</div>
-<div id="k2SubGrid" class="flex flex-wrap justify-center items-center gap-2.5 sm:gap-4 max-w-lg min-h-[110px] p-3 bg-purple-50/70 rounded-2xl border-2 border-purple-200"></div>
-<div class="flex items-center justify-center gap-3 mt-3 text-xl sm:text-2xl font-black text-purple-950 bg-white px-5 py-1.5 rounded-full border-2 border-purple-200 shadow-sm">
-<span id="k2SubTotalDigit">5</span>
-<span class="text-pink-500">➖</span>
-<span id="k2SubMinusDigit">2</span>
-<span class="text-emerald-500">🟰</span>
-<span class="text-indigo-600">❓</span>
-</div>
-</div>
-<!-- STAGE: 🎧 AUDIO LISTENING STAGE -->
-<div id="stageAudioListening" class="w-full hidden flex-col items-center py-2">
-<div class="flex items-center gap-2 mb-2 bg-sky-50 border border-sky-300 px-4 py-1.5 rounded-full shadow-sm">
-<span id="listeningTagBadge" class="text-sky-700 font-black text-xs">🎧 正在播放純英文聽力題 Listening...</span>
-<div class="flex items-center gap-1">
-<div class="sound-wave-bar"></div>
-<div class="sound-wave-bar"></div>
-<div class="sound-wave-bar"></div>
-<div class="sound-wave-bar"></div>
-</div>
-</div>
-<div id="listeningSceneIllustration" class="w-full max-w-md p-4 rounded-3xl bg-gradient-to-b from-sky-100 to-indigo-50 border-3 border-indigo-200 flex flex-col items-center text-center shadow-inner my-2">
-<div id="listeningSceneEmojiArt" class="text-5xl sm:text-6xl mb-2 flex justify-center items-center gap-2">
-🌳 🦆 🦆 🦆 🌊
-</div>
-<div id="listeningSceneCaption" class="text-xs sm:text-sm font-bold text-slate-700 bg-white/85 px-4 py-1 rounded-xl shadow-xs">
-"Listen carefully to the teacher..."
-</div>
-</div>
-<div class="text-xs font-black text-indigo-700 mt-1">
-👂 細心聽聽老師讀出的英文題目，點選正確的數字！
-</div>
-</div>
-<!-- STAGE: K3 Number Bonds to 10 -->
-<div id="stageK3Bonds" class="w-full hidden flex-col items-center py-2">
-<div class="text-xs sm:text-sm font-bold text-amber-700 mb-2 bg-amber-50 border border-amber-300 px-3 py-1 rounded-full">
-十格陣模型 (Ten-Frame Model)：凑成 10 仲需要幾多？
-</div>
-<div id="k3TenFrame" class="grid grid-cols-5 gap-2 p-3 bg-white border-4 border-amber-300 rounded-2xl shadow-inner max-w-xs mb-3"></div>
-<div class="flex items-center justify-center gap-2 text-2xl sm:text-3xl font-black text-amber-950 bg-amber-50 px-5 py-2 rounded-2xl border-2 border-amber-200">
-<span id="k3BondsGiven">7</span>
-<span class="text-amber-500">➕</span>
-<span class="w-12 h-12 rounded-xl border-3 border-dashed border-amber-400 bg-white flex items-center justify-center text-amber-600">❓</span>
-<span class="text-emerald-600">🟰</span>
-<span class="text-rose-600">10</span>
-</div>
-</div>
-<!-- STAGE: K3 Math Within 20 -->
-<div id="stageK3Math20" class="w-full hidden flex-col items-center py-4">
-<div class="clay-card-flat px-8 py-5 flex items-center justify-center gap-3 text-3xl sm:text-5xl font-black text-slate-800 shadow-sm border-2 border-sky-200">
-<span id="k3Math20A">12</span>
-<span id="k3Math20Op" class="text-pink-500">➕</span>
-<span id="k3Math20B">5</span>
-<span class="text-emerald-500">🟰</span>
-<span class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-4 border-dashed border-sky-400 bg-sky-50 flex items-center justify-center text-sky-500">❓</span>
-</div>
-</div>
-<!-- STAGE: K3 Clock Master -->
-<div id="stageK3Clock" class="w-full hidden flex-col items-center py-2">
-<div class="text-xs sm:text-sm font-bold text-slate-600 mb-2">睇下個鐘面，現在係幾點鐘？(What time is it?)</div>
-<div id="k3ClockSvgContainer" class="w-48 h-48 sm:w-56 sm:h-56 my-2 drop-shadow-md"></div>
-</div>
-<!-- STAGE: K3 HK Coins Recognition -->
-<div id="stageK3Coins" class="w-full hidden flex-col items-center py-2">
-<div class="text-xs sm:text-sm font-bold text-slate-600 mb-2">呢個係香港幾多元硬幣？(Which HK Coin is this?)</div>
-<div id="k3CoinTargetDisplay" class="my-4 transform scale-125"></div>
-</div>
-<!-- STAGE: P1 Place Value (UPGRADED: 魔法水晶寶石塔) -->
-<div id="stageP1Place" class="w-full hidden flex-col items-center py-2">
-<div class="text-xs sm:text-sm font-extrabold text-indigo-800 mb-2 bg-indigo-50 border border-indigo-200 px-4 py-1 rounded-full">
-🔮 數數魔法水晶寶石塔(十位)與閃耀能量珠(個位)，代表咩數字？
-</div>
-<div class="flex items-center justify-center gap-6 sm:gap-12 my-3 p-4 bg-gradient-to-b from-indigo-50/60 to-purple-50/60 border-2 border-indigo-200 rounded-3xl shadow-inner">
-<!-- Tens Crystal Towers -->
-<div class="flex flex-col items-center">
-<span class="text-xs font-black text-indigo-700 bg-indigo-100 px-3.5 py-0.5 rounded-full mb-2 shadow-xs">💎 十位 Tens (每塔 10 顆)</span>
-<div id="p1TensContainer" class="flex gap-2.5 min-h-[110px] items-end p-2 bg-white/70 rounded-2xl border border-indigo-100"></div>
-</div>
-<!-- Ones Single Gems -->
-<div class="flex flex-col items-center">
-<span class="text-xs font-black text-rose-700 bg-rose-100 px-3.5 py-0.5 rounded-full mb-2 shadow-xs">✨ 個位 Units (獨立寶石)</span>
-<div id="p1OnesContainer" class="grid grid-cols-2 gap-2 min-h-[110px] items-center p-2 bg-white/70 rounded-2xl border border-rose-100"></div>
-</div>
-</div>
-</div>
-<!-- STAGE: P1 Mental Quick Math (UPGRADED: 太空火箭能量發射台) -->
-<div id="stageP1Mental" class="w-full hidden flex-col items-center py-3">
-<div class="flex items-center gap-2 mb-2 bg-rose-50 border border-rose-200 px-4 py-1 rounded-full">
-<span class="text-2xl animate-bounce">🚀</span>
-<span class="text-xs sm:text-sm font-black text-rose-700">太空火箭推進能量速算！計算加減發射火箭！</span>
-</div>
-<div class="clay-card-flat px-8 py-5 flex items-center justify-center gap-3 sm:gap-5 text-3xl sm:text-5xl font-black text-slate-800 shadow-sm border-2 border-indigo-200 bg-gradient-to-r from-indigo-50/60 via-purple-50/60 to-pink-50/60">
-<span id="p1MentalA" class="text-indigo-600">35</span>
-<span id="p1MentalOp" class="text-rose-500">➕</span>
-<span id="p1MentalB" class="text-purple-600">20</span>
-<span class="text-emerald-500">🟰</span>
-<span class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-4 border-dashed border-indigo-400 bg-white flex items-center justify-center text-indigo-500 text-3xl font-black">❓</span>
-</div>
-</div>
-<!-- STAGE: P1 HK Dollar Store (UPGRADED: 超市購物車多件商品結算) -->
-<div id="stageP1Money" class="w-full hidden flex-col items-center py-2 max-w-xl">
-<div class="w-full bg-amber-50/90 border-3 border-amber-300 rounded-3xl p-3 sm:p-4 shadow-sm mb-2.5">
-<div class="flex items-center justify-between border-b border-amber-200 pb-2 mb-2">
-<div class="flex items-center gap-2">
-<span class="text-2xl">🛒</span>
-<span class="font-black text-sm text-amber-950">開心超市購物清單 (Shopping Cart)</span>
-</div>
-<span class="text-xs font-bold text-amber-700">請計算總金額結帳</span>
-</div>
-<!-- Multi-item list in basket -->
-<div id="p1StoreCartItems" class="grid grid-cols-2 sm:grid-cols-3 gap-2 my-2">
-<!-- Dynamically populated 2-3 items -->
-</div>
-<!-- Receipt Total Summary Equation -->
-<div class="mt-2 pt-2 border-t border-dashed border-amber-300 flex items-center justify-between text-xs sm:text-sm font-black text-slate-800">
-<span id="p1StoreSumFormula" class="text-amber-800">HK$ 15 + HK$ 10 = ?</span>
-<span class="bg-rose-500 text-white px-3 py-1 rounded-xl text-sm font-black shadow-xs">
-總共 Total: <span id="p1StoreTotalText">HK$ ?</span>
-</span>
-</div>
-</div>
-<div class="text-xs font-bold text-slate-500">點選正確的港幣付款金額！(Select total payment)</div>
-</div>
-<!-- STAGE: P1 Story Word Problem -->
-<div id="stageP1Word" class="w-full hidden flex-col items-center py-2 max-w-xl">
-<div class="bg-white/95 border-2 border-purple-200 p-4 rounded-2xl shadow-sm text-center w-full">
-<div id="p1WordZh" class="text-sm sm:text-base font-black text-slate-800 mb-1">Leo 有 7 粒糖果，媽媽再給他 5 粒。Leo 現在共有幾多粒糖果？</div>
-<div id="p1WordEn" class="text-xs sm:text-sm font-bold text-purple-700 italic">Leo has 7 candies. Mum gives him 5 more. How many candies does Leo have now?</div>
-<div id="p1WordVisual" class="flex justify-center items-center gap-2 mt-3 text-3xl"></div>
-</div>
-</div>
-</div>
-<!-- NUMERIC OR CUSTOM MULTIPLE CHOICE BAR -->
-<div id="numberOptionsRow" class="w-full mt-3.5 flex justify-center items-center gap-2.5 sm:gap-4 flex-wrap">
-<!-- Injected Choice Buttons -->
-</div>
-</div>
-<!-- =========================================================================
-MODALS: EVOLVING STICKER ALBUM, 3D SHOWCASE & VOICE SETTINGS
-========================================================================= -->
-<!-- 1. PROGRESSIVE EVOLUTION STICKER ALBUM MODAL -->
-<div id="stickerAlbumModal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
-<div class="clay-card p-4 sm:p-6 max-w-lg w-full border-4 border-amber-300 flex flex-col items-center text-center pop-in max-h-[90vh] overflow-hidden">
-<div class="flex items-center gap-2 mb-1 shrink-0">
-<span class="text-3xl">📖</span>
-<h3 class="text-xl sm:text-3xl font-black text-amber-900">貼紙進化收藏簿</h3>
-</div>
-<p class="text-[11px] sm:text-xs font-bold text-slate-500 shrink-0">Sticker Collection • 點擊已解鎖貼紙打開大尺寸立體展示窗</p>
-<!-- Current Prestige Banner -->
-<div id="albumPrestigeBanner" class="w-full my-2 py-1.5 px-3 rounded-xl bg-gradient-to-r from-amber-200 via-rose-200 to-indigo-200 border border-white text-xs font-black text-slate-800 flex items-center justify-between shrink-0">
-<span>👑 當前位階：<span id="albumPrestigeLevelText" class="text-indigo-800 font-extrabold">第 1 階段 (尚未獲得貼紙)</span></span>
-<span id="albumPrestigeProgress" class="bg-white/80 px-2 py-0.5 rounded-full text-[10px]">0/12</span>
-</div>
-<div class="text-[10px] sm:text-[11px] font-bold text-slate-500 mb-2 flex items-center gap-3 shrink-0">
-<span>⚪ 普通 (Normal)</span>
-<span class="text-amber-600 font-black">🌟 金箔 (Gold)</span>
-<span class="text-purple-600 font-black">🌈 幻彩 (Rainbow)</span>
-</div>
-<!-- 12 Dynamic Evolution Sticker Slots -->
-<div id="stickerGridContainer" class="grid grid-cols-3 sm:grid-cols-4 gap-2 w-full my-1 p-2.5 bg-amber-50/70 rounded-2xl border-2 border-amber-200 overflow-y-auto flex-1 min-h-0">
-<!-- Rendered dynamically -->
-</div>
-<button onclick="closeStickerModal()" class="bouncy-btn mt-3 w-full bg-gradient-to-b from-pink-400 to-rose-500 text-white font-black text-sm sm:text-base py-2.5 sm:py-3 rounded-2xl border-b-4 border-rose-700 cursor-pointer shrink-0">
-回到遊戲 Keep Playing 🎈
-</button>
-</div>
-</div>
-<!-- 2. 大尺寸立體展示窗 (CONTAINED 3D FLOATING SHOWCASE) -->
-<div id="stickerShowcaseModal" class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-<div class="clay-card p-4 sm:p-6 max-w-sm w-full border-4 border-amber-300 flex flex-col items-center text-center pop-in relative my-auto max-h-[92vh] overflow-y-auto">
-<button onclick="closeStickerShowcaseModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700 bg-white/90 rounded-full w-8 h-8 flex items-center justify-center font-black text-sm shadow cursor-pointer">✕</button>
-<span class="text-[11px] font-black uppercase tracking-wider text-amber-700 bg-amber-100 px-3 py-0.5 rounded-full mt-1">✨ 3D Sticker Showcase</span>
-<!-- 3D Contained Floating Badge Container -->
-<div class="w-full flex items-center justify-center py-2 sm:py-3">
-<div id="showcaseBigBadge" class="w-28 h-28 sm:w-36 sm:h-36 rounded-3xl flex items-center justify-center text-5xl sm:text-6xl shadow-xl animate-gentleFloatWiggle select-none shrink-0">
-🦄
-</div>
-</div>
-<!-- Sticker Tier Pill Badge -->
-<div id="showcaseTierBadge" class="text-xs font-black px-3.5 py-1 rounded-full text-white bg-amber-500 mb-1.5 shadow-sm">
-🌟 閃爍黃金箔 Gold Foil
-</div>
-<!-- Sticker Name -->
-<h3 id="showcaseNameZh" class="text-xl sm:text-2xl font-black text-slate-800">Unicorn 獨角獸</h3>
-<p id="showcaseDescEn" class="text-xs font-bold text-sky-700 mt-1 max-w-xs px-2">The magical Unicorn brings joyful rainbow dreams!</p>
-<!-- Repeat Listen Teacher Voice Button -->
-<div class="mt-4 flex gap-2 w-full">
-<button id="showcaseAudioBtn" onclick="speakShowcaseTeacherVoice()" class="bouncy-btn flex-1 bg-gradient-to-b from-sky-400 to-blue-500 text-white font-black text-xs sm:text-sm py-2.5 rounded-2xl border-b-4 border-blue-700 flex items-center justify-center gap-1.5 cursor-pointer">
-<span>🔊</span> <span>溫柔讀音 Listen</span>
-</button>
-<button onclick="closeStickerShowcaseModal()" class="bouncy-btn bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs sm:text-sm px-4 py-2.5 rounded-2xl border-b-4 border-slate-300 cursor-pointer">
-關閉 Close
-</button>
-</div>
-</div>
-</div>
-<!-- 3. 語音與老師設定選單 (STRICT GENDER FILTERING) -->
-<div id="voiceSettingsModal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
-<div class="clay-card p-4 sm:p-6 max-w-md w-full border-4 border-sky-300 flex flex-col text-left pop-in max-h-[92vh] overflow-y-auto">
-<div class="flex items-center justify-between pb-2 border-b border-slate-200">
-<div class="flex items-center gap-2">
-<span class="text-2xl">👩‍🏫</span>
-<div>
-<h3 class="text-lg sm:text-xl font-black text-slate-800">自選英語老師口音</h3>
-<p class="text-[10px] text-slate-500 font-bold">嚴格匹配女聲與男聲，告別誤稱 Miss</p>
-</div>
-</div>
-<button onclick="closeVoiceSettingsModal()" class="text-slate-400 hover:text-slate-700 bg-white rounded-full w-7 h-7 flex items-center justify-center font-bold text-sm shadow">✕</button>
-</div>
-<!-- Grade Auto-Pair Mode Toggle -->
-<div class="mt-3 p-2.5 rounded-2xl bg-indigo-50/70 border border-indigo-200 flex items-center justify-between">
-<div>
-<div class="text-xs font-black text-indigo-900">按年級自動匹配最佳老師</div>
-<div class="text-[10px] text-indigo-700 font-medium">K1/K2 溫柔啟蒙、K3 親切自然、P1 穩健生動</div>
-</div>
-<label class="relative inline-flex items-center cursor-pointer">
-<input type="checkbox" id="autoGradeVoiceToggle" onchange="toggleAutoGradeVoice()" class="sr-only peer" checked>
-<div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-</label>
-</div>
-<div class="text-xs font-black text-slate-700 mt-3 mb-2 flex items-center justify-between">
-<span>挑選老師 (Personas)：</span>
-<span class="text-[10px] text-sky-600 font-bold">點選切換</span>
-</div>
-<!-- Teacher Personas List -->
-<div id="teacherPersonasContainer" class="space-y-2">
-<!-- Persona 1: Miss Emma -->
-<div onclick="selectTeacherPersona('emma')" id="personaCard_emma" class="persona-card p-3 rounded-2xl border-2 border-sky-400 bg-sky-50 flex items-center justify-between cursor-pointer transition-all">
-<div class="flex items-center gap-2.5">
-<span class="text-3xl">🌸</span>
-<div>
-<div class="flex items-center gap-1.5">
-<span class="text-sm font-black text-slate-800">Miss Emma</span>
-<span class="text-[9px] bg-sky-200 text-sky-800 font-bold px-1.5 py-0.2 rounded-full">美式 • 溫柔女聲</span>
-</div>
-<p class="text-[11px] text-slate-600 font-medium">輕柔甜美、語速舒緩，適合幼童 K1/K2</p>
-</div>
-</div>
-<span class="check-mark text-sky-600 font-black text-lg">✔</span>
-</div>
-<!-- Persona 2: Miss Sophie (or Mr. Oliver if system is male-only) -->
-<div onclick="selectTeacherPersona('sophie')" id="personaCard_sophie" class="persona-card p-3 rounded-2xl border-2 border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-between cursor-pointer transition-all">
-<div class="flex items-center gap-2.5">
-<span class="text-3xl">🇬🇧</span>
-<div>
-<div class="flex items-center gap-1.5">
-<span id="labelPersonaUK" class="text-sm font-black text-slate-800">Miss Sophie</span>
-<span id="badgePersonaUK" class="text-[9px] bg-rose-100 text-rose-800 font-bold px-1.5 py-0.2 rounded-full">英式 • 親切優雅</span>
-</div>
-<p class="text-[11px] text-slate-600 font-medium">標準英音、清晰語調，適合 K3 幼小銜接</p>
-</div>
-</div>
-<span class="check-mark text-sky-600 font-black text-lg hidden">✔</span>
-</div>
-<!-- Persona 3: Miss Chloe -->
-<div onclick="selectTeacherPersona('chloe')" id="personaCard_chloe" class="persona-card p-3 rounded-2xl border-2 border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-between cursor-pointer transition-all">
-<div class="flex items-center gap-2.5">
-<span class="text-3xl">🐨</span>
-<div>
-<div class="flex items-center gap-1.5">
-<span class="text-sm font-black text-slate-800">Miss Chloe</span>
-<span class="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.2 rounded-full">澳式 • 陽光元氣</span>
-</div>
-<p class="text-[11px] text-slate-600 font-medium">歡樂生動、富有感染力</p>
-</div>
-</div>
-<span class="check-mark text-sky-600 font-black text-lg hidden">✔</span>
-</div>
-<!-- Persona 4: Mr. Daniel -->
-<div onclick="selectTeacherPersona('daniel')" id="personaCard_daniel" class="persona-card p-3 rounded-2xl border-2 border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-between cursor-pointer transition-all">
-<div class="flex items-center gap-2.5">
-<span class="text-3xl">📖</span>
-<div>
-<div class="flex items-center gap-1.5">
-<span class="text-sm font-black text-slate-800">Mr. Daniel</span>
-<span class="text-[9px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.2 rounded-full">故事大王 • 穩健男聲</span>
-</div>
-<p class="text-[11px] text-slate-600 font-medium">溫暖沉穩，小學 P1 常規應用題好幫手</p>
-</div>
-</div>
-<span class="check-mark text-sky-600 font-black text-lg hidden">✔</span>
-</div>
-</div>
-<!-- Test Voice Button -->
-<div class="mt-4 pt-3 border-t border-slate-200 flex items-center gap-2">
-<button onclick="testSelectedVoice()" class="bouncy-btn flex-1 bg-gradient-to-b from-amber-400 to-orange-500 text-amber-950 font-black text-xs sm:text-sm py-2.5 rounded-2xl border-b-4 border-orange-600 flex items-center justify-center gap-1.5 cursor-pointer">
-<span>🗣️</span> <span>試聽當前老師聲音 Test Voice</span>
-</button>
-<button onclick="closeVoiceSettingsModal()" class="bouncy-btn bg-slate-800 text-white font-black text-xs sm:text-sm px-4 py-2.5 rounded-2xl border-b-4 border-slate-950 cursor-pointer">
-完成 Done
-</button>
-</div>
-</div>
-</div>
-<!-- 4. PARENT GATE & EDB DASHBOARD MODAL -->
-<div id="parentGateModal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-<div class="clay-card p-6 max-w-lg w-full border-4 border-slate-300 flex flex-col items-center text-center pop-in max-h-[90vh] overflow-y-auto">
-<div class="text-3xl mb-1">🔒</div>
-<h3 class="text-xl sm:text-2xl font-black text-slate-800">家長驗證與學習進度 (Parents Only)</h3>
-<p class="text-xs font-semibold text-slate-500 mt-0.5">請回答算式以解鎖香港 EDB 學習報告：</p>
-<div id="parentLockChallenge" class="w-full my-3 p-3 bg-slate-100 rounded-2xl border border-slate-300">
-<div id="parentLockFormula" class="text-2xl font-black text-slate-700 tracking-wider">8 × 7 = ?</div>
-<input id="parentLockInput" type="number" pattern="[0-9]*" placeholder="答案" class="mt-2 w-28 text-center text-xl font-black p-1.5 rounded-xl border-2 border-slate-400 focus:outline-none focus:border-indigo-500">
-<button onclick="verifyParentPass()" class="bouncy-btn mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2 rounded-xl block mx-auto">
-驗證並查看報告 Verify
-</button>
-<div id="parentLockError" class="text-red-500 text-xs font-bold mt-1 hidden">答案不正確，請再試一次</div>
-</div>
-<div id="parentDashboardReport" class="w-full hidden text-left my-2">
-<div class="flex items-center justify-between border-b pb-1.5 mb-2.5">
-<h4 class="text-sm font-black text-slate-800">📊 香港學制學習進度分析 (EDB Report)</h4>
-<span class="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">實時更新 Live</span>
-</div>
-<div class="grid grid-cols-2 gap-2 text-xs mb-3">
-<div class="bg-sky-50 p-2.5 rounded-xl border border-sky-200">
-<span class="text-slate-500 block">總答題數 Total Solved</span>
-<span id="statTotalSolved" class="text-lg font-black text-sky-800">0 題</span>
-</div>
-<div class="bg-emerald-50 p-2.5 rounded-xl border border-emerald-200">
-<span class="text-slate-500 block">整體正確率 Accuracy</span>
-<span id="statAccuracy" class="text-lg font-black text-emerald-800">100%</span>
-</div>
-<div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200">
-<span class="text-slate-500 block">星級金幣 Stars</span>
-<span id="statStars" class="text-lg font-black text-amber-800">0 顆</span>
-</div>
-<div class="bg-purple-50 p-2.5 rounded-xl border border-purple-200">
-<span class="text-slate-500 block">貼紙總進化進度</span>
-<span id="statStickers" class="text-lg font-black text-purple-800">0 / 36</span>
-</div>
-</div>
-<div class="space-y-1.5 text-xs">
-<div class="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-200">
-<span class="font-bold">🌱 K1 幼兒班數感</span>
-<span id="statK1Score" class="font-black text-emerald-600">0 題完成</span>
-</div>
-<div class="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-200">
-<span class="font-bold">🌸 K2 低班具象運算 & 數字聆聽</span>
-<span id="statK2Score" class="font-black text-sky-600">0 題完成</span>
-</div>
-<div class="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-200">
-<span class="font-bold">⭐ K3 高班幼小銜接 & 加減聆聽</span>
-<span id="statK3Score" class="font-black text-amber-600">0 題完成</span>
-</div>
-<div class="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-200">
-<span class="font-bold">🚀 P1 小學購物結算 & 寶石速算</span>
-<span id="statP1Score" class="font-black text-rose-600">0 題完成</span>
-</div>
-</div>
-<p class="text-[11px] text-slate-500 mt-3 font-medium bg-amber-50/80 p-2 rounded-xl border border-amber-200">
-💡 <strong>EDB 教學建議</strong>：小一重點在於透過具體生活購物經驗與數值模型，建立兩位數加減運算與貨幣組合的直覺。
-</p>
-</div>
-<button onclick="closeParentGateModal()" class="bouncy-btn mt-3 w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-black text-sm py-2 rounded-xl">
-關閉 Close
-</button>
-</div>
-</div>
-<!-- 5. PROGRESSIVE EVOLUTION CELEBRATION MODAL -->
-<div id="unlockCelebrationModal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-<div id="celebrationModalCard" class="clay-card p-6 max-w-sm w-full border-4 flex flex-col items-center text-center pop-in">
-<h3 id="celebrationTitle" class="text-2xl font-black text-amber-600">🎉 Super Milestone!</h3>
-<p id="celebrationSubtitle" class="text-xs font-black text-slate-600 mt-1">恭喜你解鎖了新貼紙！</p>
-<div id="newStickerBigIconContainer" class="w-32 h-32 rounded-3xl my-3 flex items-center justify-center text-6xl shadow-lg animate-gentleFloatWiggle">
-🦁
-</div>
-<div id="newStickerTierPill" class="text-xs font-black px-3 py-1 rounded-full text-white bg-amber-500 mb-1">
-普通徽章 Normal
-</div>
-<p id="newStickerNameText" class="text-base font-black text-slate-800 mb-3">Lion 勇敢小獅子</p>
-<button onclick="closeUnlockModal()" class="bouncy-btn w-full bg-gradient-to-b from-pink-500 to-rose-600 text-white font-black text-base py-3 rounded-2xl border-b-4 border-rose-800 cursor-pointer">
-太棒了！繼續挑戰 🎈
-</button>
-</div>
-</div>
-</main>
-<script>
-/* ==========================================================================
-1. EXTENSIVE VOCABULARY, HK COINS & EVOLVING STICKERS DATABASE
-========================================================================== */
-const VOCAB_DATABASE = [
-{ emoji: '🐼', en: 'Panda', zh: '熊貓', pluralEn: 'pandas', unitZh: '隻熊貓' },
-{ emoji: '🐨', en: 'Koala', zh: '樹熊', pluralEn: 'koalas', unitZh: '隻樹熊' },
-{ emoji: '🦁', en: 'Lion', zh: '小獅子', pluralEn: 'lions', unitZh: '隻小獅子' },
-{ emoji: '🐰', en: 'Rabbit', zh: '小白兔', pluralEn: 'rabbits', unitZh: '隻小白兔' },
-{ emoji: '🐶', en: 'Puppy', zh: '小狗', pluralEn: 'puppies', unitZh: '隻小狗' },
-{ emoji: '🐱', en: 'Kitten', zh: '小貓', pluralEn: 'kittens', unitZh: '隻小貓' },
-{ emoji: '🐵', en: 'Monkey', zh: '小猴子', pluralEn: 'monkeys', unitZh: '隻小猴子' },
-{ emoji: '🐧', en: 'Penguin', zh: '企鵝', pluralEn: 'penguins', unitZh: '隻企鵝' },
-{ emoji: '🦆', en: 'Duck', zh: '小鴨', pluralEn: 'ducks', unitZh: '隻小鴨' },
-{ emoji: '🐬', en: 'Dolphin', zh: '海豚', pluralEn: 'dolphins', unitZh: '條海豚' },
-{ emoji: '🐸', en: 'Frog', zh: '青蛙', pluralEn: 'frogs', unitZh: '隻青蛙' },
-{ emoji: '🦊', en: 'Fox', zh: '小狐狸', pluralEn: 'foxes', unitZh: '隻小狐狸' },
-{ emoji: '🍎', en: 'Apple', zh: '蘋果', pluralEn: 'apples', unitZh: '個蘋果' },
-{ emoji: '🍓', en: 'Strawberry', zh: '士多啤梨', pluralEn: 'strawberries', unitZh: '粒士多啤梨' },
-{ emoji: '🍌', en: 'Banana', zh: '香蕉', pluralEn: 'bananas', unitZh: '條香蕉' },
-{ emoji: '🍉', en: 'Watermelon', zh: '西瓜', pluralEn: 'watermelons', unitZh: '片西瓜' },
-{ emoji: '🍇', en: 'Grape', zh: '提子', pluralEn: 'grapes', unitZh: '抽提子' },
-{ emoji: '🍒', en: 'Cherry', zh: '車厘子', pluralEn: 'cherries', unitZh: '粒車厘子' },
-{ emoji: '🍩', en: 'Donut', zh: '冬甩', pluralEn: 'donuts', unitZh: '個冬甩' },
-{ emoji: '🍪', en: 'Cookie', zh: '曲奇餅', pluralEn: 'cookies', unitZh: '塊曲奇餅' },
-{ emoji: '🧁', en: 'Cupcake', zh: '紙杯蛋糕', pluralEn: 'cupcakes', unitZh: '個蛋糕' },
-{ emoji: '🚀', en: 'Rocket', zh: '火箭', pluralEn: 'rockets', unitZh: '枚火箭' },
-{ emoji: '🚗', en: 'Car', zh: '玩具車', pluralEn: 'cars', unitZh: '架玩具車' },
-{ emoji: '✈️', en: 'Airplane', zh: '飛機', pluralEn: 'airplanes', unitZh: '架飛機' },
-{ emoji: '🚂', en: 'Train', zh: '火車', pluralEn: 'trains', unitZh: '架火車' },
-{ emoji: '⭐', en: 'Star', zh: '小星星', pluralEn: 'stars', unitZh: '粒星星' }
-];
-const STICKER_LIST = [
-{ id: 's1', icon: '🦄', name: 'Unicorn 獨角獸', desc: 'The lovely Unicorn brings magical rainbow wishes!' },
-{ id: 's2', icon: '🦖', name: 'T-Rex 暴龍', desc: 'The brave T-Rex cheers for your smart mathematical mind!' },
-{ id: 's3', icon: '🚀', name: 'Rocket 太空火箭', desc: 'The swift Rocket zooms across the galaxy of numbers!' },
-{ id: 's4', icon: '🦁', name: 'Lion 勇敢小獅', desc: 'The golden Lion shines with courage and clever answers!' },
-{ id: 's5', icon: '👑', name: 'Crown 國王皇冠', desc: 'The sparkling Crown honors our little math champion!' },
-{ id: 's6', icon: '🌈', name: 'Rainbow 幸福彩虹', desc: 'The colorful Rainbow spreads endless happiness!' },
-{ id: 's7', icon: '🍦', name: 'Gelato 甜品雪糕', desc: 'Delicious sweet Gelato makes learning math so delightful!' },
-{ id: 's8', icon: '🐳', name: 'Whale 溫柔抹香鯨', desc: 'The gentle blue Whale sings wonderful ocean songs!' },
-{ id: 's9', icon: '🐨', name: 'Koala 樹熊小寶', desc: 'The sweet Koala gives you a warm hug for great work!' },
-{ id: 's10', icon: '🦋', name: 'Butterfly 斑斕蝴蝶', desc: 'The joyful Butterfly dances gracefully in the warm spring breeze!' },
-{ id: 's11', icon: '🛸', name: 'UFO 神秘飛碟', desc: 'The friendly UFO explores new starry secrets with you!' },
-{ id: 's12', icon: '🏆', name: 'Trophy 數學冠軍', desc: 'The glorious Trophy shines brightly for the ultimate master!' }
-];
-const HK_COIN_DATA = [
-{ val: 1, nameEn: 'One Dollar ($1)', nameZh: '一元 ($1)', css: 'coin-1', label: '$1' },
-{ val: 2, nameEn: 'Two Dollars ($2)', nameZh: '二元 ($2)', css: 'coin-2', label: '$2' },
-{ val: 5, nameEn: 'Five Dollars ($5)', nameZh: '五元 ($5)', css: 'coin-5', label: '$5' },
-{ val: 10, nameEn: 'Ten Dollars ($10)', nameZh: '十元 ($10)', css: 'coin-10', label: '$10' }
-];
-/* ==========================================================================
-2. TEACHER PERSONA SYSTEM WITH STRICT GENDER/VOICE MATCHING
-========================================================================== */
-const TEACHER_PERSONAS = {
-emma: {
-id: 'emma',
-name: 'Miss Emma',
-avatar: '🌸',
-gender: 'female',
-rate: 0.80,
-pitch: 1.25,
-targetLang: 'en-US'
-},
-sophie: {
-id: 'sophie',
-name: 'Miss Sophie',
-avatar: '🇬🇧',
-gender: 'female',
-rate: 0.82,
-pitch: 1.22,
-targetLang: 'en-GB'
-},
-chloe: {
-id: 'chloe',
-name: 'Miss Chloe',
-avatar: '🐨',
-gender: 'female',
-rate: 0.84,
-pitch: 1.18,
-targetLang: 'en-AU'
-},
-daniel: {
-id: 'daniel',
-name: 'Mr. Daniel',
-avatar: '📖',
-gender: 'male',
-rate: 0.82,
-pitch: 1.05,
-targetLang: 'en-US'
-}
-};
-let selectedTeacherId = 'emma';
-let isAutoGradeVoiceEnabled = true;
-let cachedVoices = [];
-function refreshVoiceList() {
-if (!('speechSynthesis' in window)) return;
-cachedVoices = window.speechSynthesis.getVoices() || [];
-inspectAndAdaptUKTeacherTitle();
-}
-if ('speechSynthesis' in window) {
-window.speechSynthesis.onvoiceschanged = refreshVoiceList;
-refreshVoiceList();
-}
-// Adapt persona title if system only has male voices for UK English
-function inspectAndAdaptUKTeacherTitle() {
-const ukVoices = cachedVoices.filter(v => v.lang.startsWith('en-GB') || v.lang === 'en-GB');
-if (ukVoices.length > 0) {
-const hasFemale = ukVoices.some(v => isVoiceDefinitelyFemale(v));
-const ukLabel = document.getElementById('labelPersonaUK');
-const ukBadge = document.getElementById('badgePersonaUK');
-if (!hasFemale) {
-TEACHER_PERSONAS.sophie.name = 'Mr. Oliver';
-TEACHER_PERSONAS.sophie.avatar = '🎩';
-TEACHER_PERSONAS.sophie.gender = 'male';
-if (ukLabel) ukLabel.innerText = 'Mr. Oliver';
-if (ukBadge) ukBadge.innerText = '英式 • 紳士男聲';
-} else {
-TEACHER_PERSONAS.sophie.name = 'Miss Sophie';
-TEACHER_PERSONAS.sophie.avatar = '🇬🇧';
-TEACHER_PERSONAS.sophie.gender = 'female';
-if (ukLabel) ukLabel.innerText = 'Miss Sophie';
-if (ukBadge) ukBadge.innerText = '英式 • 親切女聲';
-}
-}
-}
-function isVoiceDefinitelyFemale(voice) {
-const name = (voice.name || '').toLowerCase();
-const maleClues = ['male', 'david', 'george', 'guy', 'daniel', 'mark', 'james', 'richard'];
-const femaleClues = ['female', 'samantha', 'victoria', 'jenny', 'karen', 'hazel', 'susan', 'catherine', 'zira'];
-if (maleClues.some(c => name.includes(c))) return false;
-if (femaleClues.some(c => name.includes(c))) return true;
-return true; // Default fallback assume gentle tone
-}
-function getBestVoiceForPersona(persona) {
-if (!cachedVoices.length) refreshVoiceList();
-if (!cachedVoices.length) return null;
-const langVoices = cachedVoices.filter(v => v.lang.startsWith(persona.targetLang) || v.lang === persona.targetLang);
-if (persona.gender === 'female') {
-const femaleMatch = langVoices.find(v => isVoiceDefinitelyFemale(v));
-if (femaleMatch) return femaleMatch;
-// Search globally for any female English voice
-const anyFemale = cachedVoices.find(v => v.lang.startsWith('en') && isVoiceDefinitelyFemale(v));
-if (anyFemale) return anyFemale;
-} else {
-const maleMatch = langVoices.find(v => !isVoiceDefinitelyFemale(v));
-if (maleMatch) return maleMatch;
-}
-return langVoices[0] || cachedVoices.find(v => v.lang.startsWith('en')) || cachedVoices[0];
-}
-function getEffectiveTeacher() {
-if (isAutoGradeVoiceEnabled) {
-if (currentGrade === 'k1' || currentGrade === 'k2') {
-return TEACHER_PERSONAS.emma;
-} else if (currentGrade === 'k3') {
-return TEACHER_PERSONAS.sophie;
-} else {
-return TEACHER_PERSONAS.daniel;
-}
-}
-return TEACHER_PERSONAS[selectedTeacherId] || TEACHER_PERSONAS.emma;
-}
-function updateTeacherUIBadge() {
-const teacher = getEffectiveTeacher();
-const label = document.getElementById('teacherNameLabel');
-const avatar = document.getElementById('teacherAvatarIcon');
-if (label) label.innerText = teacher.name;
-if (avatar) avatar.innerText = teacher.avatar;
-}
-function speakEnglishOnly(text, onEndCallback = null) {
-if (!isSoundOn || !('speechSynthesis' in window)) return;
-window.speechSynthesis.cancel();
-const cleanText = text.replace(/[\u4e00-\u9fa5]|[\u3000-\u303f]|[\uff01-\uff60]/g, '')
-.replace(/[🎈⭐🍓🍎🐶🐱➕➖🟰❓❌👈👉⚖️✂️🦁🐨🐼🌱🌸🚀🏛️🎧🌳🦆🌊🍦🦋🍰🪙👑🌈🦖🛸🏆🧱🔮💎🍬✨🛒🎩]/g, '')
-.trim();
-if (!cleanText) return;
-const teacher = getEffectiveTeacher();
-const utterance = new SpeechSynthesisUtterance(cleanText);
-utterance.lang = teacher.targetLang;
-utterance.rate = teacher.rate;
-utterance.pitch = teacher.pitch;
-const voice = getBestVoiceForPersona(teacher);
-if (voice) utterance.voice = voice;
-if (onEndCallback) utterance.onend = onEndCallback;
-window.speechSynthesis.speak(utterance);
-}
-const NUMBER_WORDS_EN = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
-'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'];
-function speakNumberWord(n) {
-const word = NUMBER_WORDS_EN[n] || String(n);
-speakEnglishOnly(word);
-}
-function speakPraiseEn() {
-const praises = [
-"Fantastic! Look at you, great job!",
-"Super star! You got it right!",
-"Brilliant! Well done, my clever friend!",
-"Awesome! Keep up the good work!",
-"Wonderful! High five!"
-];
-speakEnglishOnly(praises[Math.floor(Math.random() * praises.length)]);
-}
-function speakTryAgainEn() {
-const msgs = [
-"Almost there! Try again, sweetie!",
-"Good effort! Let's count once more!",
-"Keep trying! You can do it!"
-];
-speakEnglishOnly(msgs[Math.floor(Math.random() * msgs.length)]);
-}
-/* ==========================================================================
-3. WARM, SOFT PROCEDURAL WEB AUDIO SYNTHESIS
-========================================================================== */
-const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-let audioContext = null;
-let isSoundOn = true;
-function ensureAudioContext() {
-if (!audioContext) audioContext = new AudioContextClass();
-if (audioContext.state === 'suspended') audioContext.resume();
-}
-function playSoftTone(freq, duration = 0.18, delay = 0, volume = 0.18, type = 'sine') {
-if (!isSoundOn) return;
-ensureAudioContext();
-try {
-const osc = audioContext.createOscillator();
-const gain = audioContext.createGain();
-const now = audioContext.currentTime + delay;
-osc.type = type;
-osc.frequency.setValueAtTime(freq, now);
-gain.gain.setValueAtTime(0.001, now);
-gain.gain.linearRampToValueAtTime(volume, now + 0.03);
-gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-osc.connect(gain);
-gain.connect(audioContext.destination);
-osc.start(now);
-osc.stop(now + duration + 0.05);
-} catch (err) {
-console.warn('Audio Tone Error:', err);
-}
-}
-function soundSuccessChime() {
-playSoftTone(523.25, 0.20, 0.00, 0.16, 'sine');
-playSoftTone(659.25, 0.22, 0.08, 0.17, 'sine');
-playSoftTone(783.99, 0.24, 0.16, 0.18, 'sine');
-playSoftTone(1046.50, 0.35, 0.24, 0.19, 'sine');
-}
-function soundGoldUpgradeChime() {
-playSoftTone(587.33, 0.20, 0.00, 0.18, 'sine');
-playSoftTone(739.99, 0.22, 0.09, 0.19, 'sine');
-playSoftTone(880.00, 0.25, 0.18, 0.20, 'sine');
-playSoftTone(1174.66, 0.45, 0.28, 0.22, 'sine');
-}
-function soundRainbowPrismaticChime() {
-[523.25, 659.25, 783.99, 987.77, 1318.51].forEach((freq, idx) => {
-playSoftTone(freq, 0.35, idx * 0.06, 0.13, 'sine');
-});
-}
-function soundTapPop() {
-playSoftTone(440 + Math.random() * 80, 0.09, 0, 0.12, 'sine');
-}
-function soundCoinJingle() {
-playSoftTone(987.77, 0.12, 0.00, 0.15, 'sine');
-playSoftTone(1318.51, 0.22, 0.06, 0.16, 'sine');
-}
-function soundCrossCut() {
-playSoftTone(280, 0.10, 0.00, 0.14, 'triangle');
-playSoftTone(220, 0.12, 0.05, 0.12, 'sine');
-}
-function soundEncourageTone() {
-playSoftTone(349.23, 0.18, 0.00, 0.14, 'sine');
-playSoftTone(329.63, 0.24, 0.10, 0.14, 'sine');
-}
-/* ==========================================================================
-4. APPLICATION STATE & STRICT 0 INITIAL STICKERS INITIALIZATION
-========================================================================== */
-let currentGrade = 'k2';
-let currentMode = 'k2_add';
-let targetAnswer = 0;
-let activeQuestionPromptEn = '';
-let isInputLocked = false;
-let totalQuestionsAnswered = 0;
-let correctAnswersCount = 0;
-let currentStars = 0;
-let gradeSolvedCounters = { k1: 0, k2: 0, k3: 0, p1: 0 };
-// STRICT ZERO INITIAL STICKERS
-const stickerTierMap = {
-'s1': 0, 's2': 0, 's3': 0, 's4': 0, 's5': 0, 's6': 0,
-'s7': 0, 's8': 0, 's9': 0, 's10': 0, 's11': 0, 's12': 0
-};
-let activeShowcaseSticker = null;
-// View Elements
-const portalScreen = document.getElementById('curriculumPortalScreen');
-const lobbyScreen = document.getElementById('gradeLobbyScreen');
-const gamePlayScreen = document.getElementById('gamePlayScreen');
-const navBackBtn = document.getElementById('navBackBtn');
-const navBackLabel = document.getElementById('navBackLabel');
-const navBackIcon = document.getElementById('navBackIcon');
-const activeGradePill = document.getElementById('activeGradePill');
-const activeGradePillIcon = document.getElementById('activeGradePillIcon');
-const activeGradePillText = document.getElementById('activeGradePillText');
-const headerStars = document.getElementById('headerStars');
-const albumTierBadge = document.getElementById('albumTierBadge');
-const promptZh = document.getElementById('promptZh');
-const promptEn = document.getElementById('promptEn');
-const vocabPillText = document.getElementById('vocabPillText');
-const numberOptionsRow = document.getElementById('numberOptionsRow');
-const GRADE_CONFIG = {
-k1: {
-icon: '🌱',
-title: 'K1 幼兒班 (Age 3-4)',
-desc: '啟蒙數感與感官操作 Early Math Foundation',
-topics: [
-{ id: 'k1_count', title: '數一數 1-5', subtitle: 'Tap to Count 1-5', icon: '🐰', color: 'from-emerald-400 to-teal-500' },
-{ id: 'k1_compare', title: '比大小與長短', subtitle: 'Big vs Small / Size', icon: '🐘', color: 'from-teal-400 to-cyan-500' },
-{ id: 'k1_shape', title: '基礎圖形配對', subtitle: 'Shapes Explorer', icon: '🔷', color: 'from-cyan-400 to-sky-500' }
-]
-},
-k2: {
-icon: '🌸',
-title: 'K2 低班 (Age 4-5)',
-desc: '具象運算與概念建構 Concrete Operations',
-topics: [
-{ id: 'k2_count', title: '數一數 1-10', subtitle: 'Counting 1-10', icon: '🦁', color: 'from-amber-400 to-amber-500' },
-{ id: 'k2_compare', title: '比多少 (More/Less)', subtitle: 'Compare Quantities', icon: '⚖️', color: 'from-sky-400 to-sky-500' },
-{ id: 'k2_add', title: '加加看 (Tap-to-Add)', subtitle: 'Sequential Addition', icon: '➕', color: 'from-rose-400 to-rose-500' },
-{ id: 'k2_sub', title: '減減看 (Cross-Out ❌)', subtitle: 'Interactive Subtraction', icon: '✂️', color: 'from-purple-400 to-purple-500' },
-{ id: 'k2_listening', title: '🎧 英文聆聽 1-10 數字', subtitle: 'Listen & Find Numbers 1-10', icon: '🎧', color: 'from-indigo-400 to-blue-600' }
-]
-},
-k3: {
-icon: '⭐',
-title: 'K3 高班 (Age 5-6)',
-desc: '幼小銜接與生活應用 Bridge to Primary Math',
-topics: [
-{ id: 'k3_bonds', title: '10 的分解與組合', subtitle: 'Number Bonds to 10', icon: '🔟', color: 'from-amber-400 to-orange-500' },
-{ id: 'k3_math20', title: '20 以內運算', subtitle: 'Math within 20', icon: '⚡', color: 'from-sky-400 to-blue-500' },
-{ id: 'k3_clock', title: '認識時鐘 (鐘面)', subtitle: 'Telling Time (Clock)', icon: '⏰', color: 'from-pink-400 to-rose-500' },
-{ id: 'k3_coins', title: '香港硬幣辨析', subtitle: 'HK Coins ($1-$10)', icon: '🪙', color: 'from-emerald-400 to-teal-500' },
-{ id: 'k3_listening', title: '🎧 英文聆聽加減數', subtitle: 'Listening Addition & Subtraction', icon: '👂', color: 'from-violet-400 to-indigo-600' }
-]
-},
-p1: {
-icon: '🚀',
-title: 'P1 小學一年級 (Age 6-7)',
-desc: '常規小學數學邏輯 Primary 1 Curriculum',
-topics: [
-{ id: 'p1_place', title: '魔法水晶 (十位與個位)', subtitle: 'Gems Place Value', icon: '🔮', color: 'from-indigo-400 to-indigo-600' },
-{ id: 'p1_mental', title: '火箭發射速算挑戰', subtitle: 'Rocket Launch Math', icon: '🚀', color: 'from-rose-400 to-pink-500' },
-{ id: 'p1_money', title: '超市購物多件結算', subtitle: 'Supermarket Cart Total', icon: '🛒', color: 'from-emerald-400 to-teal-600' },
-{ id: 'p1_word', title: '英文應用題', subtitle: 'Story Word Problems', icon: '📖', color: 'from-purple-400 to-violet-600' },
-{ id: 'p1_listening', title: '🎧 十個位加減速算聆聽', subtitle: 'Tens Mental Listening Math', icon: '🎯', color: 'from-rose-500 to-pink-600' }
-]
-}
-};
-function getRandomItem(list) {
-return list[Math.floor(Math.random() * list.length)];
-}
-function getRandomInt(min, max) {
-return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-function selectGrade(gradeKey) {
-soundTapPop();
-currentGrade = gradeKey;
-activeGradePillIcon.innerText = GRADE_CONFIG[gradeKey].icon;
-activeGradePillText.innerText = GRADE_CONFIG[gradeKey].title.split(' ')[0] + ' ' + GRADE_CONFIG[gradeKey].title.split(' ')[1];
-activeGradePill.classList.remove('hidden');
-updateTeacherUIBadge();
-renderGradeLobby();
-}
-function renderGradeLobby() {
-const cfg = GRADE_CONFIG[currentGrade];
-document.getElementById('lobbyBadge').innerText = ⁠${cfg.icon} ${cfg.title}⁠;
-document.getElementById('lobbyTitle').innerText = ⁠${cfg.title} 核心數學模塊⁠;
-document.getElementById('lobbySubtitle').innerText = cfg.desc;
-const container = document.getElementById('lobbyCardsContainer');
-container.innerHTML = '';
-cfg.topics.forEach((topic) => {
-const card = document.createElement('button');
-card.className = ⁠bouncy-btn clay-card p-4 sm:p-5 flex flex-col items-center text-center cursor-pointer border-b-6 hover:scale-102 transition-all⁠;
-card.innerHTML = ⁠<div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr ${topic.color} text-white flex items-center justify-center text-3xl sm:text-4xl mb-2.5 shadow-md"> ${topic.icon} </div> <h3 class="text-base sm:text-lg font-black text-slate-800">${topic.title}</h3> <span class="text-[11px] font-bold text-slate-500 mt-0.5">${topic.subtitle}</span> <span class="text-xs font-black text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full mt-2">進入單元 ▶</span>⁠;
-card.onclick = () => launchTopic(topic.id);
-container.appendChild(card);
-});
-portalScreen.classList.add('hidden');
-gamePlayScreen.classList.add('hidden');
-lobbyScreen.classList.remove('hidden');
-lobbyScreen.classList.add('flex');
-navBackLabel.innerText = "課程選單";
-navBackIcon.innerText = "🏛️";
-}
-function launchTopic(modeId) {
-soundTapPop();
-currentMode = modeId;
-lobbyScreen.classList.add('hidden');
-lobbyScreen.classList.remove('flex');
-gamePlayScreen.classList.remove('hidden');
-gamePlayScreen.classList.add('flex');
-navBackLabel.innerText = "單元選單";
-navBackIcon.innerText = "🔙";
-generateQuestion();
-}
-function handleNavigationBack() {
-soundTapPop();
-if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-if (!gamePlayScreen.classList.contains('hidden')) {
-gamePlayScreen.classList.add('hidden');
-gamePlayScreen.classList.remove('flex');
-lobbyScreen.classList.remove('hidden');
-lobbyScreen.classList.add('flex');
-navBackLabel.innerText = "課程選單";
-navBackIcon.innerText = "🏛️";
-} else if (!lobbyScreen.classList.contains('hidden')) {
-lobbyScreen.classList.add('hidden');
-lobbyScreen.classList.remove('flex');
-portalScreen.classList.remove('hidden');
-portalScreen.classList.add('flex');
-}
-}
-function speakCurrentQuestionPrompt() {
-soundTapPop();
-if (activeQuestionPromptEn) {
-speakEnglishOnly(activeQuestionPromptEn);
-}
-}
-/* ==========================================================================
-5. COMPREHENSIVE QUESTION GENERATION & GRADUATED LISTENING ENGINES
-========================================================================== */
-function hideAllStages() {
-const stageIds = [
-'stageK1Count', 'stageK1Compare', 'stageK1Shape',
-'stageK2Count', 'stageK2Compare', 'stageK2Add', 'stageK2Sub', 'stageAudioListening',
-'stageK3Bonds', 'stageK3Math20', 'stageK3Clock', 'stageK3Coins',
-'stageP1Place', 'stageP1Mental', 'stageP1Money', 'stageP1Word'
-];
-stageIds.forEach(id => {
-const el = document.getElementById(id);
-if (el) {
-el.classList.add('hidden');
-el.classList.remove('flex', 'grid');
-}
-});
-numberOptionsRow.innerHTML = '';
-}
-function generateQuestion() {
-isInputLocked = false;
-hideAllStages();
-switch (currentMode) {
-// K1
-case 'k1_count': renderK1Counting(); break;
-case 'k1_compare': renderK1Compare(); break;
-case 'k1_shape': renderK1Shape(); break;
-// K2
-case 'k2_count': renderK2Counting(); break;
-case 'k2_compare': renderK2Compare(); break;
-case 'k2_add': renderK2Addition(); break;
-case 'k2_sub': renderK2Subtraction(); break;
-case 'k2_listening': renderK2ListeningNumbers(); break;
-// K3
-case 'k3_bonds': renderK3Bonds(); break;
-case 'k3_math20': renderK3Math20(); break;
-case 'k3_clock': renderK3Clock(); break;
-case 'k3_coins': renderK3Coins(); break;
-case 'k3_listening': renderK3ListeningAddSub(); break;
-// P1
-case 'p1_place': renderP1Place(); break;
-case 'p1_mental': renderP1Mental(); break;
-case 'p1_money': renderP1Money(); break;
-case 'p1_word': renderP1Word(); break;
-case 'p1_listening': renderP1ListeningTensMath(); break;
-default: renderK2Addition();
-}
-speakEnglishOnly(activeQuestionPromptEn);
-}
-/* K2 LISTENING: 1-10 基礎數字聽力 */
-function renderK2ListeningNumbers() {
-const stage = document.getElementById('stageAudioListening');
-stage.classList.remove('hidden');
-stage.classList.add('flex');
-document.getElementById('listeningTagBadge').innerText = '🎧 K2 基礎數字聽力 (Numbers 1-10)';
-const targetNum = getRandomInt(1, 10);
-targetAnswer = targetNum;
-const vocab = getRandomItem(VOCAB_DATABASE.slice(0, 12));
-const wordEn = NUMBER_WORDS_EN[targetNum];
-const phrasingList = [
-{
-speech: ⁠Listen carefully! Can you find number ${wordEn}? Tap number ${wordEn}!⁠,
-zh: ⁠聽聽老師指示：請找出數字「${targetNum}」(${wordEn})！⁠,
-en: ⁠Listen carefully: Find number ${wordEn}!⁠
-},
-{
-speech: ⁠Hello friend! Listen to the teacher. Show me number ${wordEn}!⁠,
-zh: ⁠細心聽聽老師讀音：哪一個是數字「${targetNum}」(${wordEn})？⁠,
-en: ⁠Listen to teacher: Where is number ${wordEn}?⁠
-},
-{
-speech: ⁠Listen to teacher! Pick number ${wordEn} for the lovely ${vocab.en}!⁠,
-zh: ⁠聽聽英文讀音：幫可愛的 ${vocab.zh} 選擇數字「${targetNum}」！⁠,
-en: ⁠Listen carefully: Tap number ${wordEn}!⁠
-}
-];
-const chosenPhrase = getRandomItem(phrasingList);
-vocabPillText.innerText = ⁠🎧 Number ${wordEn} (${targetNum})⁠;
-promptZh.innerText = chosenPhrase.zh;
-promptEn.innerText = chosenPhrase.en;
-activeQuestionPromptEn = chosenPhrase.speech;
-document.getElementById('listeningSceneEmojiArt').innerText = ⁠${vocab.emoji} ⁠.repeat(Math.min(targetNum, 5));
-document.getElementById('listeningSceneCaption').innerText = ⁠"Teacher says: Find number ${wordEn}!"⁠;
-renderChoiceButtons(targetAnswer, 1, 10);
-}
-/* K3 LISTENING: 10 以內加減數聆聽 */
-function renderK3ListeningAddSub() {
-const stage = document.getElementById('stageAudioListening');
-stage.classList.remove('hidden');
-stage.classList.add('flex');
-document.getElementById('listeningTagBadge').innerText = '🎧 K3 聆聽加減法 (Addition & Subtraction to 10)';
-const isAddition = Math.random() > 0.45;
-const vocab = getRandomItem(VOCAB_DATABASE.slice(0, 14));
-if (isAddition) {
-const a = getRandomInt(1, 5);
-const b = getRandomInt(1, 4);
-targetAnswer = a + b;
-const aWord = NUMBER_WORDS_EN[a];
-const bWord = NUMBER_WORDS_EN[b];
-const speech = ⁠Listen carefully! There are ${aWord} lovely ${vocab.pluralEn}. Mum brings ${bWord} more. How many ${vocab.pluralEn} altogether?⁠;
-vocabPillText.innerText = ⁠🎧 ${a} ➕ ${b} = ?⁠;
-promptZh.innerText = ⁠英文聆聽加法：有 ${a} 隻${vocab.zh}，再來 ${b} 隻，共有幾多隻？⁠;
-promptEn.innerText = ⁠Listen carefully: What is ${aWord} plus ${bWord}?⁠;
-activeQuestionPromptEn = speech;
-document.getElementById('listeningSceneEmojiArt').innerText = ⁠${vocab.emoji} ⁠.repeat(a) + ⁠➕ ⁠ + ⁠${vocab.emoji} ⁠.repeat(b);
-document.getElementById('listeningSceneCaption').innerText = ⁠"${aWord} ${vocab.pluralEn} plus ${bWord} more..."⁠;
-renderChoiceButtons(targetAnswer, 2, 10);
-} else {
-const total = getRandomInt(3, 8);
-const take = getRandomInt(1, total - 1);
-targetAnswer = total - take;
-const totalWord = NUMBER_WORDS_EN[total];
-const takeWord = NUMBER_WORDS_EN[take];
-const speech = ⁠Listen carefully! We have ${totalWord} sweet ${vocab.pluralEn}. We take away ${takeWord}. How many ${vocab.pluralEn} are left?⁠;
-vocabPillText.innerText = ⁠🎧 ${total} ➖ ${take} = ?⁠;
-promptZh.innerText = ⁠英文聆聽減法：原本有 ${total} 個${vocab.zh}，拿走了 ${take} 個，仲剩幾多？⁠;
-promptEn.innerText = ⁠Listen carefully: What is ${totalWord} minus ${takeWord}?⁠;
-activeQuestionPromptEn = speech;
-document.getElementById('listeningSceneEmojiArt').innerText = ⁠${vocab.emoji} ⁠.repeat(total) + ⁠ ❌ 拿走 ${take}⁠;
-document.getElementById('listeningSceneCaption').innerText = ⁠"${totalWord} ${vocab.pluralEn} take away ${takeWord}..."⁠;
-renderChoiceButtons(targetAnswer, 1, 8);
-}
-}
-/* P1 LISTENING: 十個位加減速算聆聽 */
-function renderP1ListeningTensMath() {
-const stage = document.getElementById('stageAudioListening');
-stage.classList.remove('hidden');
-stage.classList.add('flex');
-document.getElementById('listeningTagBadge').innerText = '🎧 P1 十個位加減速算聆聽 (Tens Mental Math)';
-const isAdd = Math.random() > 0.45;
-const tensWords = {
-10: 'ten', 20: 'twenty', 30: 'thirty', 40: 'forty',
-50: 'fifty', 60: 'sixty', 70: 'seventy', 80: 'eighty', 90: 'ninety'
-};
-if (isAdd) {
-const tensA = getRandomInt(1, 5) * 10;
-const tensB = getRandomInt(1, 4) * 10;
-targetAnswer = tensA + tensB;
-const wordA = tensWords[tensA];
-const wordB = tensWords[tensB];
-const speech = ⁠Listen to the math teacher! What is ${wordA} plus ${wordB}? Calculate ${wordA} plus ${wordB}!⁠;
-vocabPillText.innerText = ⁠🎧 Tens: ${tensA} + ${tensB}⁠;
-promptZh.innerText = ⁠十個位英文加法速算：${tensA} 加 ${tensB} 等於幾多？⁠;
-promptEn.innerText = ⁠Listen carefully: What is ${wordA} plus ${wordB}?⁠;
-activeQuestionPromptEn = speech;
-document.getElementById('listeningSceneEmojiArt').innerText = ⁠💎 ${tensA} ➕ 💎 ${tensB}⁠;
-document.getElementById('listeningSceneCaption').innerText = ⁠"Listen: What is ${wordA} plus ${wordB}?"⁠;
-const choices = [targetAnswer];
-while (choices.length < 4) {
-const randTen = getRandomInt(2, 9) * 10;
-if (!choices.includes(randTen)) choices.push(randTen);
-}
-renderChoiceButtons(targetAnswer, Math.min(...choices), Math.max(...choices));
-} else {
-const tensA = getRandomInt(4, 9) * 10;
-const tensB = getRandomInt(1, Math.floor(tensA / 10) - 1) * 10;
-targetAnswer = tensA - tensB;
-const wordA = tensWords[tensA];
-const wordB = tensWords[tensB];
-const speech = ⁠Listen to the math teacher! What is ${wordA} minus ${wordB}? What is ${wordA} take away ${wordB}?⁠;
-vocabPillText.innerText = ⁠🎧 Tens: ${tensA} - ${tensB}⁠;
-promptZh.innerText = ⁠十個位英文減法速算：${tensA} 減 ${tensB} 等於幾多？⁠;
-promptEn.innerText = ⁠Listen carefully: What is ${wordA} minus ${wordB}?⁠;
-activeQuestionPromptEn = speech;
-document.getElementById('listeningSceneEmojiArt').innerText = ⁠💎 ${tensA} ➖ 💎 ${tensB}⁠;
-document.getElementById('listeningSceneCaption').innerText = ⁠"Listen: What is ${wordA} minus ${wordB}?"⁠;
-const choices = [targetAnswer];
-while (choices.length < 4) {
-const randTen = getRandomInt(1, 8) * 10;
-if (!choices.includes(randTen)) choices.push(randTen);
-}
-renderChoiceButtons(targetAnswer, Math.min(...choices), Math.max(...choices));
-}
-}
-/* K1-A: Counting 1-5 */
-function renderK1Counting() {
-const stage = document.getElementById('stageK1Count');
-stage.classList.remove('hidden');
-stage.classList.add('flex');
-const count = getRandomInt(1, 5);
-targetAnswer = count;
-const vocab = getRandomItem(VOCAB_DATABASE.slice(0, 10));
-vocabPillText.innerText = ⁠${vocab.en} ${vocab.zh}⁠;
-promptZh.innerText = ⁠數一數，草地上有幾多${vocab.unitZh}？⁠;
-promptEn.innerText = ⁠Let's count! How many ${vocab.pluralEn} are there?⁠;
-activeQuestionPromptEn = ⁠Let's count! How many ${vocab.pluralEn} are there?⁠;
-const grid = document.getElementById('k1CountGrid');
-grid.innerHTML = '';
-const tappedSet = new Set();
-function updateK1Badges() {
-const items = grid.querySelectorAll('.k1-item');
-let seq = 1;
-items.forEach((item, idx) => {
-const badge = item.querySelector('.badge');
-if (tappedSet.has(idx)) {
-badge.innerText = seq;
-badge.classList.remove('hidden');
-item.classList.add('scale-110', 'bg-white', 'shadow-md');
-seq++;
-} else {
-badge.innerText = '';
-badge.classList.add('hidden');
-item.classList.remove('scale-110', 'bg-white', 'shadow-md');
-}
-});
-}
-for (let i = 0; i < count; i++) {
-const itemBox = document.createElement('div');
-itemBox.className = 'k1-item text-6xl sm:text-7xl p-3 rounded-3xl relative cursor-pointer pop-in transition-all';
-itemBox.innerHTML = ⁠<span>${vocab.emoji}</span> <span class="badge hidden absolute -top-1 -right-1 bg-emerald-500 text-white font-black text-sm w-7 h-7 rounded-full flex items-center justify-center border-2 border-white shadow"></span>⁠;
-itemBox.onclick = () => {
-soundTapPop();
-if (tappedSet.has(i)) tappedSet.delete(i);
-else {
-tappedSet.add(i);
-speakNumberWord(tappedSet.size);
-}
-updateK1Badges();
-};
-grid.appendChild(itemBox);
-}
-renderChoiceButtons(targetAnswer, 1, 5);
-}
-/* K1-B: Big vs Small Comparison */
-let k1CompareTarget = 'left';
-function renderK1Compare() {
-const stage = document.getElementById('stageK1Compare');
-stage.classList.remove('hidden');
-stage.classList.add('grid');
-const isBigTask = Math.random() > 0.5;
-k1CompareTarget = Math.random() > 0.5 ? 'left' : 'right';
-const vocab = getRandomItem(VOCAB_DATABASE);
-vocabPillText.innerText = ⁠${vocab.en} ${vocab.zh}⁠;
-if (isBigTask) {
-promptZh.innerText = ⁠哪一隻${vocab.zh}比較「大」？點擊大嗰隻！⁠;
-promptEn.innerText = ⁠Which ${vocab.en} is BIGGER? Tap the big one!⁠;
-activeQuestionPromptEn = ⁠Which ${vocab.en} is bigger? Tap the big one!⁠;
-} else {
-promptZh.innerText = ⁠哪一隻${vocab.zh}比較「細」？點擊細嗰隻！⁠;
-promptEn.innerText = ⁠Which ${vocab.en} is SMALLER? Tap the small one!⁠;
-activeQuestionPromptEn = ⁠Which ${vocab.en} is smaller? Tap the small one!⁠;
-}
-const leftGraphic = document.getElementById('k1CompareLeftGraphic');
-const rightGraphic = document.getElementById('k1CompareRightGraphic');
-const leftLabel = document.getElementById('k1CompareLeftLabel');
-const rightLabel = document.getElementById('k1CompareRightLabel');
-const bigSizeClass = 'text-7xl sm:text-8xl scale-125';
-const smallSizeClass = 'text-3xl sm:text-4xl scale-90';
-const leftIsBig = (isBigTask && k1CompareTarget === 'left') || (!isBigTask && k1CompareTarget === 'right');
-leftGraphic.className = leftIsBig ? bigSizeClass : smallSizeClass;
-leftGraphic.innerText = vocab.emoji;
-rightGraphic.className = leftIsBig ? smallSizeClass : bigSizeClass;
-rightGraphic.innerText = vocab.emoji;
-leftLabel.innerText = "呢邊 👈";
-rightLabel.innerText = "呢邊 👉";
-document.getElementById('k1CompareLeftBtn').disabled = false;
-document.getElementById('k1CompareRightBtn').disabled = false;
-}
-function submitK1CompareChoice(side) {
-if (isInputLocked) return;
-if (side === k1CompareTarget) {
-lockInteraction();
-onAnswerCorrect();
-} else {
-onAnswerWrong();
-}
-}
-/* K1-C: Shape Match */
-const SHAPE_LIST = [
-{ id: 'circle', nameZh: '圓形', nameEn: 'Circle', svg: '<svg class="w-24 h-24 text-rose-500 fill-current" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45"/></svg>' },
-{ id: 'square', nameZh: '正方形', nameEn: 'Square', svg: '<svg class="w-24 h-24 text-sky-500 fill-current" viewBox="0 0 100 100"><rect x="10" y="10" width="80" height="80" rx="10"/></svg>' },
-{ id: 'triangle', nameZh: '三角形', nameEn: 'Triangle', svg: '<svg class="w-24 h-24 text-amber-500 fill-current" viewBox="0 0 100 100"><polygon points="50,10 90,85 10,85"/></svg>' },
-{ id: 'star', nameZh: '星星', nameEn: 'Star', svg: '<svg class="w-24 h-24 text-purple-500 fill-current" viewBox="0 0 100 100"><polygon points="50,5 64,36 98,36 70,57 81,91 50,70 19,91 30,57 2,36 36,36"/></svg>' }
-];
-function renderK1Shape() {
-const stage = document.getElementById('stageK1Shape');
-stage.classList.remove('hidden');
-stage.classList.add('flex');
-const targetShape = getRandomItem(SHAPE_LIST);
-vocabPillText.innerText = ⁠${targetShape.nameEn} ${targetShape.nameZh}⁠;
-promptZh.innerText = ⁠找出畫面中間相同的「${targetShape.nameZh}」！⁠;
-promptEn.innerText = ⁠Find the matching ${targetShape.nameEn}!⁠;
-activeQuestionPromptEn = ⁠Find the matching ${targetShape.nameEn}!⁠;
-document.getElementById('k1ShapeTargetGraphic').innerHTML = targetShape.svg;
-const optGrid = document.getElementById('k1ShapeOptionsGrid');
-optGrid.innerHTML = '';
-SHAPE_LIST.forEach(s => {
-const btn = document.createElement('button');
-btn.className = 'bouncy-btn clay-card p-3 flex flex-col items-center justify-center cursor-pointer border-b-6 border-slate-300 hover:bg-slate-50';
-btn.innerHTML = ⁠<div class="w-14 h-14 flex items-center justify-center">${s.svg}</div> <span class="text-xs font-black text-slate-700 mt-1">${s.nameEn}</span>⁠;
-btn.onclick = () => {
-if (isInputLocked) return;
-if (s.id === targetShape.id) {
-lockInteraction();
-onAnswerCorrect();
-} else {
-onAnswerWrong();
-}
-};
-optGrid.appendChild(btn);
-});
-}
-/* K2-A: Counting 1-10 */
-function renderK2Counting() {
-const stage = document.getElementById('stageK2Count');
-stage.classList.remove('hidden');
-stage.classList.add('flex');
-const count = getRandomInt(1, 9);
-targetAnswer = count;
-const vocab = getRandomItem(VOCAB_DATABASE);
-vocabPillText.innerText = ⁠${vocab.en} ${vocab.zh}⁠;
-promptZh.innerText = ⁠數一數，畫面上共有幾多${vocab.unitZh}？⁠;
-promptEn.innerText = ⁠Let's count! How many ${vocab.pluralEn} do you see?⁠;
-activeQuestionPromptEn = ⁠Let's count! How many ${vocab.pluralEn} do you see?⁠;
-const grid = document.getElementById('k2CountGrid');
-grid.innerHTML = '';
-const tappedSet = new Set();
-function updateBadges() {
-const items = grid.querySelectorAll('.k2-count-item');
-let seq = 1;
-items.forEach((item, idx) => {
-const badge = item.querySelector('.badge');
-if (tappedSet.has(idx)) {
-badge.innerText = seq;
-badge.classList.remove('hidden');
-item.classList.add('ring-4', 'ring-amber-400', 'bg-white', 'shadow-md');
-seq++;
-} else {
-badge.innerText = '';
-badge.classList.add('hidden');
-item.classList.remove('ring-4', 'ring-amber-400', 'bg-white', 'shadow-md');
-}
-});
-}
-for (let i = 0; i < count; i++) {
-const itemBox = document.createElement('div');
-itemBox.className = 'k2-count-item text-5xl sm:text-6xl p-2.5 rounded-3xl relative cursor-pointer pop-in hover:scale-105 transition-all';
-itemBox.innerHTML = ⁠<span>${vocab.emoji}</span> <span class="badge hidden absolute -top-1.5 -right-1.5 bg-gradient-to-tr from-amber-500 to-orange-400 text-white font-black text-xs w-6 h-6 rounded-full flex items-center justify-center shadow-lg border-2 border-white"></span>⁠;
-itemBox.onclick = () => {
-soundTapPop();
-if (tappedSet.has(i)) tappedSet.delete(i);
-else {
-tappedSet.add(i);
-speakNumberWord(tappedSet.size);
-}
-updateBadges();
-};
-grid.appendChild(itemBox);
-}
-renderChoiceButtons(targetAnswer, 1, 10);
-}
-/* K2-B: Compare Quantities */
-let k2CompareTarget = 'left';
-function renderK2Compare() {
-const stage = document.getElementById('stageK2Compare');
-stage.classList.remove('hidden');
-stage.classList.add('grid');
-let nA = getRandomInt(2, 7);
-let nB = getRandomInt(2, 7);
-while (nA === nB) nB = getRandomInt(2, 7);
-k2CompareTarget = nA > nB ? 'left' : 'right';
-const vocabA = getRandomItem(VOCAB_DATABASE);
-const vocabB = getRandomItem(VOCAB_DATABASE.filter(v => v.emoji !== vocabA.emoji));
-vocabPillText.innerText = ⁠${vocabA.en} vs ${vocabB.en}⁠;
-promptZh.innerText = ⁠哪一邊的數量比較多呢？點擊多嗰邊！⁠;
-promptEn.innerText = ⁠Which side has MORE? Tap the bigger group!⁠;
-activeQuestionPromptEn = ⁠Which group has more items? Tap the side with more!⁠;
-const leftCont = document.getElementById('k2CompareLeftContainer');
-const rightCont = document.getElementById('k2CompareRightContainer');
-leftCont.innerHTML = '';
-rightCont.innerHTML = '';
-for (let i = 0; i < nA; i++) {
-const s = document.createElement('span');
-s.className = 'text-4xl sm:text-5xl pop-in';
-s.innerText = vocabA.emoji;
-leftCont.appendChild(s);
-}
-for (let i = 0; i < nB; i++) {
-const s = document.createElement('span');
-s.className = 'text-4xl sm:text-5xl pop-in';
-s.innerText = vocabB.emoji;
-rightCont.appendChild(s);
-}
-document.getElementById('k2CompareLeftBtn').disabled = false;
-document.getElementById('k2CompareRightBtn').disabled = false;
-}
-function submitK2CompareChoice(side) {
-if (isInputLocked) return;
-if (side === k2CompareTarget) {
-lockInteraction();
-onAnswerCorrect();
-} else {
-onAnswerWrong();
-}
-}
-/* K2-C: Addition (Tap-to-Add) */
-function renderK2Addition() {
-const stage = document.getElementById('stageK2Add');
-stage.classList.remove('hidden');
-stage.classList.add('flex');
-const n1 = getRandomInt(1, 5);
-const n2 = getRandomInt(1, 4);
-targetAnswer = n1 + n2;
-const vocab = getRandomItem(VOCAB_DATABASE);
-vocabPillText.innerText = ⁠${targetAnswer} ${vocab.pluralEn}⁠;
-promptZh.innerText = ⁠${n1} 加 ${n2}，逐個點擊圖案數數總和！⁠;
-promptEn.innerText = ⁠${n1} plus ${n2}. Tap each to count total!⁠;
-activeQuestionPromptEn = ⁠${n1} plus ${n2}. Tap each ${vocab.en} to count the total!⁠;
-document.getElementById('k2AddLeftDigit').innerText = n1;
-document.getElementById('k2AddRightDigit').innerText = n2;
-const leftBox = document.getElementById('k2AddLeftItems');
-const rightBox = document.getElementById('k2AddRightItems');
-leftBox.innerHTML = '';
-rightBox.innerHTML = '';
-const allItemElements = [];
-const activeToggledSet = new Set();
-function refreshSequentialBadges() {
-let runningSeq = 1;
-allItemElements.forEach((el) => {
-const badge = el.querySelector('.add-badge');
-if (activeToggledSet.has(el)) {
-badge.innerText = runningSeq;
-badge.classList.remove('hidden');
-el.classList.add('ring-4', 'ring-rose-400', 'bg-white', 'shadow-md', 'scale-105');
-runningSeq++;
-} else {
-badge.innerText = '';
-badge.classList.add('hidden');
-el.classList.remove('ring-4', 'ring-rose-400', 'bg-white', 'shadow-md', 'scale-105');
-}
-});
-}
-function createAdditionItem() {
-const itemEl = document.createElement('div');
-itemEl.className = 'text-4xl sm:text-5xl p-2 rounded-2xl relative cursor-pointer pop-in transition-all hover:bg-white/80';
-itemEl.innerHTML = ⁠<span>${vocab.emoji}</span> <span class="add-badge hidden absolute -top-1 -right-1 bg-gradient-to-tr from-rose-500 to-pink-400 text-white font-black text-xs w-6 h-6 rounded-full flex items-center justify-center shadow-md border-2 border-white"></span>⁠;
-itemEl.onclick = () => {
-soundTapPop();
-if (activeToggledSet.has(itemEl)) {
-activeToggledSet.delete(itemEl);
-} else {
-activeToggledSet.add(itemEl);
-speakNumberWord(activeToggledSet.size);
-}
-refreshSequentialBadges();
-};
-allItemElements.push(itemEl);
-return itemEl;
-}
-for (let i = 0; i < n1; i++) leftBox.appendChild(createAdditionItem());
-for (let i = 0; i < n2; i++) rightBox.appendChild(createAdditionItem());
-renderChoiceButtons(targetAnswer, 2, 9);
-}
-/* K2-D: Subtraction (Cross-Out ❌) */
-function renderK2Subtraction() {
-const stage = document.getElementById('stageK2Sub');
-stage.classList.remove('hidden');
-stage.classList.add('flex');
-const total = getRandomInt(3, 7);
-const minus = getRandomInt(1, total - 1);
-targetAnswer = total - minus;
-const vocab = getRandomItem(VOCAB_DATABASE);
-vocabPillText.innerText = ⁠${vocab.en} ${vocab.zh}⁠;
-promptZh.innerText = ⁠${total} 減 ${minus}，親手點擊劃走 ${minus} 個！⁠;
-promptEn.innerText = ⁠${total} minus ${minus}. Tap to cross out ${minus} items!⁠;
-activeQuestionPromptEn = ⁠${total} take away ${minus}. Tap to cross out ${minus} items! How many are left?⁠;
-document.getElementById('k2SubTotalDigit').innerText = total;
-document.getElementById('k2SubMinusDigit').innerText = minus;
-document.getElementById('k2SubCutBadge').innerText = minus;
-const grid = document.getElementById('k2SubGrid');
-grid.innerHTML = '';
-let currentCrossCount = 0;
-for (let i = 0; i < total; i++) {
-const itemBox = document.createElement('div');
-itemBox.className = 'text-4xl sm:text-5xl p-2 rounded-2xl relative cursor-pointer pop-in transition-all hover:bg-purple-100';
-itemBox.innerText = vocab.emoji;
-itemBox.onclick = () => {
-if (itemBox.classList.contains('cross-marked')) {
-itemBox.classList.remove('cross-marked');
-currentCrossCount = Math.max(0, currentCrossCount - 1);
-soundTapPop();
-} else {
-itemBox.classList.add('cross-marked');
-currentCrossCount++;
-soundCrossCut();
-speakEnglishOnly(⁠Take away ${currentCrossCount}⁠);
-}
-};
-grid.appendChild(itemBox);
-}
-renderChoiceButtons(targetAnswer, 1, 6);
-}
-/* K3-A: Number Bonds to 10 */
-function renderK3Bonds() {
-const stage = document.getElementById('stageK3Bonds');
-stage.classList.remove('hidden');
-stage.classList.add('flex');
-const given = getRandomInt(1, 9);
-targetAnswer = 10 - given;
-vocabPillText.innerText = ⁠Bonds to 10 (凑十法)⁠;
-promptZh.innerText = ⁠10 的分解：${given} 加上幾多等於 10？⁠;
-promptEn.innerText = ⁠Number Bonds to 10: ${given} plus what makes 10?⁠;
-activeQuestionPromptEn = ⁠${given} plus what equals 10? Find the missing number!⁠;
-document.getElementById('k3BondsGiven').innerText = given;
-const tenFrame = document.getElementById('k3TenFrame');
-tenFrame.innerHTML = '';
-for (let i = 0; i < 10; i++) {
-const cell = document.createElement('div');
-cell.className = 'w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center border-2 border-amber-200';
-if (i < given) {
-cell.className += ' bg-amber-400 text-white font-black text-2xl shadow-sm';
-cell.innerText = '●';
-} else {
-cell.className += ' bg-amber-50 text-slate-300 font-bold';
-cell.innerText = '○';
-}
-tenFrame.appendChild(cell);
-}
-renderChoiceButtons(targetAnswer, 1, 9);
-}
-/* K3-B: Math within 20 */
-function renderK3Math20() {
-const stage = document.getElementById('stageK3Math20');
-stage.classList.remove('hidden');
-stage.classList.add('flex');
-const isAdd = Math.random() > 0.4;
-vocabPillText.innerText = ⁠Operations within 20⁠;
-if (isAdd) {
-const a = getRandomInt(6, 12);
-const b = getRandomInt(3, 8);
-targetAnswer = a + b;
-document.getElementById('k3Math20A').innerText = a;
-document.getElementById('k3Math20Op').innerText = '➕';
-document.getElementById('k3Math20B').innerText = b;
-promptZh.innerText = ⁠計算算式：${a} 加 ${b} 等於幾多？⁠;
-promptEn.innerText = ⁠Calculate: What is ${a} plus ${b}?⁠;
-activeQuestionPromptEn = ⁠What is ${a} plus ${b}?⁠;
-} else {
-const a = getRandomInt(11, 18);
-const b = getRandomInt(2, 7);
-targetAnswer = a - b;
-document.getElementById('k3Math20A').innerText = a;
-document.getElementById('k3Math20Op').innerText = '➖';
-document.getElementById('k3Math20B').innerText = b;
-promptZh.innerText = ⁠計算算式：${a} 減 ${b} 等於幾多？⁠;
-promptEn.innerText = ⁠Calculate: What is ${a} minus ${b}?⁠;
-activeQuestionPromptEn = ⁠What is ${a} minus ${b}?⁠;
-}
-renderChoiceButtons(targetAnswer, Math.max(5, targetAnswer - 4), targetAnswer + 4);
-}
-/* K3-C: Telling Time */
-function renderK3Clock() {
-const stage = document.getElementById('stageK3Clock');
-stage.classList.remove('hidden');
-stage.classList.add('flex');
-const isHalfHour = Math.random() > 0.5;
-const hour = getRandomInt(1, 12);
-const minute = isHalfHour ? 30 : 0;
-targetAnswer = isHalfHour ? ⁠${hour}:30⁠ : ⁠${hour}:00⁠;
-vocabPillText.innerText = ⁠Telling Time 認識時間⁠;
-promptZh.innerText = ⁠睇下個時鐘，現在是幾點鐘？⁠;
-promptEn.innerText = ⁠Look at the clock face. What time is it?⁠;
-activeQuestionPromptEn = ⁠Look at the clock face. What time is it?⁠;
-const container = document.getElementById('k3ClockSvgContainer');
-const hourAngle = (hour % 12) * 30 + (minute === 30 ? 15 : 0);
-const minAngle = minute === 30 ? 180 : 0;
-container.innerHTML = ⁠<svg viewBox="0 0 200 200" class="w-full h-full"> <circle cx="100" cy="100" r="92" fill="#ffffff" stroke="#0284c7" stroke-width="8"/> ${[1,2,3,4,5,6,7,8,9,10,11,12].map(n => { const rad = ((n * 30) - 90) * Math.PI / 180; const x = 100 + 72 * Math.cos(rad); const y = 100 + 72 * Math.sin(rad) + 5; return⁠<text x="${x}" y="${y}" font-size="16" font-weight="900" fill="#0f172a" text-anchor="middle">${n}</text>⁠; }).join('')} <line x1="100" y1="100" x2="100" y2="45" stroke="#f43f5e" stroke-width="7" stroke-linecap="round" transform="rotate(${hourAngle} 100 100)" /> <line x1="100" y1="100" x2="100" y2="25" stroke="#0284c7" stroke-width="4.5" stroke-linecap="round" transform="rotate(${minAngle} 100 100)" /> <circle cx="100" cy="100" r="6" fill="#0f172a" /> </svg> ⁠;
-const choices = [targetAnswer];
-while (choices.length < 4) {
-const randH = getRandomInt(1, 12);
-const randHalf = Math.random() > 0.5;
-const timeStr = randHalf ? ⁠${randH}:30⁠ : ⁠${randH}:00⁠;
-if (!choices.includes(timeStr)) choices.push(timeStr);
-}
-renderCustomChoiceButtons(choices, targetAnswer);
-}
-/* K3-D: HK Coins */
-function renderK3Coins() {
-const stage = document.getElementById('stageK3Coins');
-stage.classList.remove('hidden');
-stage.classList.add('flex');
-const targetCoin = getRandomItem(HK_COIN_DATA);
-targetAnswer = targetCoin.val;
-vocabPillText.innerText = ⁠HK Currency 香港貨幣⁠;
-promptZh.innerText = ⁠畫面中的是香港幾多圓硬幣？⁠;
-promptEn.innerText = ⁠Which Hong Kong coin is shown here?⁠;
-activeQuestionPromptEn = ⁠Which Hong Kong coin is shown here?⁠;
-document.getElementById('k3CoinTargetDisplay').innerHTML = ⁠<div class="hk-coin ${targetCoin.css}"> <span class="text-xl">${targetCoin.label}</span> <span class="text-[9px] font-bold">HONG KONG</span> </div>⁠;
-const options = [1, 2, 5, 10];
-const customLabels = options.map(v => ⁠$${v}⁠);
-renderCustomChoiceButtons(customLabels, ⁠$${targetAnswer}⁠, (val) => parseInt(val.replace('$', ''), 10) === targetAnswer);
-}
-/* P1-A: Place Value (UPGRADED: 魔法水晶寶石塔) */
-function renderP1Place() {
-const stage = document.getElementById('stageP1Place');
-stage.classList.remove('hidden');
-stage.classList.add('flex');
-const tens = getRandomInt(1, 4);
-const ones = getRandomInt(1, 8);
-targetAnswer = tens * 10 + ones;
-vocabPillText.innerText = ⁠🔮 Gems: ${tens} Tens & ${ones} Ones⁠;
-promptZh.innerText = ⁠數一數水晶能量塔(十位)與閃耀能量珠(個位)，代表咩數字？⁠;
-promptEn.innerText = ⁠Count the crystal towers and glowing gems! What number is it?⁠;
-activeQuestionPromptEn = ⁠${tens} crystal towers of ten, and ${ones} shiny gems. What number is this?⁠;
-const tensCont = document.getElementById('p1TensContainer');
-const onesCont = document.getElementById('p1OnesContainer');
-tensCont.innerHTML = '';
-onesCont.innerHTML = '';
-// Render glowing crystal towers (each has 10 sparkling gems)
-for (let t = 0; t < tens; t++) {
-const tower = document.createElement('div');
-tower.className = 'w-7 sm:w-8 h-28 bg-gradient-to-t from-indigo-500 via-purple-500 to-pink-400 rounded-xl flex flex-col justify-between py-1.5 px-1 border-2 border-indigo-200 shadow-md pop-in';
-tower.innerHTML = Array(10).fill('<div class="w-full h-1.5 bg-white/90 rounded-full shadow-xs"></div>').join('');
-tensCont.appendChild(tower);
-}
-// Render single shiny gems
-for (let o = 0; o < ones; o++) {
-const gem = document.createElement('div');
-gem.className = 'w-6 h-6 rounded-lg bg-gradient-to-tr from-pink-500 to-rose-400 flex items-center justify-center text-xs shadow-md border border-white pop-in';
-gem.innerText = '💎';
-onesCont.appendChild(gem);
-}
-renderChoiceButtons(targetAnswer, targetAnswer - 10, targetAnswer + 10);
-}
-/* P1-B: Two-Digit Quick Math (UPGRADED: 太空火箭發射台) */
-function renderP1Mental() {
-const stage = document.getElementById('stageP1Mental');
-stage.classList.remove('hidden');
-stage.classList.add('flex');
-const isAdd = Math.random() > 0.45;
-vocabPillText.innerText = ⁠🚀 Rocket Mental Math⁠;
-if (isAdd) {
-const a = getRandomInt(2, 6) * 10 + getRandomInt(1, 5);
-const b = getRandomInt(1, 3) * 10;
-targetAnswer = a + b;
-document.getElementById('p1MentalA').innerText = a;
-document.getElementById('p1MentalOp').innerText = '➕';
-document.getElementById('p1MentalB').innerText = b;
-promptZh.innerText = ⁠火箭發射能量速算：${a} 加 ${b} 等於幾多？⁠;
-promptEn.innerText = ⁠Rocket Launch Math: What is ${a} plus ${b}?⁠;
-activeQuestionPromptEn = ⁠Rocket launch power calculation! What is ${a} plus ${b}?⁠;
-} else {
-const a = getRandomInt(4, 8) * 10 + getRandomInt(2, 8);
-const b = getRandomInt(1, 3) * 10;
-targetAnswer = a - b;
-document.getElementById('p1MentalA').innerText = a;
-document.getElementById('p1MentalOp').innerText = '➖';
-document.getElementById('p1MentalB').innerText = b;
-promptZh.innerText = ⁠火箭冷卻能量速算：${a} 減 ${b} 等於幾多？⁠;
-promptEn.innerText = ⁠Rocket Math: What is ${a} minus ${b}?⁠;
-activeQuestionPromptEn = ⁠Rocket countdown! What is ${a} minus ${b}?⁠;
-}
-renderChoiceButtons(targetAnswer, targetAnswer - 15, targetAnswer + 15);
-}
-/* P1-C: HK Dollar Store (UPGRADED: 超市購物車多件商品結算 🛒) */
-const STORE_CATALOG = [
-{ nameZh: '玩具小熊', nameEn: 'Teddy Bear', icon: '🧸', price: 12 },
-{ nameZh: '草莓蛋糕', nameEn: 'Cake', icon: '🎂', price: 15 },
-{ nameZh: '賽車模型', nameEn: 'Toy Car', icon: '🏎️', price: 10 },
-{ nameZh: '健康果汁', nameEn: 'Fruit Juice', icon: '🧃', price: 6 },
-{ nameZh: '朱古力糖', nameEn: 'Chocolates', icon: '🍫', price: 8 },
-{ nameZh: '彩色氣球', nameEn: 'Balloons', icon: '🎈', price: 4 }
-];
-function renderP1Money() {
-const stage = document.getElementById('stageP1Money');
-stage.classList.remove('hidden');
-stage.classList.add('flex');
-// Pick 2 or 3 distinct items
-const count = Math.random() > 0.4 ? 2 : 3;
-const shuffled = [...STORE_CATALOG].sort(() => 0.5 - Math.random());
-const selectedItems = shuffled.slice(0, count);
-let totalSum = 0;
-selectedItems.forEach(item => totalSum += item.price);
-targetAnswer = totalSum;
-vocabP1Store = selectedItems.map(i => i.nameEn).join(' & ');
-vocabPillText.innerText = ⁠🛒 Supermarket Shopping Cart⁠;
-// Render cart items cards
-const cartCont = document.getElementById('p1StoreCartItems');
-cartCont.innerHTML = '';
-selectedItems.forEach(item => {
-const itemCard = document.createElement('div');
-itemCard.className = 'bg-white p-2 rounded-2xl border border-amber-200 flex items-center gap-2 shadow-xs';
-itemCard.innerHTML = ⁠<span class="text-3xl">${item.icon}</span> <div class="text-left"> <div class="text-xs font-black text-slate-800">${item.nameZh}</div> <div class="text-xs font-bold text-rose-600">HK$ ${item.price}</div> </div>⁠;
-cartCont.appendChild(itemCard);
-});
-// Equation text
-const sumString = selectedItems.map(i => ⁠HK$ ${i.price}⁠).join(' + ');
-document.getElementById('p1StoreSumFormula').innerText = ⁠${sumString} = ?⁠;
-document.getElementById('p1StoreTotalText').innerText = ⁠HK$ ?⁠;
-promptZh.innerText = ⁠購物車買了 ${count} 件商品，計算總合並選擇付款金額！⁠;
-promptEn.innerText = ⁠Shopping cart total: Calculate ${sumString}!⁠;
-activeQuestionPromptEn = ⁠Look at your shopping cart! What is the total cost of these items? Calculate the sum!⁠;
-// Generate options
-const optionValues = [targetAnswer];
-while (optionValues.length < 4) {
-const diff = getRandomInt(-5, 6);
-const candidate = targetAnswer + diff;
-if (candidate > 5 && !optionValues.includes(candidate)) {
-optionValues.push(candidate);
-}
-}
-const labels = optionValues.sort((a,b) => a-b).map(val => ⁠HK$ ${val}⁠);
-renderCustomChoiceButtons(labels, ⁠HK$ ${targetAnswer}⁠, (selected) => selected === ⁠HK$ ${targetAnswer}⁠);
-}
-/* P1-D: Story Word Problem */
-const WORD_TEMPLATES = [
-{
-getQ: () => {
-const a = getRandomInt(4, 9);
-const b = getRandomInt(3, 7);
-const ans = a + b;
-return {
-zh: ⁠Leo 有 ${a} 粒糖果，媽媽再給他 ${b} 粒。Leo 現在共有幾多粒糖果？⁠,
-en: ⁠Leo has ${a} candies. Mum gives him ${b} more. How many candies in total?⁠,
-voice: ⁠Leo has ${a} candies. Mum gives him ${b} more. How many candies does Leo have in total?⁠,
-visual: '🍬 '.repeat(a) + '➕ ' + '🍬 '.repeat(b),
-ans
-};
-}
-},
-{
-getQ: () => {
-const a = getRandomInt(8, 14);
-const b = getRandomInt(2, 6);
-const ans = a - b;
-return {
-zh: ⁠池塘裡有 ${a} 隻小鴨，其中 ${b} 隻游走了。池塘裡仲剩幾多隻小鴨？⁠,
-en: ⁠There are ${a} ducks in the pond. ${b} swim away. How many ducks are left?⁠,
-voice: ⁠There are ${a} ducks in the pond. ${b} swim away. How many ducks are left?⁠,
-visual: '🦆 '.repeat(a - b) + '💨',
-ans
-};
-}
-}
-];
-function renderP1Word() {
-const stage = document.getElementById('stageP1Word');
-stage.classList.remove('hidden');
-stage.classList.add('flex');
-const template = getRandomItem(WORD_TEMPLATES);
-const q = template.getQ();
-targetAnswer = q.ans;
-vocabPillText.innerText = ⁠Word Problem 英文應用題⁠;
-promptZh.innerText = ⁠細心閱讀應用題，找出正確答案！⁠;
-promptEn.innerText = ⁠Read the word problem carefully and find the answer!⁠;
-activeQuestionPromptEn = q.voice;
-document.getElementById('p1WordZh').innerText = q.zh;
-document.getElementById('p1WordEn').innerText = q.en;
-document.getElementById('p1WordVisual').innerText = q.visual;
-renderChoiceButtons(targetAnswer, Math.max(1, targetAnswer - 5), targetAnswer + 5);
-}
-/* ==========================================================================
-6. BUTTON RENDERERS & ANTI-SPAM LOCK ARCHITECTURE
-========================================================================== */
-function renderChoiceButtons(correctVal, minR, maxR) {
-const set = new Set([correctVal]);
-while (set.size < 4) {
-set.add(getRandomInt(minR, maxR));
-}
-const options = Array.from(set).sort((a, b) => a - b);
-const palettes = [
-'from-amber-400 to-amber-500 border-amber-600 text-amber-950',
-'from-sky-400 to-sky-500 border-sky-600 text-sky-950',
-'from-emerald-400 to-emerald-500 border-emerald-600 text-emerald-950',
-'from-pink-400 to-rose-500 border-rose-600 text-rose-950'
-];
-numberOptionsRow.innerHTML = '';
-options.forEach((val, idx) => {
-const btn = document.createElement('button');
-const color = palettes[idx % palettes.length];
-btn.className = ⁠option-choice-btn bouncy-btn bg-gradient-to-b ${color} border-b-6 w-16 h-16 sm:w-20 sm:h-20 rounded-3xl text-3xl sm:text-4xl font-black flex items-center justify-center cursor-pointer shadow-lg⁠;
-btn.innerText = val;
-btn.onclick = () => {
-if (isInputLocked) return;
-if (val === correctVal) {
-lockInteraction();
-onAnswerCorrect();
-} else {
-onAnswerWrong();
-}
-};
-numberOptionsRow.appendChild(btn);
-});
-}
-function renderCustomChoiceButtons(labels, correctValue, customCheckFn = null) {
-const palettes = [
-'from-amber-400 to-amber-500 border-amber-600 text-amber-950',
-'from-sky-400 to-sky-500 border-sky-600 text-sky-950',
-'from-emerald-400 to-emerald-500 border-emerald-600 text-emerald-950',
-'from-pink-400 to-rose-500 border-rose-600 text-rose-950'
-];
-numberOptionsRow.innerHTML = '';
-labels.forEach((text, idx) => {
-const btn = document.createElement('button');
-const color = palettes[idx % palettes.length];
-btn.className = ⁠option-choice-btn bouncy-btn bg-gradient-to-b ${color} border-b-6 px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl text-base sm:text-xl font-black flex items-center justify-center cursor-pointer shadow-md min-w-[75px]⁠;
-btn.innerText = text;
-btn.onclick = () => {
-if (isInputLocked) return;
-const isCorrect = customCheckFn ? customCheckFn(text) : (text === correctValue);
-if (isCorrect) {
-lockInteraction();
-onAnswerCorrect();
-} else {
-onAnswerWrong();
-}
-};
-numberOptionsRow.appendChild(btn);
-});
-}
-function lockInteraction() {
-isInputLocked = true;
-document.querySelectorAll('.option-choice-btn, #k1CompareLeftBtn, #k1CompareRightBtn, #k2CompareLeftBtn, #k2CompareRightBtn').forEach(btn => {
-btn.disabled = true;
-});
-}
-/* ==========================================================================
-7. PROGRESSIVE EVOLUTION REWARDS ENGINE (STANDARD -> GOLD -> RAINBOW)
-========================================================================== */
-function onAnswerCorrect() {
-soundSuccessChime();
-soundCoinJingle();
-speakPraiseEn();
-totalQuestionsAnswered++;
-correctAnswersCount++;
-gradeSolvedCounters[currentGrade]++;
-currentStars += 1;
-headerStars.innerText = currentStars;
-confetti({
-particleCount: 65,
-spread: 85,
-origin: { y: 0.6 }
-});
-promptZh.innerText = '太叻啦！答啱啦！🎉';
-promptEn.innerText = 'Awesome! That is correct! ⭐';
-// Every 4 questions triggers an Evolution or New Sticker event
-if (totalQuestionsAnswered % 4 === 0) {
-setTimeout(triggerNextEvolutionMilestone, 650);
-} else {
-setTimeout(generateQuestion, 1400);
-}
-}
-function onAnswerWrong() {
-soundEncourageTone();
-speakTryAgainEn();
-promptZh.innerText = '差少少！再試多次啦！💪';
-promptEn.innerText = 'Almost! Try again! You can do it! 🐰';
-const banner = document.getElementById('promptDisplayBanner');
-banner.classList.add('animate-wiggle');
-setTimeout(() => banner.classList.remove('animate-wiggle'), 400);
-}
-function triggerNextEvolutionMilestone() {
-let targetSticker = null;
-let targetNextTier = 1;
-// Phase 1: Unlock locked stickers (Tier 0 -> Tier 1)
-for (let s of STICKER_LIST) {
-if (stickerTierMap[s.id] === 0) {
-targetSticker = s;
-targetNextTier = 1;
-break;
-}
-}
-// Phase 2: If all unlocked to Tier 1, upgrade to Tier 2 (Gold Foil)
-if (!targetSticker) {
-for (let s of STICKER_LIST) {
-if (stickerTierMap[s.id] === 1) {
-targetSticker = s;
-targetNextTier = 2;
-break;
-}
-}
-}
-// Phase 3: If all upgraded to Tier 2, upgrade to Tier 3 (Rainbow Prismatic)
-if (!targetSticker) {
-for (let s of STICKER_LIST) {
-if (stickerTierMap[s.id] === 2) {
-targetSticker = s;
-targetNextTier = 3;
-break;
-}
-}
-}
-// If all are already Tier 3 (Master Prestige), random celebration boost
-if (!targetSticker) {
-targetSticker = getRandomItem(STICKER_LIST);
-targetNextTier = 3;
-}
-stickerTierMap[targetSticker.id] = targetNextTier;
-updateAlbumBadgeDisplay();
-displayCelebrationModal(targetSticker, targetNextTier);
-}
-function updateAlbumBadgeDisplay() {
-let minTier = 3;
-let totalUnlocked = 0;
-STICKER_LIST.forEach(s => {
-const t = stickerTierMap[s.id];
-if (t > 0) totalUnlocked++;
-if (t < minTier) minTier = t;
-});
-if (totalUnlocked === 0) {
-albumTierBadge.innerText = '0/12';
-document.getElementById('headerAlbumIcon').innerText = '🎁';
-} else if (minTier >= 2) {
-albumTierBadge.innerText = '🌈 RAINBOW';
-document.getElementById('headerAlbumIcon').innerText = '🌈';
-} else if (minTier >= 1) {
-albumTierBadge.innerText = '✨ GOLD';
-document.getElementById('headerAlbumIcon').innerText = '👑';
-} else {
-albumTierBadge.innerText = ⁠${totalUnlocked}/12⁠;
-document.getElementById('headerAlbumIcon').innerText = '🎁';
-}
-}
-function displayCelebrationModal(sticker, tier) {
-const modal = document.getElementById('unlockCelebrationModal');
-const title = document.getElementById('celebrationTitle');
-const subtitle = document.getElementById('celebrationSubtitle');
-const iconContainer = document.getElementById('newStickerBigIconContainer');
-const tierPill = document.getElementById('newStickerTierPill');
-const nameText = document.getElementById('newStickerNameText');
-iconContainer.innerText = sticker.icon;
-iconContainer.className = 'w-32 h-32 rounded-3xl my-3 flex items-center justify-center text-6xl shadow-lg animate-gentleFloatWiggle';
-if (tier === 3) {
-soundRainbowPrismaticChime();
-title.innerText = '🌈 全息幻彩虹光進化！';
-title.className = 'text-2xl font-black text-purple-600';
-subtitle.innerText = '不可思議！貼紙已進化至最高【幻彩虹光】！';
-tierPill.innerText = '🌈 幻彩全息虹光 (Prismatic Edition)';
-tierPill.className = 'text-xs font-black px-3 py-1 rounded-full text-white bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 shadow-md';
-iconContainer.classList.add('tier-rainbow');
-speakEnglishOnly(⁠Incredible! Rainbow evolution! Look at the Prismatic ${sticker.name.split(' ')[0]}! It shines so brightly with rainbow colors!⁠);
-} else if (tier === 2) {
-soundGoldUpgradeChime();
-title.innerText = '✨ 閃爍黃金箔升級！';
-title.className = 'text-2xl font-black text-amber-600';
-subtitle.innerText = '恭喜你！貼紙成功升級至【閃耀金箔】版！';
-tierPill.innerText = '🌟 閃爍黃金 (Golden Foil Edition)';
-tierPill.className = 'text-xs font-black px-3 py-1 rounded-full text-amber-950 bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 shadow-md';
-iconContainer.classList.add('tier-gold');
-speakEnglishOnly(⁠Super! Look at the Golden ${sticker.name.split(' ')[0]}! It shines so brightly!⁠);
-} else {
-soundSuccessChime();
-title.innerText = '🎉 解鎖新貼紙！';
-title.className = 'text-2xl font-black text-emerald-600';
-subtitle.innerText = '太棒了！你的收藏簿又多了一張可愛貼紙！';
-tierPill.innerText = '⚪ 普通徽章 (Standard)';
-tierPill.className = 'text-xs font-black px-3 py-1 rounded-full text-white bg-emerald-500 shadow-sm';
-iconContainer.classList.add('tier-standard');
-speakEnglishOnly(⁠Look! It's the lovely ${sticker.name.split(' ')[0]}! Well done!⁠);
-}
-nameText.innerText = sticker.name;
-modal.classList.remove('hidden');
-confetti({
-particleCount: 90,
-spread: 110,
-origin: { y: 0.55 }
-});
-}
-function closeUnlockModal() {
-soundTapPop();
-document.getElementById('unlockCelebrationModal').classList.add('hidden');
-generateQuestion();
-}
-/* ==========================================================================
-8. STICKER ALBUM MODAL & 3D FLOATING SHOWCASE WINDOW
-========================================================================== */
-const stickerAlbumModal = document.getElementById('stickerAlbumModal');
-const stickerGridContainer = document.getElementById('stickerGridContainer');
-const stickerShowcaseModal = document.getElementById('stickerShowcaseModal');
-function renderStickerAlbum() {
-stickerGridContainer.innerHTML = '';
-let totalGold = 0;
-let totalRainbow = 0;
-let totalUnlocked = 0;
-STICKER_LIST.forEach((item) => {
-const tier = stickerTierMap[item.id] || 0;
-if (tier >= 1) totalUnlocked++;
-if (tier >= 2) totalGold++;
-if (tier >= 3) totalRainbow++;
-const slot = document.createElement('div');
-let tierClass = 'bg-slate-100 border-2 border-dashed border-slate-300 opacity-40 cursor-not-allowed';
-let tierTag = '<span class="text-[9px] font-bold text-slate-400">未解鎖</span>';
-if (tier === 3) {
-tierClass = 'tier-rainbow shadow-md scale-102 cursor-pointer hover:scale-106';
-tierTag = '<span class="text-[8px] font-black text-purple-900 bg-white/90 px-1.5 py-0.2 rounded-full shadow-xs">🌈 幻彩</span>';
-} else if (tier === 2) {
-tierClass = 'tier-gold shadow-sm scale-101 cursor-pointer hover:scale-106';
-tierTag = '<span class="text-[8px] font-black text-amber-950 bg-white/90 px-1.5 py-0.2 rounded-full shadow-xs">🌟 金箔</span>';
-} else if (tier === 1) {
-tierClass = 'tier-standard bg-white shadow-xs cursor-pointer hover:scale-106';
-tierTag = '<span class="text-[8px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.2 rounded-full">⚪ 普通</span>';
-}
-slot.className = ⁠p-2 rounded-2xl flex flex-col items-center justify-between min-h-[92px] transition-all relative ${tierClass}⁠;
-slot.innerHTML = ⁠<span class="text-3xl my-auto select-none">${tier > 0 ? item.icon : '🔒'}</span> <div class="w-full flex flex-col items-center"> <span class="text-[9px] font-black text-slate-800 truncate w-full text-center">${tier > 0 ? item.name.split(' ')[0] : 'Locked'}</span> ${tierTag} </div>⁠;
-if (tier > 0) {
-slot.onclick = () => openStickerShowcase(item, tier);
-}
-stickerGridContainer.appendChild(slot);
-});
-const bannerText = document.getElementById('albumPrestigeLevelText');
-const progressText = document.getElementById('albumPrestigeProgress');
-if (totalUnlocked === 0) {
-bannerText.innerText = '第 1 階段：尚未獲得貼紙，快玩遊戲獲取！';
-progressText.innerText = '0/12 未解鎖';
-} else if (totalRainbow >= 12) {
-bannerText.innerText = '🌈 傳奇幻彩大師 (Prismatic Master)';
-progressText.innerText = '12/12 幻彩全滿';
-} else if (totalGold >= 12) {
-bannerText.innerText = '第 3 階段：正在晉升幻彩全息虹光！';
-progressText.innerText = ⁠${totalRainbow}/12 幻彩⁠;
-} else if (totalUnlocked >= 12) {
-bannerText.innerText = '第 2 階段：正在晉升純金箔徽章！';
-progressText.innerText = ⁠${totalGold}/12 金箔⁠;
-} else {
-bannerText.innerText = '第 1 階段：收集基礎貼紙中';
-progressText.innerText = ⁠${totalUnlocked}/12 普通⁠;
-}
-}
-function openStickerShowcase(sticker, tier) {
-soundTapPop();
-activeShowcaseSticker = { sticker, tier };
-const badge = document.getElementById('showcaseBigBadge');
-const tierBadge = document.getElementById('showcaseTierBadge');
-const nameZh = document.getElementById('showcaseNameZh');
-const descEn = document.getElementById('showcaseDescEn');
-badge.innerText = sticker.icon;
-badge.className = 'w-28 h-28 sm:w-36 sm:h-36 rounded-3xl flex items-center justify-center text-5xl sm:text-6xl shadow-xl animate-gentleFloatWiggle select-none shrink-0';
-if (tier === 3) {
-badge.classList.add('tier-rainbow');
-tierBadge.innerText = '🌈 幻彩全息虹光 Prismatic Edition';
-tierBadge.className = 'text-xs font-black px-3.5 py-1 rounded-full text-white bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 shadow-md';
-} else if (tier === 2) {
-badge.classList.add('tier-gold');
-tierBadge.innerText = '🌟 閃爍黃金箔 Golden Foil Edition';
-tierBadge.className = 'text-xs font-black px-3.5 py-1 rounded-full text-amber-950 bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 shadow-md';
-} else {
-badge.classList.add('tier-standard');
-tierBadge.innerText = '⚪ 普通徽章 Standard Edition';
-tierBadge.className = 'text-xs font-black px-3.5 py-1 rounded-full text-white bg-emerald-500 shadow-sm';
-}
-nameZh.innerText = sticker.name;
-descEn.innerText = sticker.desc;
-stickerShowcaseModal.classList.remove('hidden');
-speakShowcaseTeacherVoice();
-}
-function speakShowcaseTeacherVoice() {
-if (!activeShowcaseSticker) return;
-const { sticker, tier } = activeShowcaseSticker;
-const stickerBaseName = sticker.name.split(' ')[0];
-let teacherPraise = "";
-if (tier === 3) {
-teacherPraise = ⁠Incredible! Look at the Prismatic ${stickerBaseName}! It shines so brightly with rainbow colors! You are wonderful!⁠;
-} else if (tier === 2) {
-teacherPraise = ⁠Super! Look at the Golden ${stickerBaseName}! It shines so brightly! Well done!⁠;
-} else {
-teacherPraise = ⁠Look! It's the lovely ${stickerBaseName}! Well done!⁠;
-}
-speakEnglishOnly(teacherPraise);
-}
-function closeStickerShowcaseModal() {
-soundTapPop();
-if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-stickerShowcaseModal.classList.add('hidden');
-}
-document.getElementById('openStickerAlbumBtn').addEventListener('click', () => {
-soundTapPop();
-renderStickerAlbum();
-stickerAlbumModal.classList.remove('hidden');
-});
-function closeStickerModal() {
-soundTapPop();
-stickerAlbumModal.classList.add('hidden');
-}
-/* ==========================================================================
-9. VOICE SETTINGS MODAL & PERSONA SWITCHING
-========================================================================== */
-const voiceSettingsModal = document.getElementById('voiceSettingsModal');
-function openVoiceSettingsModal() {
-soundTapPop();
-updateVoiceSettingsUI();
-voiceSettingsModal.classList.remove('hidden');
-}
-function closeVoiceSettingsModal() {
-soundTapPop();
-updateTeacherUIBadge();
-voiceSettingsModal.classList.add('hidden');
-}
-function selectTeacherPersona(personaId) {
-soundTapPop();
-selectedTeacherId = personaId;
-isAutoGradeVoiceEnabled = false;
-document.getElementById('autoGradeVoiceToggle').checked = false;
-updateVoiceSettingsUI();
-updateTeacherUIBadge();
-}
-function toggleAutoGradeVoice() {
-isAutoGradeVoiceEnabled = document.getElementById('autoGradeVoiceToggle').checked;
-soundTapPop();
-updateVoiceSettingsUI();
-updateTeacherUIBadge();
-}
-function updateVoiceSettingsUI() {
-const activeTeacher = getEffectiveTeacher();
-['emma', 'sophie', 'chloe', 'daniel'].forEach(id => {
-const card = document.getElementById(⁠personaCard_${id}⁠);
-const check = card.querySelector('.check-mark');
-if (id === activeTeacher.id) {
-card.classList.add('border-sky-500', 'bg-sky-50');
-card.classList.remove('border-slate-200', 'bg-white');
-check.classList.remove('hidden');
-} else {
-card.classList.remove('border-sky-500', 'bg-sky-50');
-card.classList.add('border-slate-200', 'bg-white');
-check.classList.add('hidden');
-}
-});
-}
-function testSelectedVoice() {
-soundTapPop();
-const teacher = getEffectiveTeacher();
-const testPhrases = {
-emma: "Hello sweetie! I'm Miss Emma. Let's count numbers together! You can do it!",
-sophie: ⁠Hello lovely friends! I'm ${teacher.name}. We are going to have a splendid math adventure today!⁠,
-chloe: "G'day mate! I'm Miss Chloe! Are you ready for some awesome math games? Let's go!",
-daniel: "Hello young learners! I'm Mr. Daniel. Let's solve today's math puzzles together!"
-};
-speakEnglishOnly(testPhrases[teacher.id] || "Hello! Great job practicing math today!");
-}
-/* ==========================================================================
-10. PARENT ZONE & VERIFICATION
-========================================================================== */
-const parentGateModal = document.getElementById('parentGateModal');
-let parentGateAnswer = 0;
-document.getElementById('openParentGateBtn').addEventListener('click', () => {
-soundTapPop();
-const a = getRandomInt(7, 12);
-const b = getRandomInt(6, 9);
-parentGateAnswer = a * b;
-document.getElementById('parentLockFormula').innerText = ⁠${a} × ${b} = ?⁠;
-document.getElementById('parentLockInput').value = '';
-document.getElementById('parentLockError').classList.add('hidden');
-document.getElementById('parentLockChallenge').classList.remove('hidden');
-document.getElementById('parentDashboardReport').classList.add('hidden');
-parentGateModal.classList.remove('hidden');
-});
-function verifyParentPass() {
-const val = parseInt(document.getElementById('parentLockInput').value, 10);
-if (val === parentGateAnswer) {
-soundSuccessChime();
-document.getElementById('parentLockChallenge').classList.add('hidden');
-document.getElementById('parentDashboardReport').classList.remove('hidden');
-let totalTiersUnlocked = 0;
-STICKER_LIST.forEach(s => totalTiersUnlocked += (stickerTierMap[s.id] || 0));
-document.getElementById('statTotalSolved').innerText = ⁠${totalQuestionsAnswered} 題⁠;
-const acc = totalQuestionsAnswered > 0 ? Math.round((correctAnswersCount / totalQuestionsAnswered) * 100) : 100;
-document.getElementById('statAccuracy').innerText = ⁠${acc}%⁠;
-document.getElementById('statStars').innerText = ⁠${currentStars} 顆⁠;
-document.getElementById('statStickers').innerText = ⁠${totalTiersUnlocked} / 36 階⁠;
-document.getElementById('statK1Score').innerText = ⁠${gradeSolvedCounters.k1} 題完成⁠;
-document.getElementById('statK2Score').innerText = ⁠${gradeSolvedCounters.k2} 題完成⁠;
-document.getElementById('statK3Score').innerText = ⁠${gradeSolvedCounters.k3} 題完成⁠;
-document.getElementById('statP1Score').innerText = ⁠${gradeSolvedCounters.p1} 題完成⁠;
-} else {
-soundEncourageTone();
-document.getElementById('parentLockError').classList.remove('hidden');
-}
-}
-function closeParentGateModal() {
-soundTapPop();
-parentGateModal.classList.add('hidden');
-}
-/* ==========================================================================
-11. AUDIO TOGGLE & BOOTSTRAP
-========================================================================== */
-const toggleAudioBtn = document.getElementById('toggleAudioBtn');
-const audioMuteIcon = document.getElementById('audioMuteIcon');
-toggleAudioBtn.addEventListener('click', () => {
-isSoundOn = !isSoundOn;
-audioMuteIcon.innerText = isSoundOn ? '🔊' : '🔇';
-if (!isSoundOn && 'speechSynthesis' in window) {
-window.speechSynthesis.cancel();
-}
-soundTapPop();
-});
-// Boot
-updateAlbumBadgeDisplay();
-updateTeacherUIBadge();
-</script>
+
+  <header class="w-full max-w-5xl flex items-center justify-between clay-card px-3 sm:px-5 py-2.5 mb-3 gap-2">
+    <div class="flex items-center gap-2 shrink-0">
+      <button id="navBackBtn" onclick="handleNavigationBack()" class="unified-nav-btn bouncy-btn bg-gradient-to-b from-rose-400 to-pink-500 text-white border-pink-700">
+        <span id="navBackIcon">🏛️</span>
+        <span id="navBackLabel" class="hidden xs:inline">課程選單</span>
+      </button>
+
+      <button id="teacherVoiceModalBtn" onclick="openTeacherVoiceModal()" class="unified-nav-btn bouncy-btn bg-gradient-to-b from-purple-400 to-indigo-500 text-white border-indigo-700" title="自選英語老師聲音">
+        <span id="currentTeacherAvatar">🌸</span>
+        <span id="currentTeacherNamePill" class="hidden sm:inline">Miss Emma</span>
+      </button>
+
+      <button id="toggleAudioBtn" onclick="toggleAudioMute()" class="unified-nav-btn bouncy-btn bg-gradient-to-b from-sky-400 to-blue-500 text-white border-blue-700">
+        <span id="audioMuteIcon">🔊</span>
+        <span id="audioMuteLabel" class="hidden md:inline">發音</span>
+      </button>
+    </div>
+
+    <div id="activeGradePill" class="hidden sm:flex items-center gap-1.5 bg-slate-100/90 border border-slate-300 px-3 py-1.5 rounded-2xl text-xs font-black text-slate-700 shrink-0">
+      <span id="activeGradePillIcon">🌸</span>
+      <span id="activeGradePillText">K2 低班</span>
+    </div>
+
+    <div class="flex items-center gap-2 shrink-0">
+      <div class="unified-nav-btn bg-amber-50 border-2 border-amber-300 text-amber-800 shadow-inner cursor-default">
+        <span class="text-lg">⭐</span>
+        <span id="headerStars" class="font-extrabold text-base">0</span>
+      </div>
+
+      <button id="openStickerAlbumBtn" onclick="openStickerModal()" class="unified-nav-btn bouncy-btn bg-gradient-to-b from-emerald-400 to-teal-500 text-white border-teal-700 relative">
+        <span id="headerAlbumIcon">🎁</span>
+        <span class="hidden md:inline">貼紙寶箱</span>
+        <span id="albumTierBadge" class="absolute -top-1.5 -right-1.5 bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full border border-white">0/12</span>
+      </button>
+
+      <button id="openParentGateBtn" onclick="openParentGate()" class="unified-nav-btn bouncy-btn bg-gradient-to-b from-slate-700 to-slate-900 text-amber-200 border-slate-950" title="家長專區">
+        <span>🔒</span>
+        <span class="hidden sm:inline">家長</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="w-full max-w-5xl flex-1 flex flex-col items-center justify-center relative">
+    <div id="curriculumPortalScreen" class="w-full flex flex-col items-center gap-4 sm:gap-6 py-2">
+      <div class="text-center relative">
+        <div class="inline-flex items-center gap-2 bg-white/95 px-5 py-1.5 rounded-full shadow-sm border-2 border-pink-200 mb-2">
+          <span class="text-xs sm:text-sm font-extrabold text-pink-600 uppercase tracking-wider">🇭🇰 遵循香港教育局數學指引 • 純英文外教伴讀</span>
+        </div>
+        <h1 class="text-3xl sm:text-5xl font-black text-slate-800 tracking-tight flex items-center justify-center gap-2">
+          <span class="text-pink-500">Tiny</span><span class="text-sky-500">Genius</span>
+          <span class="text-amber-500">Math</span>
+          <span class="text-3xl sm:text-5xl">🇭🇰</span>
+        </h1>
+        <p class="text-xs sm:text-base font-bold text-slate-600 mt-1 max-w-xl mx-auto px-2">
+          幼小銜接專屬：K1 啟蒙 ➔ K2 具象運算 ➔ K3 銜接 ➔ P1 常規！支援多名溫柔外師切換、3D 立體浮動獎品展示與多件商品超市運算！
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full px-1.5">
+        <div class="clay-card p-4 sm:p-5 flex flex-col justify-between border-t-8 border-emerald-400 hover:shadow-xl transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-3xl sm:text-4xl">🌱</span>
+              <span class="bg-emerald-100 text-emerald-800 text-xs font-black px-2.5 py-0.5 rounded-full">3 - 4 歲</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-800">K1 幼兒班</h2>
+            <div class="text-xs font-bold text-emerald-700">啟蒙數感 (Early Math)</div>
+            <ul class="mt-3 space-y-1.5 text-xs text-slate-600 font-semibold border-t border-slate-200/80 pt-2.5">
+              <li class="flex items-center gap-1.5"><span>🔹</span> 點點小動物 1-5 數數</li>
+              <li class="flex items-center gap-1.5"><span>🔹</span> 大小與長短直觀比較</li>
+              <li class="flex items-center gap-1.5"><span>🔹</span> 基礎幾何圖形辨識</li>
+            </ul>
+          </div>
+          <button onclick="selectGrade('k1')" class="bouncy-btn mt-4 w-full bg-gradient-to-b from-emerald-400 to-teal-500 text-white font-black text-sm py-2.5 rounded-2xl border-b-4 border-teal-700">開始學習 Start 👉</button>
+        </div>
+
+        <div class="clay-card p-4 sm:p-5 flex flex-col justify-between border-t-8 border-sky-400 hover:shadow-xl transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-3xl sm:text-4xl">🌸</span>
+              <span class="bg-sky-100 text-sky-800 text-xs font-black px-2.5 py-0.5 rounded-full">4 - 5 歲</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-800">K2 低班</h2>
+            <div class="text-xs font-bold text-sky-700">具象運算 (Operations)</div>
+            <ul class="mt-3 space-y-1.5 text-xs text-slate-600 font-semibold border-t border-slate-200/80 pt-2.5">
+              <li class="flex items-center gap-1.5"><span>🔹</span> 1-10 點算與詞彙卡</li>
+              <li class="flex items-center gap-1.5"><span>🔹</span> 連續點數加法 (加加看)</li>
+              <li class="flex items-center gap-1.5"><span>🔹</span> 動手劃叉 ❌ 減法 (減減看)</li>
+              <li class="flex items-center gap-1.5 text-indigo-700 font-bold"><span>🎧</span> 1-10 基礎英文數字聽力</li>
+            </ul>
+          </div>
+          <button onclick="selectGrade('k2')" class="bouncy-btn mt-4 w-full bg-gradient-to-b from-sky-400 to-blue-500 text-white font-black text-sm py-2.5 rounded-2xl border-b-4 border-blue-700">開始學習 Start 👉</button>
+        </div>
+
+        <div class="clay-card p-4 sm:p-5 flex flex-col justify-between border-t-8 border-amber-400 hover:shadow-xl transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-3xl sm:text-4xl">⭐</span>
+              <span class="bg-amber-100 text-amber-800 text-xs font-black px-2.5 py-0.5 rounded-full">5 - 6 歲</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-800">K3 高班</h2>
+            <div class="text-xs font-bold text-amber-700">幼小銜接 (Bridge)</div>
+            <ul class="mt-3 space-y-1.5 text-xs text-slate-600 font-semibold border-t border-slate-200/80 pt-2.5">
+              <li class="flex items-center gap-1.5"><span>🔹</span> 10 的分解與組合 (Bonds)</li>
+              <li class="flex items-center gap-1.5"><span>🔹</span> 20 以內進位思維運算</li>
+              <li class="flex items-center gap-1.5"><span>🔹</span> 認識鐘面與香港硬幣</li>
+              <li class="flex items-center gap-1.5 text-indigo-700 font-bold"><span>🎧</span> 10 以內故事加減聆聽</li>
+            </ul>
+          </div>
+          <button onclick="selectGrade('k3')" class="bouncy-btn mt-4 w-full bg-gradient-to-b from-amber-400 to-orange-500 text-white font-black text-sm py-2.5 rounded-2xl border-b-4 border-orange-700">開始學習 Start 👉</button>
+        </div>
+
+        <div class="clay-card p-4 sm:p-5 flex flex-col justify-between border-t-8 border-rose-400 hover:shadow-xl transition-all">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-3xl sm:text-4xl">🚀</span>
+              <span class="bg-rose-100 text-rose-800 text-xs font-black px-2.5 py-0.5 rounded-full">6 - 7 歲</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-800">P1 小一</h2>
+            <div class="text-xs font-bold text-rose-700">小學常規 (Primary 1)</div>
+            <ul class="mt-3 space-y-1.5 text-xs text-slate-600 font-semibold border-t border-slate-200/80 pt-2.5">
+              <li class="flex items-center gap-1.5"><span>💎</span> 能量水晶塔 (十位與個位)</li>
+              <li class="flex items-center gap-1.5"><span>🚀</span> 太空火箭推進兩位數速算</li>
+              <li class="flex items-center gap-1.5"><span>🛒</span> 超市購物車多商品合併運算</li>
+              <li class="flex items-center gap-1.5 text-indigo-700 font-bold"><span>🎧</span> 十個位速算英文聆聽</li>
+            </ul>
+          </div>
+          <button onclick="selectGrade('p1')" class="bouncy-btn mt-4 w-full bg-gradient-to-b from-rose-400 to-pink-500 text-white font-black text-sm py-2.5 rounded-2xl border-b-4 border-pink-700">開始學習 Start 👉</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="gradeLobbyScreen" class="w-full hidden flex-col items-center gap-4 py-2">
+      <div class="text-center">
+        <span id="lobbyBadge" class="text-xs font-black px-3.5 py-1 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-widest">Grade K1</span>
+        <h2 id="lobbyTitle" class="text-2xl sm:text-4xl font-black text-slate-800 mt-1">請選擇探索單元</h2>
+        <p id="lobbySubtitle" class="text-xs sm:text-sm font-bold text-slate-500">Pick a game mode to start!</p>
+      </div>
+      <div id="lobbyCardsContainer" class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 w-full max-w-4xl px-2"></div>
+    </div>
+
+    <div id="gamePlayScreen" class="w-full hidden flex-col items-center">
+      <div class="w-full max-w-3xl flex items-center justify-center gap-2 sm:gap-3 mb-2.5">
+        <button id="replayVoiceBtn" onclick="speakCurrentQuestionPrompt()" class="bouncy-btn bg-gradient-to-b from-amber-300 to-amber-500 text-amber-950 p-2 sm:px-3 sm:py-2.5 rounded-2xl border-b-4 border-amber-600 flex items-center gap-1.5 font-black shrink-0 cursor-pointer">
+          <span class="text-xl sm:text-2xl">🗣️</span>
+          <span class="text-xs sm:text-sm hidden sm:inline">重聽 (EN)</span>
+        </button>
+        <div id="promptDisplayBanner" class="clay-card px-4 sm:px-6 py-2.5 text-center flex-1">
+          <div id="promptZh" class="text-base sm:text-xl font-extrabold text-slate-800">載入題目中...</div>
+          <div id="promptEn" class="text-xs sm:text-sm font-bold text-sky-600 flex items-center justify-center gap-1">Loading...</div>
+        </div>
+      </div>
+
+      <div class="w-full max-w-3xl clay-card p-3 sm:p-6 min-h-[350px] flex flex-col items-center justify-center relative">
+        <div id="vocabPill" class="absolute top-2.5 left-3 sm:left-5 inline-flex items-center gap-1.5 bg-amber-100/90 border border-amber-300 text-amber-900 text-xs font-black px-3 py-1 rounded-full shadow-sm">
+          <span>🏷️</span> <span id="vocabPillText">Panda 熊貓</span>
+        </div>
+
+        <div id="stageK1Count" class="w-full hidden flex-col items-center py-4">
+          <div class="text-xs sm:text-sm font-bold text-slate-500 mb-3 bg-slate-100 px-3 py-1 rounded-full">👆 輕輕點擊每個動物，一起用英文數！</div>
+          <div id="k1CountGrid" class="flex flex-wrap justify-center items-center gap-4 sm:gap-6 max-w-lg min-h-[120px]"></div>
+        </div>
+
+        <div id="stageK1Compare" class="w-full hidden grid-cols-2 gap-4 max-w-lg py-2">
+          <button id="k1CompareLeftBtn" onclick="submitK1CompareChoice('left')" class="bouncy-btn clay-card hover:bg-emerald-50/70 p-4 flex flex-col items-center justify-center min-h-[190px] border-b-8 border-emerald-300">
+            <div id="k1CompareLeftGraphic" class="my-auto flex items-center justify-center"></div>
+            <span class="text-xs sm:text-sm font-black bg-emerald-100 text-emerald-900 px-3 py-1 rounded-full mt-2">呢邊 👈</span>
+          </button>
+          <button id="k1CompareRightBtn" onclick="submitK1CompareChoice('right')" class="bouncy-btn clay-card hover:bg-teal-50/70 p-4 flex flex-col items-center justify-center min-h-[190px] border-b-8 border-teal-300">
+            <div id="k1CompareRightGraphic" class="my-auto flex items-center justify-center"></div>
+            <span class="text-xs sm:text-sm font-black bg-teal-100 text-teal-900 px-3 py-1 rounded-full mt-2">呢邊 👉</span>
+          </button>
+        </div>
+
+        <div id="stageK1Shape" class="w-full hidden flex-col items-center py-2">
+          <div id="k1ShapeTargetGraphic" class="w-28 h-28 sm:w-32 sm:h-32 mb-4 flex items-center justify-center"></div>
+          <div id="k1ShapeOptionsGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-md"></div>
+        </div>
+
+        <div id="stageK2Count" class="w-full hidden flex-col items-center py-3">
+          <div class="text-xs sm:text-sm font-bold text-slate-500 mb-2 bg-slate-100 px-3 py-1 rounded-full">👆 輕輕點擊每個圖案數數看！</div>
+          <div id="k2CountGrid" class="flex flex-wrap justify-center items-center gap-3 sm:gap-4 max-w-xl min-h-[130px] p-2"></div>
+        </div>
+
+        <div id="stageK2Compare" class="w-full hidden grid-cols-2 gap-3 sm:gap-5 max-w-xl py-2">
+          <button id="k2CompareLeftBtn" onclick="submitK2CompareChoice('left')" class="bouncy-btn clay-card hover:bg-sky-50/70 p-3 sm:p-5 flex flex-col items-center justify-between min-h-[180px] border-b-8 border-sky-300">
+            <div id="k2CompareLeftContainer" class="flex flex-wrap justify-center gap-2 items-center my-auto min-h-[80px]"></div>
+            <span class="text-xs sm:text-sm font-black bg-sky-200 text-sky-900 px-3 py-1 rounded-full mt-2">呢邊比較多 👈</span>
+          </button>
+          <button id="k2CompareRightBtn" onclick="submitK2CompareChoice('right')" class="bouncy-btn clay-card hover:bg-amber-50/70 p-3 sm:p-5 flex flex-col items-center justify-between min-h-[180px] border-b-8 border-amber-300">
+            <div id="k2CompareRightContainer" class="flex flex-wrap justify-center gap-2 items-center my-auto min-h-[80px]"></div>
+            <span class="text-xs sm:text-sm font-black bg-amber-200 text-amber-900 px-3 py-1 rounded-full mt-2">呢邊比較多 👉</span>
+          </button>
+        </div>
+
+        <div id="stageK2Add" class="w-full hidden flex-col items-center py-2">
+          <div class="text-xs sm:text-sm font-black text-rose-600 mb-2 bg-rose-50 border border-rose-200 px-3.5 py-1 rounded-full">👉 逐個點擊圖案數出總和！</div>
+          <div class="flex items-center justify-center flex-wrap gap-2 sm:gap-4 my-2">
+            <div class="clay-card p-3 sm:p-4 flex flex-col items-center min-w-[110px] sm:min-w-[130px] border-2 border-amber-200 bg-amber-50/40">
+              <div id="k2AddLeftItems" class="flex flex-wrap justify-center gap-2 max-w-[140px] min-h-[60px] items-center"></div>
+              <span id="k2AddLeftDigit" class="text-2xl sm:text-3xl font-black text-amber-700 mt-1">3</span>
+            </div>
+            <span class="text-3xl sm:text-4xl font-black text-rose-500">➕</span>
+            <div class="clay-card p-3 sm:p-4 flex flex-col items-center min-w-[110px] sm:min-w-[130px] border-2 border-sky-200 bg-sky-50/40">
+              <div id="k2AddRightItems" class="flex flex-wrap justify-center gap-2 max-w-[140px] min-h-[60px] items-center"></div>
+              <span id="k2AddRightDigit" class="text-2xl sm:text-3xl font-black text-sky-700 mt-1">2</span>
+            </div>
+            <span class="text-3xl sm:text-4xl font-black text-emerald-500">🟰</span>
+            <div class="w-14 sm:w-16 h-14 sm:h-16 rounded-2xl border-4 border-dashed border-indigo-300 flex items-center justify-center bg-indigo-50/70">
+              <span class="text-3xl font-black text-indigo-400">❓</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="stageK2Sub" class="w-full hidden flex-col items-center py-2">
+          <div class="text-xs sm:text-sm font-black text-purple-700 mb-2 bg-purple-100 border border-purple-300 px-4 py-1 rounded-full flex items-center gap-1.5">
+            <span>✂️</span> 點擊劃走 <span id="k2SubCutBadge" class="bg-red-500 text-white px-2 py-0.5 rounded-full font-black text-sm">2</span> 個，數下仲剩幾多？
+          </div>
+          <div id="k2SubGrid" class="flex flex-wrap justify-center items-center gap-2.5 sm:gap-4 max-w-lg min-h-[110px] p-3 bg-purple-50/70 rounded-2xl border-2 border-purple-200"></div>
+          <div class="flex items-center justify-center gap-3 mt-3 text-xl sm:text-2xl font-black text-purple-950 bg-white px-5 py-1.5 rounded-full border-2 border-purple-200 shadow-sm">
+            <span id="k2SubTotalDigit">5</span>
+            <span class="text-pink-500">➖</span>
+            <span id="k2SubMinusDigit">2</span>
+            <span class="text-emerald-500">🟰</span>
+            <span class="text-indigo-600">❓</span>
+          </div>
+        </div>
+
+        <div id="stageAudioListening" class="w-full hidden flex-col items-center py-2">
+          <div class="flex items-center gap-2 mb-2 bg-sky-50 border border-sky-300 px-4 py-1.5 rounded-full">
+            <span class="text-sky-600 font-black text-xs">🎧 英文聆聽題 Listening Challenge...</span>
+            <div class="flex items-center gap-1">
+              <div class="sound-wave-bar"></div>
+              <div class="sound-wave-bar"></div>
+              <div class="sound-wave-bar"></div>
+              <div class="sound-wave-bar"></div>
+            </div>
+          </div>
+          <div id="listeningSceneIllustration" class="w-full max-w-md p-4 rounded-3xl bg-gradient-to-b from-sky-100 to-indigo-50 border-3 border-indigo-200 flex flex-col items-center text-center shadow-inner my-2">
+            <div id="listeningSceneEmojiArt" class="text-5xl sm:text-6xl mb-2 flex justify-center items-center gap-2"></div>
+            <div id="listeningSceneCaption" class="text-xs sm:text-sm font-bold text-slate-700 bg-white/80 px-4 py-1 rounded-xl"></div>
+          </div>
+          <div class="text-xs font-black text-indigo-700 mt-1">👂 仔細聆聽老師的英語提示，挑選正確數字！</div>
+        </div>
+
+        <div id="stageK3Bonds" class="w-full hidden flex-col items-center py-2">
+          <div class="text-xs sm:text-sm font-bold text-amber-700 mb-2 bg-amber-50 border border-amber-300 px-3 py-1 rounded-full">十格陣 (Ten-Frame)：凑成 10 仲需要幾多？</div>
+          <div id="k3TenFrame" class="grid grid-cols-5 gap-2 p-3 bg-white border-4 border-amber-300 rounded-2xl shadow-inner max-w-xs mb-3"></div>
+          <div class="flex items-center justify-center gap-2 text-2xl sm:text-3xl font-black text-amber-950 bg-amber-50 px-5 py-2 rounded-2xl border-2 border-amber-200">
+            <span id="k3BondsGiven">7</span>
+            <span class="text-amber-500">➕</span>
+            <span class="w-12 h-12 rounded-xl border-3 border-dashed border-amber-400 bg-white flex items-center justify-center text-amber-600">❓</span>
+            <span class="text-emerald-600">🟰</span>
+            <span class="text-rose-600">10</span>
+          </div>
+        </div>
+
+        <div id="stageK3Math20" class="w-full hidden flex-col items-center py-4">
+          <div class="clay-card-flat px-8 py-5 flex items-center justify-center gap-3 text-3xl sm:text-5xl font-black text-slate-800 shadow-sm border-2 border-sky-200">
+            <span id="k3Math20A">12</span>
+            <span id="k3Math20Op" class="text-pink-500">➕</span>
+            <span id="k3Math20B">5</span>
+            <span class="text-emerald-500">🟰</span>
+            <span class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-4 border-dashed border-sky-400 bg-sky-50 flex items-center justify-center text-sky-500">❓</span>
+          </div>
+        </div>
+
+        <div id="stageK3Clock" class="w-full hidden flex-col items-center py-2">
+          <div class="text-xs sm:text-sm font-bold text-slate-600 mb-2">睇下個鐘面，現在係幾點鐘？(What time is it?)</div>
+          <div id="k3ClockSvgContainer" class="w-48 h-48 sm:w-56 sm:h-56 my-2 drop-shadow-md"></div>
+        </div>
+
+        <div id="stageK3Coins" class="w-full hidden flex-col items-center py-2">
+          <div class="text-xs sm:text-sm font-bold text-slate-600 mb-2">呢個係香港幾多元硬幣？</div>
+          <div id="k3CoinTargetDisplay" class="my-4 transform scale-125"></div>
+        </div>
+
+        <div id="stageP1Place" class="w-full hidden flex-col items-center py-2">
+          <div class="text-xs sm:text-sm font-bold text-indigo-800 mb-2 bg-indigo-50 border border-indigo-200 px-4 py-1 rounded-full flex items-center gap-1.5">
+            <span>✨</span> 魔法能量柱 (每柱 10 粒水晶) 與零散寶石，代表咩數字？
+          </div>
+          <div class="flex items-center justify-center gap-6 sm:gap-12 my-3 p-4 bg-gradient-to-b from-indigo-50/70 to-purple-50/50 border-2 border-indigo-200 rounded-3xl shadow-inner">
+            <div class="flex flex-col items-center">
+              <span class="text-xs font-black text-indigo-700 bg-indigo-100 px-3 py-0.5 rounded-full mb-2">十位 Tens</span>
+              <div id="p1TensContainer" class="flex gap-2 min-h-[110px] items-end"></div>
+            </div>
+            <div class="flex flex-col items-center">
+              <span class="text-xs font-black text-rose-700 bg-rose-100 px-3 py-0.5 rounded-full mb-2">個位 Units</span>
+              <div id="p1OnesContainer" class="grid grid-cols-2 gap-2 min-h-[110px] items-center"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="stageP1Mental" class="w-full hidden flex-col items-center py-2">
+          <div class="flex items-center gap-2 mb-2 bg-rose-50 border border-rose-200 px-4 py-1 rounded-full text-xs font-black text-rose-700">
+            <span>🚀</span> 太空火箭能量推進！計算推進器數值！
+          </div>
+          <div class="relative clay-card-flat px-8 py-5 flex items-center justify-center gap-3 text-3xl sm:text-5xl font-black text-slate-800 shadow-sm border-2 border-rose-300 bg-gradient-to-r from-rose-50 via-amber-50 to-orange-50">
+            <span class="text-3xl sm:text-4xl">🚀</span>
+            <span id="p1MentalA">35</span>
+            <span id="p1MentalOp" class="text-rose-500">➕</span>
+            <span id="p1MentalB">20</span>
+            <span class="text-emerald-500">🟰</span>
+            <span class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl border-4 border-dashed border-rose-400 bg-white flex items-center justify-center text-rose-500">❓</span>
+          </div>
+        </div>
+
+        <div id="stageP1Money" class="w-full hidden flex-col items-center py-2 w-full max-w-lg">
+          <div class="w-full bg-gradient-to-b from-amber-50 to-orange-50/50 border-2 border-amber-300 rounded-3xl p-3.5 shadow-sm mb-2">
+            <div class="flex items-center justify-between border-b border-amber-200 pb-2 mb-2.5">
+              <span class="text-xs font-black text-amber-900 flex items-center gap-1.5">
+                <span>🛒</span> 超市購物車清單 (Shopping Cart)
+              </span>
+              <span class="text-[10px] font-bold text-slate-500 bg-white px-2 py-0.5 rounded-full border border-amber-200">香港貨幣結算</span>
+            </div>
+            <div id="p1CartItemsList" class="flex flex-col gap-1.5 mb-3"></div>
+            <div class="flex items-center justify-between bg-white/95 px-3.5 py-2 rounded-2xl border border-amber-300">
+              <span class="text-xs font-black text-slate-700">總金額 Total Sum:</span>
+              <div id="p1CartEquationDisplay" class="text-base sm:text-lg font-black text-rose-600"></div>
+            </div>
+          </div>
+          <div class="text-xs font-bold text-slate-500">點選正確的結帳金額！(Select matching total)</div>
+        </div>
+      </div>
+
+      <div id="numberOptionsRow" class="w-full mt-3.5 flex justify-center items-center gap-2.5 sm:gap-4 flex-wrap"></div>
+    </div>
+
+    <!-- MODAL 1: 貼紙寶箱 -->
+    <div id="stickerAlbumModal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+      <div class="clay-card p-4 sm:p-6 max-w-lg w-full border-4 border-amber-300 flex flex-col items-center text-center pop-in max-h-[92vh]">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-3xl">📖</span>
+          <h3 class="text-xl sm:text-2xl font-black text-amber-900">貼紙進化收藏簿</h3>
+        </div>
+        <p class="text-xs font-bold text-slate-500">點擊已解鎖的貼紙，可打開立體展示窗與英文讀音！</p>
+        <div class="w-full my-2.5 py-1.5 px-3 rounded-xl bg-gradient-to-r from-amber-200 via-rose-200 to-indigo-200 border border-white text-xs font-black text-slate-800 flex items-center justify-between shrink-0">
+          <span>👑 當前位階：<span id="albumPrestigeLevelText" class="text-indigo-800 font-extrabold">第 1 階段</span></span>
+          <span id="albumPrestigeProgress" class="bg-white/80 px-2 py-0.5 rounded-full text-[10px]">0/12</span>
+        </div>
+        <div class="w-full overflow-y-auto flex-1 my-1 p-2 bg-amber-50/70 rounded-2xl border-2 border-amber-200 min-h-[200px]">
+          <div id="stickerGridContainer" class="grid grid-cols-3 sm:grid-cols-4 gap-2.5 w-full"></div>
+        </div>
+        <button onclick="closeStickerModal()" class="bouncy-btn mt-3 w-full bg-gradient-to-b from-pink-400 to-rose-500 text-white font-black text-sm sm:text-base py-2.5 rounded-2xl border-b-4 border-rose-700 shrink-0">
+          回到遊戲 Keep Playing 🎈
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL 2: 3D 大尺寸立體展示窗 (No Overflow) -->
+    <div id="stickerShowcaseModal" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+      <div class="clay-card p-5 sm:p-6 max-w-sm w-full border-4 flex flex-col items-center text-center pop-in max-h-[92vh] overflow-y-auto relative">
+        <button onclick="closeShowcaseModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700 text-xl font-black w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">✕</button>
+        <h3 id="showcaseModalTitle" class="text-lg sm:text-xl font-black text-slate-800 mt-1">Sticker Showcase</h3>
+        <span id="showcaseModalTierPill" class="text-[11px] font-black px-3 py-0.5 rounded-full text-white bg-emerald-500 my-1.5">普通徽章</span>
+        <div class="my-3 py-2 flex items-center justify-center w-full">
+          <div id="showcaseModalBadgeBox" class="w-28 h-28 sm:w-36 sm:h-36 rounded-3xl flex items-center justify-center text-6xl sm:text-7xl shadow-xl animate-gentleFloatWiggle transition-all">🦄</div>
+        </div>
+        <h4 id="showcaseModalName" class="text-base sm:text-lg font-black text-slate-800">Unicorn 獨角獸</h4>
+        <p id="showcaseModalSpeechText" class="text-xs font-bold text-sky-700 bg-sky-50 p-2.5 rounded-xl border border-sky-200 mt-2 italic">
+          "Look! It's the lovely Unicorn! Well done!"
+        </p>
+        <div class="grid grid-cols-2 gap-2 w-full mt-4">
+          <button onclick="replayShowcaseVoice()" class="bouncy-btn bg-gradient-to-b from-sky-400 to-blue-500 text-white font-black text-xs sm:text-sm py-2.5 rounded-xl border-b-4 border-blue-700 flex items-center justify-center gap-1">
+            <span>🔊</span> 溫柔讀音
+          </button>
+          <button onclick="closeShowcaseModal()" class="bouncy-btn bg-gradient-to-b from-slate-200 to-slate-300 text-slate-700 font-black text-xs sm:text-sm py-2.5 rounded-xl border-b-4 border-slate-400">
+            關閉 Close
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 3: 老師音色選擇 -->
+    <div id="teacherVoiceModal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+      <div class="clay-card p-5 max-w-md w-full border-4 border-indigo-300 flex flex-col items-center text-center pop-in max-h-[92vh] overflow-y-auto">
+        <div class="text-3xl mb-1">👩‍🏫</div>
+        <h3 class="text-xl font-black text-slate-800">自選英語老師聲音 (Teacher Voices)</h3>
+        <p class="text-xs font-bold text-slate-500 mb-3">嚴格過濾發音性別，杜絕男聲誤稱 Miss！可自由選擇喜歡的老師：</p>
+        <div id="teacherCardsList" class="flex flex-col gap-2.5 w-full"></div>
+        <button onclick="closeTeacherVoiceModal()" class="bouncy-btn mt-4 w-full bg-gradient-to-b from-indigo-500 to-indigo-600 text-white font-black text-sm py-2.5 rounded-xl border-b-4 border-indigo-800">
+          儲存並返回 Save & Return
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL 4: 家長專區 -->
+    <div id="parentGateModal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+      <div class="clay-card p-6 max-w-lg w-full border-4 border-slate-300 flex flex-col items-center text-center pop-in max-h-[90vh] overflow-y-auto">
+        <div class="text-3xl mb-1">🔒</div>
+        <h3 class="text-xl font-black text-slate-800">家長驗證與學習進度 (Parents Only)</h3>
+        <p class="text-xs font-semibold text-slate-500 mt-0.5">請回答算式以解鎖學習報告：</p>
+        <div id="parentLockChallenge" class="w-full my-3 p-3 bg-slate-100 rounded-2xl border border-slate-300">
+          <div id="parentLockFormula" class="text-2xl font-black text-slate-700 tracking-wider">8 × 7 = ?</div>
+          <input id="parentLockInput" type="number" placeholder="答案" class="mt-2 w-28 text-center text-xl font-black p-1.5 rounded-xl border-2 border-slate-400 focus:outline-none focus:border-indigo-500">
+          <button onclick="verifyParentPass()" class="bouncy-btn mt-2 bg-indigo-600 text-white font-bold text-xs px-4 py-2 rounded-xl block mx-auto">驗證 Verify</button>
+          <div id="parentLockError" class="text-red-500 text-xs font-bold mt-1 hidden">答案不正確，請再試一次</div>
+        </div>
+        <div id="parentDashboardReport" class="w-full hidden text-left my-2">
+          <div class="flex items-center justify-between border-b pb-1.5 mb-2.5">
+            <h4 class="text-sm font-black text-slate-800">📊 香港學制學習進度 (EDB Progress)</h4>
+            <span class="text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Live</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-xs mb-3">
+            <div class="bg-sky-50 p-2.5 rounded-xl border border-sky-200">
+              <span class="text-slate-500 block">總答題數</span>
+              <span id="statTotalSolved" class="text-lg font-black text-sky-800">0 題</span>
+            </div>
+            <div class="bg-emerald-50 p-2.5 rounded-xl border border-emerald-200">
+              <span class="text-slate-500 block">整體正確率</span>
+              <span id="statAccuracy" class="text-lg font-black text-emerald-800">100%</span>
+            </div>
+          </div>
+        </div>
+        <button onclick="closeParentGateModal()" class="bouncy-btn mt-3 w-full bg-slate-200 text-slate-700 font-black text-sm py-2 rounded-xl">關閉 Close</button>
+      </div>
+    </div>
+
+    <!-- MODAL 5: 貼紙升級慶祝 -->
+    <div id="unlockCelebrationModal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+      <div id="celebrationModalCard" class="clay-card p-6 max-w-sm w-full border-4 flex flex-col items-center text-center pop-in">
+        <h3 id="celebrationTitle" class="text-2xl font-black text-amber-600">🎉 Super Milestone!</h3>
+        <p id="celebrationSubtitle" class="text-xs font-black text-slate-600 mt-1">恭喜你解鎖了新貼紙！</p>
+        <div id="newStickerBigIconContainer" class="w-32 h-32 rounded-3xl my-3 flex items-center justify-center text-7xl shadow-lg animate-wiggle">🦁</div>
+        <div id="newStickerTierPill" class="text-xs font-black px-3 py-1 rounded-full text-white bg-amber-500 mb-1">普通徽章 Normal</div>
+        <p id="newStickerNameText" class="text-base font-black text-slate-800 mb-3">Lion 勇敢小獅子</p>
+        <button onclick="closeUnlockModal()" class="bouncy-btn w-full bg-gradient-to-b from-pink-500 to-rose-600 text-white font-black text-base py-3 rounded-2xl border-b-4 border-rose-800">
+          太棒了！繼續挑戰 🎈
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/game.js"></script>
 </body>
 </html>
