@@ -1,0 +1,180 @@
+/* =========================================================================
+   TinyGenius Math HK - Modular Audio & Speech Synthesis Engine
+   ========================================================================= */
+
+const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+let audioContext = null;
+let isSoundOn = true;
+let currentTeacherIndex = 0; // 預設 Miss Emma
+
+function ensureAudioContext() {
+  if (!audioContext) audioContext = new AudioContextClass();
+  if (audioContext.state === 'suspended') audioContext.resume();
+}
+
+// 柔和合成音效 (消除生硬音質)
+function playTone(freq, type = 'sine', duration = 0.16, delay = 0, volume = 0.20) {
+  if (!isSoundOn) return;
+  ensureAudioContext();
+  try {
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioContext.currentTime + delay);
+
+    gain.gain.setValueAtTime(0.001, audioContext.currentTime + delay);
+    gain.gain.exponentialRampToValueAtTime(volume, audioContext.currentTime + delay + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + delay + duration);
+
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+
+    osc.start(audioContext.currentTime + delay);
+    osc.stop(audioContext.currentTime + delay + duration);
+  } catch (e) {
+    console.warn('Audio tone error:', e);
+  }
+}
+
+function soundSuccessChime() {
+  playTone(523.25, 'triangle', 0.14, 0, 0.22);
+  playTone(659.25, 'triangle', 0.14, 0.08, 0.22);
+  playTone(783.99, 'triangle', 0.18, 0.16, 0.22);
+  playTone(1046.50, 'triangle', 0.32, 0.24, 0.26);
+}
+
+function soundGoldUpgradeChime() {
+  playTone(587.33, 'triangle', 0.15, 0, 0.22);
+  playTone(739.99, 'triangle', 0.15, 0.1, 0.22);
+  playTone(880.00, 'triangle', 0.2, 0.2, 0.22);
+  playTone(1174.66, 'sine', 0.45, 0.3, 0.3);
+}
+
+function soundRainbowPrismaticChime() {
+  [523.25, 659.25, 783.99, 987.77, 1318.51].forEach((freq, idx) => {
+    playTone(freq, 'sine', 0.38, idx * 0.06, 0.18);
+  });
+}
+
+function soundTapPop() {
+  playTone(580 + Math.random() * 150, 'sine', 0.08, 0, 0.18);
+}
+
+function soundCoinJingle() {
+  playTone(987.77, 'sine', 0.1, 0, 0.22);
+  playTone(1318.51, 'triangle', 0.2, 0.07, 0.25);
+}
+
+function soundCrossCut() {
+  playTone(280, 'sine', 0.09, 0, 0.2);
+  playTone(200, 'sine', 0.12, 0.04, 0.18);
+}
+
+function soundEncourageTone() {
+  playTone(349.23, 'sine', 0.16, 0, 0.18);
+  playTone(311.13, 'sine', 0.22, 0.12, 0.18);
+}
+
+/* =========================================================================
+   WEB SPEECH API - 精準性別過濾引擎
+   ========================================================================= */
+let cachedSystemVoices = [];
+
+function refreshSystemVoices() {
+  if ('speechSynthesis' in window) {
+    cachedSystemVoices = window.speechSynthesis.getVoices();
+  }
+}
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = refreshSystemVoices;
+  refreshSystemVoices();
+}
+
+function findOptimalVoiceForTeacher(profile) {
+  if (!cachedSystemVoices || cachedSystemVoices.length === 0) refreshSystemVoices();
+  const voices = cachedSystemVoices;
+  if (!voices || voices.length === 0) return null;
+
+  const langVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith(profile.lang.toLowerCase().slice(0, 2)));
+
+  const femaleKeywords = ['female', 'zira', 'samantha', 'victoria', 'jenny', 'karen', 'hazel', 'susan', 'serena', 'libby', 'sonia', 'natasha', 'catherine'];
+  const maleKeywords = ['male', 'david', 'mark', 'george', 'oliver', 'daniel'];
+
+  for (const pName of profile.preferredNames) {
+    const match = langVoices.find(v => v.name.toLowerCase().includes(pName.toLowerCase()));
+    if (match) return match;
+  }
+
+  if (profile.isFemale) {
+    const femaleVoice = langVoices.find(v => {
+      const n = v.name.toLowerCase();
+      return femaleKeywords.some(kw => n.includes(kw)) && !maleKeywords.some(m => n.includes(m));
+    });
+    if (femaleVoice) return femaleVoice;
+  } else {
+    const maleVoice = langVoices.find(v => {
+      const n = v.name.toLowerCase();
+      return maleKeywords.some(kw => n.includes(kw));
+    });
+    if (maleVoice) return maleVoice;
+  }
+
+  return langVoices[0] || voices[0];
+}
+
+function speakEnglishOnly(text, onEndCallback = null) {
+  if (!isSoundOn || !('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+
+  const cleanText = text.replace(/[\u4e00-\u9fa5]|[\u3000-\u303f]|[\uff01-\uff60]/g, '')
+                        .replace(/[🎈⭐🍓🍎🐶🐱➕➖🟰❓❌👈👉⚖️✂️🦁🐨🐼🌱🌸🚀🏛️🎧🌳🦆🌊🍦🦋🍰💎🛒]/g, '')
+                        .trim();
+  if (!cleanText) return;
+
+  const currentTeacher = TEACHER_PROFILES[currentTeacherIndex];
+  const utterance = new SpeechSynthesisUtterance(cleanText);
+  utterance.lang = currentTeacher.lang;
+  utterance.rate = currentTeacher.rate;
+  utterance.pitch = currentTeacher.pitch;
+
+  const matchedVoice = findOptimalVoiceForTeacher(currentTeacher);
+  if (matchedVoice) {
+    utterance.voice = matchedVoice;
+    if (currentTeacher.isFemale && matchedVoice.name.toLowerCase().includes('male')) {
+      const namePill = document.getElementById('currentTeacherNamePill');
+      if (namePill) namePill.innerText = 'Mr. Oliver';
+    }
+  }
+
+  if (onEndCallback) utterance.onend = onEndCallback;
+  window.speechSynthesis.speak(utterance);
+}
+
+const NUMBER_WORDS_EN = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 
+                         'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen', 'Twenty'];
+
+function speakNumberWord(n) {
+  const word = NUMBER_WORDS_EN[n] || String(n);
+  speakEnglishOnly(word);
+}
+
+function speakPraiseEn() {
+  const praises = [
+    "Fantastic! Great job!",
+    "Super star! You got it right!",
+    "Brilliant! Well done!",
+    "Awesome! Keep going!",
+    "Wonderful! High five!"
+  ];
+  speakEnglishOnly(praises[Math.floor(Math.random() * praises.length)]);
+}
+
+function speakTryAgainEn() {
+  const msgs = [
+    "Almost! Try again! You can do it!",
+    "Good effort! Let's check once more!",
+    "Keep trying! Give it another go!"
+  ];
+  speakEnglishOnly(msgs[Math.floor(Math.random() * msgs.length)]);
+}
