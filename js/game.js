@@ -1,5 +1,5 @@
 /* =========================================================================
-   TinyGenius Math HK - Core Gameplay Controller & Stages Engine (Robust Debugged)
+   TinyGenius Math HK - Core Gameplay Controller (Modal & Touch Zero-Block Fix)
    ========================================================================= */
 
 let currentGrade = 'k2';
@@ -21,7 +21,7 @@ const stickerTierMap = {
 };
 let activeShowcaseSticker = null;
 
-// 安全 DOM 輔助函式（防止手機因找不到元素而拋錯卡死）
+// 通用安全 DOM 操作
 function safeSetText(id, text) {
   const el = document.getElementById(id);
   if (el) el.innerText = text;
@@ -33,7 +33,7 @@ function safeSetHtml(id, html) {
 function getRandomItem(list) { return list[Math.floor(Math.random() * list.length)]; }
 function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 
-// 解鎖所有按鈕防死鎖機制
+// 強制重設畫面所有按鈕（解鎖防死鎖）
 function forceUnlockAllButtons() {
   isInputLocked = false;
   document.querySelectorAll('button').forEach(btn => {
@@ -41,10 +41,35 @@ function forceUnlockAllButtons() {
   });
 }
 
+// 通用彈窗開啟/關閉管理 (徹底消除透明遮罩擋住螢幕)
+function showModal(modalId) {
+  const el = document.getElementById(modalId);
+  if (el) {
+    el.style.display = 'flex';
+    el.classList.remove('hidden');
+  }
+}
+
+function hideModal(modalId) {
+  const el = document.getElementById(modalId);
+  if (el) {
+    el.style.display = 'none';
+    el.classList.add('hidden');
+  }
+  forceUnlockAllButtons();
+}
+
+function hideAllModals() {
+  ['stickerAlbumModal', 'stickerShowcaseModal', 'teacherVoiceModal', 'parentGateModal', 'unlockCelebrationModal'].forEach(id => {
+    hideModal(id);
+  });
+}
+
 /* =========================================================================
-   導航與關卡切換
+   導航與關卡切換 (保證手機輕按即響應)
    ========================================================================= */
 window.selectGrade = function(gradeKey) {
+  hideAllModals();
   forceUnlockAllButtons();
   if (typeof soundTapPop === 'function') soundTapPop();
   currentGrade = gradeKey;
@@ -61,6 +86,7 @@ window.selectGrade = function(gradeKey) {
 };
 
 function renderGradeLobby() {
+  hideAllModals();
   forceUnlockAllButtons();
   const cfg = GRADE_CONFIG[currentGrade];
   if (!cfg) return;
@@ -77,16 +103,14 @@ function renderGradeLobby() {
       card.type = 'button';
       card.className = `bouncy-btn clay-card p-4 sm:p-5 flex flex-col items-center text-center cursor-pointer border-b-6 hover:scale-102 transition-all`;
       card.innerHTML = `
-        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr ${topic.color} text-white flex items-center justify-center text-3xl sm:text-4xl mb-2.5 shadow-md">
+        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-tr ${topic.color} text-white flex items-center justify-center text-3xl sm:text-4xl mb-2.5 shadow-md pointer-events-none">
           ${topic.icon}
         </div>
-        <h3 class="text-base sm:text-lg font-black text-slate-800">${topic.title}</h3>
-        <span class="text-[11px] font-bold text-slate-500 mt-0.5">${topic.subtitle}</span>
-        <span class="text-xs font-black text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full mt-2">進入單元 ▶</span>
+        <h3 class="text-base sm:text-lg font-black text-slate-800 pointer-events-none">${topic.title}</h3>
+        <span class="text-[11px] font-bold text-slate-500 mt-0.5 pointer-events-none">${topic.subtitle}</span>
+        <span class="text-xs font-black text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full mt-2 pointer-events-none">進入單元 ▶</span>
       `;
-      card.onclick = function(e) {
-        e.preventDefault();
-        e.stopPropagation();
+      card.onclick = function() {
         launchTopic(topic.id);
       };
       container.appendChild(card);
@@ -97,15 +121,16 @@ function renderGradeLobby() {
   const play = document.getElementById('gamePlayScreen');
   const lobby = document.getElementById('gradeLobbyScreen');
 
-  if (portal) portal.classList.add('hidden');
-  if (play) { play.classList.add('hidden'); play.classList.remove('flex'); }
-  if (lobby) { lobby.classList.remove('hidden'); lobby.classList.add('flex'); }
+  if (portal) portal.style.display = 'none';
+  if (play) play.style.display = 'none';
+  if (lobby) lobby.style.display = 'flex';
 
   safeSetText('navBackLabel', "課程選單");
   safeSetText('navBackIcon', "🏛️");
 }
 
 window.launchTopic = function(modeId) {
+  hideAllModals();
   forceUnlockAllButtons();
   if (typeof soundTapPop === 'function') soundTapPop();
   currentMode = modeId;
@@ -113,8 +138,8 @@ window.launchTopic = function(modeId) {
   const lobby = document.getElementById('gradeLobbyScreen');
   const play = document.getElementById('gamePlayScreen');
 
-  if (lobby) { lobby.classList.add('hidden'); lobby.classList.remove('flex'); }
-  if (play) { play.classList.remove('hidden'); play.classList.add('flex'); }
+  if (lobby) lobby.style.display = 'none';
+  if (play) play.style.display = 'flex';
 
   safeSetText('navBackLabel', "單元選單");
   safeSetText('navBackIcon', "🔙");
@@ -123,6 +148,7 @@ window.launchTopic = function(modeId) {
 };
 
 window.handleNavigationBack = function() {
+  hideAllModals();
   forceUnlockAllButtons();
   if (typeof soundTapPop === 'function') soundTapPop();
   if ('speechSynthesis' in window) window.speechSynthesis.cancel();
@@ -131,16 +157,14 @@ window.handleNavigationBack = function() {
   const lobby = document.getElementById('gradeLobbyScreen');
   const portal = document.getElementById('curriculumPortalScreen');
 
-  if (play && !play.classList.contains('hidden')) {
-    play.classList.add('hidden');
-    play.classList.remove('flex');
-    if (lobby) { lobby.classList.remove('hidden'); lobby.classList.add('flex'); }
+  if (play && play.style.display !== 'none' && !play.classList.contains('hidden')) {
+    play.style.display = 'none';
+    if (lobby) lobby.style.display = 'flex';
     safeSetText('navBackLabel', "課程選單");
     safeSetText('navBackIcon', "🏛️");
-  } else if (lobby && !lobby.classList.contains('hidden')) {
-    lobby.classList.add('hidden');
-    lobby.classList.remove('flex');
-    if (portal) { portal.classList.remove('hidden'); portal.classList.add('flex'); }
+  } else if (lobby && lobby.style.display !== 'none' && !lobby.classList.contains('hidden')) {
+    lobby.style.display = 'none';
+    if (portal) portal.style.display = 'flex';
     safeSetText('navBackLabel', "課程選單");
     safeSetText('navBackIcon', "🏛️");
   }
@@ -162,7 +186,7 @@ function hideAllStages() {
   ];
   stageIds.forEach(id => {
     const el = document.getElementById(id);
-    if (el) { el.classList.add('hidden'); el.classList.remove('flex', 'grid'); }
+    if (el) el.style.display = 'none';
   });
   safeSetHtml('numberOptionsRow', '');
 }
@@ -198,14 +222,13 @@ function generateQuestion() {
 }
 
 /* =========================================================================
-   題目邏輯渲染 (含保護機制)
+   題目邏輯渲染
    ========================================================================= */
 
 function renderK2NumberListening() {
   const stage = document.getElementById('stageAudioListening');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('flex');
+  stage.style.display = 'flex';
 
   const numberWords = [
     { num: 1, word: 'One' }, { num: 2, word: 'Two' }, { num: 3, word: 'Three' },
@@ -230,8 +253,7 @@ function renderK2NumberListening() {
 function renderK3StoryMathListening() {
   const stage = document.getElementById('stageAudioListening');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('flex');
+  stage.style.display = 'flex';
 
   const isAdd = Math.random() > 0.5;
   if (isAdd) {
@@ -262,8 +284,7 @@ function renderK3StoryMathListening() {
 function renderP1TensMentalListening() {
   const stage = document.getElementById('stageAudioListening');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('flex');
+  stage.style.display = 'flex';
 
   const a = getRandomInt(2, 6) * 10;
   const b = getRandomInt(1, 3) * 10;
@@ -284,8 +305,7 @@ function renderP1TensMentalListening() {
 function renderP1Money() {
   const stage = document.getElementById('stageP1Money');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('flex');
+  stage.style.display = 'flex';
 
   const count = Math.random() > 0.4 ? 3 : 2;
   const shuffled = [...STORE_ITEMS].sort(() => 0.5 - Math.random());
@@ -328,8 +348,7 @@ function renderP1Money() {
 function renderP1Place() {
   const stage = document.getElementById('stageP1Place');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('flex');
+  stage.style.display = 'flex';
 
   const tens = getRandomInt(1, 5);
   const ones = getRandomInt(1, 8);
@@ -367,8 +386,7 @@ function renderP1Place() {
 function renderP1Mental() {
   const stage = document.getElementById('stageP1Mental');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('flex');
+  stage.style.display = 'flex';
 
   const isAdd = Math.random() > 0.45;
   safeSetText('vocabPillText', `Rocket Speed 兩位數速算`);
@@ -401,8 +419,7 @@ function renderP1Mental() {
 function renderK1Counting() {
   const stage = document.getElementById('stageK1Count');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('flex');
+  stage.style.display = 'flex';
 
   const count = getRandomInt(1, 5);
   targetAnswer = count;
@@ -435,8 +452,7 @@ let k1CompareTarget = 'left';
 function renderK1Compare() {
   const stage = document.getElementById('stageK1Compare');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('grid');
+  stage.style.display = 'grid';
 
   const vocab = getRandomItem(VOCAB_DATABASE);
   safeSetText('vocabPillText', `${vocab.en} ${vocab.zh}`);
@@ -471,8 +487,7 @@ const SHAPE_LIST = [
 function renderK1Shape() {
   const stage = document.getElementById('stageK1Shape');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('flex');
+  stage.style.display = 'flex';
 
   const targetShape = getRandomItem(SHAPE_LIST);
   safeSetText('vocabPillText', `${targetShape.nameEn} ${targetShape.nameZh}`);
@@ -501,8 +516,7 @@ function renderK1Shape() {
 function renderK2Counting() {
   const stage = document.getElementById('stageK2Count');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('flex');
+  stage.style.display = 'flex';
 
   const count = getRandomInt(1, 9);
   targetAnswer = count;
@@ -535,8 +549,7 @@ let k2CompareTarget = 'left';
 function renderK2Compare() {
   const stage = document.getElementById('stageK2Compare');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('grid');
+  stage.style.display = 'grid';
 
   let nA = getRandomInt(2, 7);
   let nB = getRandomInt(2, 7);
@@ -569,8 +582,7 @@ window.submitK2CompareChoice = function(side) {
 function renderK2Addition() {
   const stage = document.getElementById('stageK2Add');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('flex');
+  stage.style.display = 'flex';
 
   const n1 = getRandomInt(1, 5);
   const n2 = getRandomInt(1, 4);
@@ -600,8 +612,7 @@ function renderK2Addition() {
 function renderK2Subtraction() {
   const stage = document.getElementById('stageK2Sub');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('flex');
+  stage.style.display = 'flex';
 
   const total = getRandomInt(3, 7);
   const minus = getRandomInt(1, total - 1);
@@ -642,8 +653,7 @@ function renderK2Subtraction() {
 function renderK3Bonds() {
   const stage = document.getElementById('stageK3Bonds');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('flex');
+  stage.style.display = 'flex';
 
   const given = getRandomInt(1, 9);
   targetAnswer = 10 - given;
@@ -671,8 +681,7 @@ function renderK3Bonds() {
 function renderK3Math20() {
   const stage = document.getElementById('stageK3Math20');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('flex');
+  stage.style.display = 'flex';
 
   const a = getRandomInt(6, 12);
   const b = getRandomInt(3, 8);
@@ -691,8 +700,7 @@ function renderK3Math20() {
 function renderK3Clock() {
   const stage = document.getElementById('stageK3Clock');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('flex');
+  stage.style.display = 'flex';
 
   const isHalf = Math.random() > 0.5;
   const hour = getRandomInt(1, 12);
@@ -733,8 +741,7 @@ function renderK3Clock() {
 function renderK3Coins() {
   const stage = document.getElementById('stageK3Coins');
   if (!stage) return;
-  stage.classList.remove('hidden');
-  stage.classList.add('flex');
+  stage.style.display = 'flex';
 
   const targetCoin = getRandomItem(HK_COIN_DATA);
   targetAnswer = targetCoin.val;
@@ -778,8 +785,7 @@ function renderChoiceButtons(correctVal, minR, maxR) {
     btn.type = 'button';
     btn.className = `option-choice-btn bouncy-btn bg-gradient-to-b ${palettes[idx % palettes.length]} border-b-6 w-16 h-16 sm:w-20 sm:h-20 rounded-3xl text-3xl sm:text-4xl font-black flex items-center justify-center cursor-pointer shadow-lg`;
     btn.innerText = val;
-    btn.onclick = (e) => {
-      e.preventDefault();
+    btn.onclick = () => {
       if (isInputLocked) return;
       if (val === correctVal) { lockInteraction(); onAnswerCorrect(); } else onAnswerWrong();
     };
@@ -804,8 +810,7 @@ function renderCustomChoiceButtons(labels, correctValue) {
     btn.type = 'button';
     btn.className = `option-choice-btn bouncy-btn bg-gradient-to-b ${palettes[idx % palettes.length]} border-b-6 px-4 py-2.5 rounded-2xl text-base sm:text-xl font-black flex items-center justify-center cursor-pointer shadow-md min-w-[75px]`;
     btn.innerText = text;
-    btn.onclick = (e) => {
-      e.preventDefault();
+    btn.onclick = () => {
       if (isInputLocked) return;
       if (text === correctValue) { lockInteraction(); onAnswerCorrect(); } else onAnswerWrong();
     };
@@ -860,7 +865,7 @@ function onAnswerWrong() {
 }
 
 /* =========================================================================
-   貼紙進化與展示系統
+   貼紙進化與展示系統 (彈窗開關修復)
    ========================================================================= */
 
 function triggerNextEvolutionMilestone() {
@@ -897,9 +902,6 @@ function updateAlbumBadgeDisplay() {
 }
 
 function displayCelebrationModal(sticker, tier) {
-  const modal = document.getElementById('unlockCelebrationModal');
-  if (!modal) return;
-
   const iconContainer = document.getElementById('newStickerBigIconContainer');
   const tierPill = document.getElementById('newStickerTierPill');
 
@@ -932,13 +934,12 @@ function displayCelebrationModal(sticker, tier) {
   }
 
   safeSetText('newStickerNameText', sticker.name);
-  modal.classList.remove('hidden');
+  showModal('unlockCelebrationModal');
 }
 
 window.closeUnlockModal = function() {
   if (typeof soundTapPop === 'function') soundTapPop();
-  const modal = document.getElementById('unlockCelebrationModal');
-  if (modal) modal.classList.add('hidden');
+  hideModal('unlockCelebrationModal');
   generateQuestion();
 };
 
@@ -984,15 +985,12 @@ window.openStickerModal = function() {
   });
 
   safeSetText('albumPrestigeProgress', `${unlockedCount}/12`);
-  const modal = document.getElementById('stickerAlbumModal');
-  if (modal) modal.classList.remove('hidden');
+  showModal('stickerAlbumModal');
 };
 
 window.closeStickerModal = function() {
   if (typeof soundTapPop === 'function') soundTapPop();
-  const modal = document.getElementById('stickerAlbumModal');
-  if (modal) modal.classList.add('hidden');
-  forceUnlockAllButtons();
+  hideModal('stickerAlbumModal');
 };
 
 function openShowcaseModal(sticker, tier) {
@@ -1030,8 +1028,7 @@ function openShowcaseModal(sticker, tier) {
   safeSetText('showcaseModalName', sticker.name);
   safeSetText('showcaseModalSpeechText', `"${sticker.desc}"`);
 
-  const modal = document.getElementById('stickerShowcaseModal');
-  if (modal) modal.classList.remove('hidden');
+  showModal('stickerShowcaseModal');
 
   if (typeof speakEnglishOnly === 'function') speakEnglishOnly(sticker.desc);
 }
@@ -1045,9 +1042,7 @@ window.replayShowcaseVoice = function() {
 
 window.closeShowcaseModal = function() {
   if (typeof soundTapPop === 'function') soundTapPop();
-  const modal = document.getElementById('stickerShowcaseModal');
-  if (modal) modal.classList.add('hidden');
-  forceUnlockAllButtons();
+  hideModal('stickerShowcaseModal');
 };
 
 window.openTeacherVoiceModal = function() {
@@ -1081,15 +1076,12 @@ window.openTeacherVoiceModal = function() {
     list.appendChild(card);
   });
 
-  const modal = document.getElementById('teacherVoiceModal');
-  if (modal) modal.classList.remove('hidden');
+  showModal('teacherVoiceModal');
 };
 
 window.closeTeacherVoiceModal = function() {
   if (typeof soundTapPop === 'function') soundTapPop();
-  const modal = document.getElementById('teacherVoiceModal');
-  if (modal) modal.classList.add('hidden');
-  forceUnlockAllButtons();
+  hideModal('teacherVoiceModal');
 };
 
 window.toggleAudioMute = function() {
@@ -1112,16 +1104,15 @@ window.openParentGate = function() {
   if (input) input.value = '';
 
   const err = document.getElementById('parentLockError');
-  if (err) err.classList.add('hidden');
+  if (err) err.style.display = 'none';
 
   const ch = document.getElementById('parentLockChallenge');
-  if (ch) ch.classList.remove('hidden');
+  if (ch) ch.style.display = 'block';
 
   const rep = document.getElementById('parentDashboardReport');
-  if (rep) rep.classList.add('hidden');
+  if (rep) rep.style.display = 'none';
 
-  const modal = document.getElementById('parentGateModal');
-  if (modal) modal.classList.remove('hidden');
+  showModal('parentGateModal');
 };
 
 window.verifyParentPass = function() {
@@ -1132,8 +1123,8 @@ window.verifyParentPass = function() {
     if (typeof soundSuccessChime === 'function') soundSuccessChime();
     const ch = document.getElementById('parentLockChallenge');
     const rep = document.getElementById('parentDashboardReport');
-    if (ch) ch.classList.add('hidden');
-    if (rep) rep.classList.remove('hidden');
+    if (ch) ch.style.display = 'none';
+    if (rep) rep.style.display = 'block';
 
     safeSetText('statTotalSolved', `${totalQuestionsAnswered} 題`);
     const acc = totalQuestionsAnswered > 0 ? Math.round((correctAnswersCount / totalQuestionsAnswered) * 100) : 100;
@@ -1141,19 +1132,18 @@ window.verifyParentPass = function() {
   } else {
     if (typeof soundEncourageTone === 'function') soundEncourageTone();
     const err = document.getElementById('parentLockError');
-    if (err) err.classList.remove('hidden');
+    if (err) err.style.display = 'block';
   }
 };
 
 window.closeParentGateModal = function() {
   if (typeof soundTapPop === 'function') soundTapPop();
-  const modal = document.getElementById('parentGateModal');
-  if (modal) modal.classList.add('hidden');
-  forceUnlockAllButtons();
+  hideModal('parentGateModal');
 };
 
-// 確保腳本載入完成時強制重設所有按鈕解鎖狀態
+// 確保手機頁面載入時所有彈窗徹底處於關閉狀態
 document.addEventListener('DOMContentLoaded', () => {
+  hideAllModals();
   forceUnlockAllButtons();
   updateAlbumBadgeDisplay();
 });
