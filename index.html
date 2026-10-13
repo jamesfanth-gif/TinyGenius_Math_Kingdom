@@ -14,13 +14,27 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <!-- 模組化樣式表 -->
   <link rel="stylesheet" href="style.css">
+  
+  <style>
+    /* 強制確保關閉的彈窗絕不攔截任何點擊事件 */
+    .modal-backdrop.hidden {
+      display: none !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
+    }
+    .modal-backdrop:not(.hidden) {
+      display: flex !important;
+      pointer-events: auto !important;
+      visibility: visible !important;
+    }
+  </style>
 </head>
 <body class="flex flex-col items-center justify-between p-2 sm:p-5 select-none text-slate-800">
 
   <!-- ==========================================
        TOP UNIFIED APP BAR (手機防溢出自適應導航列)
        ========================================== -->
-  <header class="w-full max-w-5xl flex items-center justify-between clay-card px-2 sm:px-4 py-2 mb-3 gap-1 sm:gap-2 overflow-hidden">
+  <header class="w-full max-w-5xl flex items-center justify-between clay-card px-2 sm:px-4 py-2 mb-3 gap-1 sm:gap-2 overflow-hidden z-20 relative">
     <!-- 左側導航組 -->
     <div class="flex items-center gap-1 sm:gap-2 shrink-0">
       <button id="navBackBtn" onclick="handleNavigationBack()" class="unified-nav-btn bouncy-btn bg-gradient-to-b from-rose-400 to-pink-500 text-white border-pink-700" title="課程選單">
@@ -39,7 +53,7 @@
       </button>
     </div>
 
-    <!-- 中間年級指示膠囊 (手機螢幕自動適應長度) -->
+    <!-- 中間年級指示膠囊 -->
     <div id="activeGradePill" class="flex items-center gap-1 bg-slate-100/90 border border-slate-300 px-2 py-1 rounded-xl text-[11px] sm:text-xs font-black text-slate-700 shrink truncate max-w-[110px] sm:max-w-none">
       <span id="activeGradePillIcon">🌸</span>
       <span id="activeGradePillText" class="truncate">K2 低班</span>
@@ -68,7 +82,7 @@
   <!-- ==========================================
        MAIN VIEWPORT CONTAINER
        ========================================== -->
-  <main class="w-full max-w-5xl flex-1 flex flex-col items-center justify-center relative">
+  <main class="w-full max-w-5xl flex-1 flex flex-col items-center justify-center relative z-10">
 
     <!-- SCREEN 1: GRADE SELECTION PORTAL -->
     <div id="curriculumPortalScreen" class="w-full flex flex-col items-center gap-4 sm:gap-6 py-2">
@@ -86,7 +100,6 @@
         </p>
       </div>
 
-      <!-- 4 個香港年級選擇卡片 -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full px-1.5">
         <!-- K1 -->
         <div class="clay-card p-4 sm:p-5 flex flex-col justify-between border-t-8 border-emerald-400 hover:shadow-xl transition-all">
@@ -201,7 +214,6 @@
           <span>🏷️</span> <span id="vocabPillText">Panda 熊貓</span>
         </div>
 
-        <!-- 關卡容器 -->
         <div id="stageK1Count" class="w-full hidden flex-col items-center py-4">
           <div class="text-xs sm:text-sm font-bold text-slate-500 mb-3 bg-slate-100 px-3 py-1 rounded-full">👆 輕輕點擊每個動物，一起用英文數！</div>
           <div id="k1CountGrid" class="flex flex-wrap justify-center items-center gap-4 sm:gap-6 max-w-lg min-h-[120px]"></div>
@@ -372,8 +384,12 @@
       <div id="numberOptionsRow" class="w-full mt-3.5 flex justify-center items-center gap-2.5 sm:gap-4 flex-wrap"></div>
     </div>
 
+    <!-- ==========================================
+         MODALS (均標記 modal-backdrop 以確保不卡死)
+         ========================================== -->
+
     <!-- 彈窗 1: 貼紙寶箱 -->
-    <div id="stickerAlbumModal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div id="stickerAlbumModal" class="modal-backdrop fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
       <div class="clay-card p-4 sm:p-6 max-w-lg w-full border-4 border-amber-300 flex flex-col items-center text-center pop-in max-h-[92vh]">
         <div class="flex items-center gap-2 mb-1">
           <span class="text-3xl">📖</span>
@@ -393,8 +409,8 @@
       </div>
     </div>
 
-    <!-- 彈窗 2: 3D 大尺寸立體展示窗 (防溢出) -->
-    <div id="stickerShowcaseModal" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <!-- 彈窗 2: 3D 大尺寸立體展示窗 -->
+    <div id="stickerShowcaseModal" class="modal-backdrop fixed inset-0 bg-black/75 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
       <div class="clay-card p-5 sm:p-6 max-w-sm w-full border-4 flex flex-col items-center text-center pop-in max-h-[92vh] overflow-y-auto relative">
         <button onclick="closeShowcaseModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-700 text-xl font-black w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">✕</button>
         <h3 id="showcaseModalTitle" class="text-lg sm:text-xl font-black text-slate-800 mt-1">Sticker Showcase</h3>
@@ -418,7 +434,7 @@
     </div>
 
     <!-- 彈窗 3: 老師音色選擇 -->
-    <div id="teacherVoiceModal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div id="teacherVoiceModal" class="modal-backdrop fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
       <div class="clay-card p-5 max-w-md w-full border-4 border-indigo-300 flex flex-col items-center text-center pop-in max-h-[92vh] overflow-y-auto">
         <div class="text-3xl mb-1">👩‍🏫</div>
         <h3 class="text-xl font-black text-slate-800">自選英語老師聲音 (Teacher Voices)</h3>
@@ -431,7 +447,7 @@
     </div>
 
     <!-- 彈窗 4: 家長專區 -->
-    <div id="parentGateModal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div id="parentGateModal" class="modal-backdrop fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
       <div class="clay-card p-6 max-w-lg w-full border-4 border-slate-300 flex flex-col items-center text-center pop-in max-h-[90vh] overflow-y-auto">
         <div class="text-3xl mb-1">🔒</div>
         <h3 class="text-xl font-black text-slate-800">家長驗證與學習進度 (Parents Only)</h3>
@@ -463,7 +479,7 @@
     </div>
 
     <!-- 彈窗 5: 貼紙升級慶祝 -->
-    <div id="unlockCelebrationModal" class="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div id="unlockCelebrationModal" class="modal-backdrop fixed inset-0 bg-black/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
       <div id="celebrationModalCard" class="clay-card p-6 max-w-sm w-full border-4 flex flex-col items-center text-center pop-in">
         <h3 id="celebrationTitle" class="text-2xl font-black text-amber-600">🎉 Super Milestone!</h3>
         <p id="celebrationSubtitle" class="text-xs font-black text-slate-600 mt-1">恭喜你解鎖了新貼紙！</p>
@@ -478,7 +494,7 @@
 
   </main>
 
-  <!-- 引用外部模組化 JavaScript 檔案 -->
+  <!-- 引用模組腳本 -->
   <script src="js/data.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/game.js"></script>
