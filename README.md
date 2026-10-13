@@ -1,86 +1,55 @@
-# 🏰 TinyGenius Math Kingdom | 幼小數學樂園
+# 🌟 TinyGenius Math HK 幼小數學樂園 (K1-P1)
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Curriculum-Hong%20Kong%20EDB-4F46E5?style=for-the-badge&logo=apple" alt="HK EDB">
-  <img src="https://img.shields.io/badge/Levels-K1%20|%20K2%20|%20K3%20|%20P1-EC4899?style=for-the-badge" alt="Levels">
-  <img src="https://img.shields.io/badge/Voice-100%25%20English%20TTS-F59E0B?style=for-the-badge&logo=google-cloud" alt="English Audio">
-  <img src="https://img.shields.io/badge/Dependencies-Zero%20(Pure%20HTML5)-10B981?style=for-the-badge" alt="Zero Dependencies">
-  <img src="https://img.shields.io/badge/Platform-iPad%20%2F%20Mobile%20%2F%20Web-06B6D4?style=for-the-badge" alt="Platform">
-</p>
-
-> 專為香港幼童與小學生（3 至 7 歲）設計的單人互動數學啟蒙 Web App。嚴格緊扣香港教育局（EDB）課程指引，結合純英文語音朗讀、具象化點算互動、原生向量繪圖與三階禮物進化系統。
+> 🇭🇰 遵循香港教育局 (EDB) 幼稚園及小學數學課程指引 • 支援自然溫柔純英語外師伴讀 • 3D 立體浮動獎品進階系統
 
 ---
 
-## ✨ 遊戲特色亮點 (Core Features)
+## 📖 專案簡介 (Overview)
 
-* **🎨 100% 原生向量繪圖（零外部圖片）**  
-  全部角色（熊貓、獅子、獨角獸、暴龍等）、鐘面、幾何圖形及香港硬幣（$1, $2, $5, $10）均由精緻 Inline SVG 原生繪製，永不死圖、載入極速。
-* **🗣️ 純正幼兒英語發音 (Web Speech API)**  
-  全題庫英語語音親切朗讀，支援點擊重複聆聽與互動報數（"One", "Two"），輔助小朋友在日常中磨練英語聽力。
-* **👆 具象點算與動手劃叉**  
-  * **加法**：小朋友可用手指逐一點擊圖案，自動依序標記連續編號（1, 2, 3...）並朗讀，解決數數重疊痛點。
-  * **減法**：幼童親手點擊劃走指定數量（❌），直觀理解「拿走 / 扣除」的概念。
-* **🎁 禮物三階無限進化系統**  
-  全套 12 款精美徽章初始為鎖定狀態，透過答對題目踏實解鎖：
-  1. **普通版 (Standard)** ➔ 2. **✨ 純金箔版 (Golden Foil)** ➔ 3. **🌈 幻彩全息流光版 (Prismatic Rainbow)**  
-  點擊貼紙簿可進入**「典藏展示廳」**，禮物具備左右搖擺動畫與全英語名稱朗讀。
-* **🎆 震撼即時反饋動效**  
-  內建 HTML5 Canvas 粒子紙花物理引擎、Web Audio API 三和弦音效、答題震動與漂浮得分動畫。
+**TinyGenius Math HK** 是一款專為香港 3 至 7 歲兒童設計的沉浸式互動數學學習網頁應用程式。涵蓋幼稚園幼兒班 (K1)、低班 (K2)、高班 (K3) 以及小學一年級 (P1) 的核心學習重點。
+
+專案具備自然溫和的英/美語外師發音引擎、3D 立體浮動貼紙 Shader 展示窗、以及生動有趣的遊戲化數學挑戰。
 
 ---
 
-## 📚 香港學制四階單元 (Curriculum Structure)
+## ✨ 核心功能與升級特點 (Key Features)
 
-| 年級階段 | 適合年齡 | 香港教育局 (EDB) 重點單元 | 互動學習形式 |
-| :--- | :---: | :--- | :--- |
-| **🌱 K1 幼兒班** | 3 - 4 歲 | 基礎數感 (1-5)、比多少、認識幾何圖形 | 直觀圖形點選、左右對比 |
-| **🌸 K2 低班** | 4 - 5 歲 | 點擊數數 (1-10)、連續加加看、動手劃叉減法、英文聆聽題 | 手腦點算編號、自主打叉 ❌ 減法 |
-| **⭐ K3 高班** | 5 - 6 歲 | 10的分解 (十格陣)、20以內加減心算、看鐘面認時間、香港硬幣辨識 | 十格陣互補數、鐘面整半點、認識硬幣 |
-| **🚀 P1 小一** | 6 - 7 歲 | 十位與個位 (位值)、兩位數速算、香港貨幣購物換算、英文應用題 | 位值拆解、文具買賣找贖、應用題理解 |
+### 1. 🎓 香港 EDB 幼小數學無縫銜接
+* **🌱 K1 幼兒班 (3-4 歲)**：1-5 點物數數、大細/長短直觀比較、基礎幾何圖形配對。
+* **🌸 K2 低班 (4-5 歲)**：1-10 連續計數、加加看 (一對一加法)、動手劃叉 ❌ 減法、**🎧 1-10 基礎英文數字辨識聽力**。
+* **⭐ K3 高班 (5-6 歲)**：10 的分解與組合 (Ten-Frame 凑十法)、20 以內加減、認識時鐘鐘面、認識香港硬幣 ($1, $2, $5, $10)、**🎧 10 以內故事加減英文聆聽**。
+* **🚀 P1 小一 (6-7 歲)**：
+  * **💎 魔法水晶能量柱**：十位柱與散落水晶寶石（取代傳統單調磚頭）。
+  * **🚀 太空火箭推進發射台**：兩位數趣味速算。
+  * **🛒 超市購物車結算**：隨機 2 至 3 件商品連加運算並以港幣付款。
+  * **🎧 十個位/兩位數速算英文聆聽**。
 
----
+### 2. 🎁 貼紙進化寶箱與 3D 大尺寸立體展示窗
+* **零初始貼紙 (Zero Initial Sticker)**：初始狀態為 0 張解鎖，需透過答題累積解鎖。
+* **三重進化階級**：⚪ 普通徽章 ➔ 🌟 閃爍金箔 ➔ 🌈 全息幻彩虹光 (Iridescent Shader)。
+* **3D 立體展示窗**：點擊任何已獲得貼紙即可彈出居中、不溢出畫面的大尺寸立體浮動窗，支援 `gentleFloatWiggle` 左右歡樂搖擺動效，並可點擊「🔊 溫柔讀音」隨時重聽老師的讚許。
 
-## 🎁 禮物珍藏圖鑑 (Sticker Trophies)
-
-| 圖標 | 禮物名稱 (English) | 象徵意義 |
-| :---: | :--- | :--- |
-| 🐼 | **Panda Hero** | 勇敢純真的熊貓，代表專注與邏輯思維 |
-| 🦁 | **Brave Lion** | 森林百獸之王，賦予面對數學難題的勇氣 |
-| 🦄 | **Magic Unicorn** | 擁有神秘魔法角，激發幼童無限幾何想像力 |
-| 🚀 | **Space Rocket** | 飛向浩瀚宇宙，載著運算夢想衝刺升空 |
-| 🍓 | **Berry Sweet** | 香甜飽滿的士多啤梨，代表健康活潑的數感 |
-| 🍩 | **Glazed Donut** | 繽紛甜甜圈，讓相加與相減變得津津有味 |
-| 👑 | **Royal Crown** | 榮譽皇冠，屬於克服重重挑戰的數學小天才 |
-| 🦖 | **Dino Rex** | 活力充沛的小暴龍，穩健踏出幼小銜接每一步 |
-| 🐬 | **Blue Dolphin** | 智多星小海豚，帶你自在暢遊數字海洋 |
-| 🧁 | **Fairy Cupcake** | 仙子紙杯蛋糕，童話色彩滿分的美點徽章 |
-| 🌈 | **Lucky Rainbow** | 幸運彩虹，照亮更廣闊的學習旅程 |
-| ⚡ | **Lightning Star** | 閃電星耀，象徵敏捷迅速的超強心算力 |
+### 3. 👩‍🏫 溫柔外師英語伴讀與音色切換
+* **消除生硬感**：語速最佳化為幼童最舒適的 `0.82`，語調提高至親切溫柔的 `1.20`。
+* **真實性別過濾引擎**：嚴格過濾發音包性別標籤，杜絕男聲被稱作 Miss 的情況（若系統無女聲會自動智慧更正為 Mr.）。
+* **多名老師口音自由切換**：
+  * 🌸 **Miss Emma**：美式 • 溫柔幼兒園老師
+  * 🇬🇧 **Miss Sophie**：英式 • 親切優雅小學老師
+  * 🐨 **Miss Chloe**：澳式 • 陽光元氣老師
+  * 📖 **Mr. Daniel**：美式 • 溫和故事叔叔
 
 ---
 
-## 🚀 部署至 GitHub Pages (1 分鐘上線)
+## 📁 檔案架構說明 (File Structure)
 
-本專案為**零依賴單一純靜態檔案（Zero-dependency Single File）**，無需安裝 Node.js 或建置工具：
+本專案採用結構清晰的模組化架構，方便在 GitHub 上個別維護：
 
-1. 將代碼存為倉庫根目錄下的 `index.html`。
-2. 進入 GitHub 倉庫的 **Settings** ➔ **Pages**。
-3. 在 **Build and deployment** 下方的 **Branch** 選擇 `main`，資料夾選擇 `/ (root)`。
-4. 點擊 **Save**，稍等 1 分鐘即可透過專屬網址在 iPad、手機或電腦瀏覽器流暢遊玩！
-
----
-
-## 🛠️ 技術架構 (Tech Stack)
-
-* **HTML5 Canvas**：粒子碎屑擴散物理模擬
-* **CSS3 Modern Specs**：Glassmorphism（玻璃擬態）、Keyframe 流光 Shader
-* **Web Audio API**：原生合成正弦波/三角波效果音（免載入音頻檔）
-* **Web Speech API**：原生英語合成語音引擎（`en-US`）
-* **Inline SVG**：100% 向量圖形封裝
-
----
-
-<p align="center">
-  Made with ❤️ for Hong Kong Kids & Parents
-</p>
+```text
+tiny-genius-math/
+├── index.html           # 應用程式主骨架、統一導航列與各功能彈窗 (Modals)
+├── style.css            # 3D 立體 Claymorphism、按鈕規範、Shader 光效與動畫
+├── README.md            # 專案說明文件
+└── js/
+    ├── data.js          # 資料庫：題目模板、詞彙、貼紙清單、超市商品、老師設定
+    ├── audio.js         # 音效與語音引擎：Web Speech API、性別過濾、Web Audio 合成音
+    └── game.js          # 核心邏輯：K1-P1 各級別渲染、購物車運算、貼紙獎勵升級
